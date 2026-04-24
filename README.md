@@ -1,4 +1,4 @@
-# Dinesh's agent skills
+# Agent skills
 
 Personal collection of agent skills, installable via the [`skills`](https://github.com/vercel-labs/skills) CLI.
 
