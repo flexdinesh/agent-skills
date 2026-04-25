@@ -103,14 +103,20 @@ After the plan is finalized and before execution starts:
 
 During execution:
 
+These execution instructions are important. Follow them to the dot. In case you can't follow them, let the user know why.
+
 - if the implementation deviates from the saved plan, update the plan file to reflect the latest approved plan state
-- surface the deviation to the user and capture the updated decisions, tradeoffs, and risks in the saved plan
+- let the user know about the deviation in plan with reasons and capture the updated decisions, tradeoffs, and risks in the saved plan
 - if something doesn't work, do not keep pushing or try various things to force it. stop execution, present the user with alternative approaches, and get explicit approval before changing direction
 
 After execution:
 
+These after execution instructions are important. Follow them to the dot. In case you can't follow them, let the user know why.
+
 - summarise the changes by listing down all the files that were changed and briefly explain what changed in each file. keep it concise.
 - summarise the decisions and tradeoffs in the execution
+- list down the files that were changed
+- list down all the commands that run during execution
 
 ## Stop Condition
 
