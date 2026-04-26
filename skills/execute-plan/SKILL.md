@@ -1,5 +1,5 @@
 ---
-name: execute-mode
+name: execute-plan
 description: "Use when executing a plan or implementing a set of changes making writes and edits."
 ---
 
