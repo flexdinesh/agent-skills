@@ -1,11 +1,13 @@
 ---
 name: review-pr
-description: Review a GitHub pull request from a provided PR URL. Use when Codex should fetch PR metadata, prepare a local detached review worktree, inspect the actual branch diff in the local codebase, focus on bugs and OWASP Top 10 style risks, and optionally reconcile findings from multiple review agents when the runtime and user request allow it.
+description: Review a GitHub pull request from a provided PR URL. Use this skill when the user wants to review a GitHub pull request and provide actionable feedback on the code changes.
 ---
 
 # Review PR
 
-Use this skill when the user wants Codex to review a GitHub pull request and provide actionable feedback on the code changes.
+Review pull requests and provide actionable feedback for improvements.
+
+## Review Priorities
 
 ## Core Rules
 
@@ -98,8 +100,8 @@ Do not fetch into normal local branch names. Fetch into review-only refs.
 Use command patterns like:
 
 ```bash
-git fetch origin <target-branch>:refs/codex/review-pr/<pr-number>/base
-git fetch origin pull/<pr-number>/head:refs/codex/review-pr/<pr-number>/head
+git fetch origin <target-branch>:refs/my-repo/review-pr/<pr-number>/base
+git fetch origin pull/<pr-number>/head:refs/my-repo/review-pr/<pr-number>/head
 ```
 
 Rules:
@@ -115,7 +117,7 @@ Create the review worktree from the fetched review ref, preferably detached so i
 Use command patterns like:
 
 ```bash
-git worktree add --detach <review-worktree-path> refs/codex/review-pr/<pr-number>/head
+git worktree add --detach <review-worktree-path> refs/my-repo/review-pr/<pr-number>/head
 ```
 
 Rules:
@@ -136,8 +138,8 @@ Rules:
 
 1. Use Git CLI to diff the actual review refs locally.
 2. Start with a file inventory:
-   - `git diff --stat refs/codex/review-pr/<pr-number>/base...refs/codex/review-pr/<pr-number>/head`
-   - `git diff --name-only refs/codex/review-pr/<pr-number>/base...refs/codex/review-pr/<pr-number>/head`
+   - `git diff --stat refs/my-repo/review-pr/<pr-number>/base...refs/my-repo/review-pr/<pr-number>/head`
+   - `git diff --name-only refs/my-repo/review-pr/<pr-number>/base...refs/my-repo/review-pr/<pr-number>/head`
 3. Read every modified file in full from the review worktree before judging a change.
 4. Inspect targeted hunks with enough context to understand control flow and data flow.
 5. Inspect nearby code and existing implementations before concluding that a change is incorrect.
@@ -158,7 +160,30 @@ Rules:
   - broken access control
   - sensitive data exposure
   - insecure defaults
+  - authentication flaws
+  - authorization bypasses
   - unsafe deserialization or similar trust-boundary mistakes when relevant
+- Performance
+  - n+1 queries
+  - missing indexes
+  - caching opportunities
+  - algorithmic bottlenecks
+- Architecture
+  - system design decisions
+  - component boundaries
+  - dependency directions
+  - design patterns and anti-patterns
+  - code smells
+- Data
+  - migration checks
+  - breaking schema, api
+  - transaction boundaries
+  - referential integrity
+  - ID mappings
+  - rollback safety
+  - data validations and backwards compatibility
+- Frontend
+  - Detects race conditions in JavaScript and Stimulus controllers
 - Behavioral regressions:
   - changed semantics
   - missing compatibility handling
@@ -168,7 +193,17 @@ Rules:
 - Fit with the existing codebase:
   - whether the change follows current patterns and established abstractions
   - whether a suspicious diff is actually correct in local context
-- Performance only when the issue is concrete and obvious.
+- Language specific
+  - Rails: Rails conventions, Turbo Streams patterns, model/controller responsibilities
+  - Go: Go conventions, code organisation conventions, patterns and boundaries
+  - Python: PEP 8 compliance, type hints, Pythonic idioms
+  - TypeScript: Type safety, modern ES patterns, clean architecture
+- Deployment
+  - pre-deploy checklists
+  - post-deploy verification steps
+  - rollback plans
+- Agent-native
+  - Ensures features are accessible to agents, not just humans
 
 Before flagging something:
 
@@ -177,6 +212,7 @@ Before flagging something:
 - Do not invent hypothetical issues.
 - Explain the realistic failure scenario.
 - Do not be a zealot about style.
+- Performance findings are high priority only when the issue is concrete and obvious.
 
 ## Orchestration
 
@@ -213,6 +249,20 @@ Optional parallel review:
 - Suggest a fix when it is straightforward.
 - If the review was single-agent, do not mention agent consensus.
 - If the review was reconciled from multiple agents, note whether each finding was reported by all agents, two agents, or one agent.
+
+Example
+
+P1 - CRITICAL (must fix):
+[ ] SQL injection vulnerability in search query
+[ ] Missing transaction around user creation
+
+P2 - IMPORTANT (should fix):
+[ ] N+1 query in comments loading
+[ ] Controller doing business logic
+
+P3 - MINOR (nice to fix):
+[ ] Unused variable
+[ ] Could use guard clause
 
 ## Constraints
 

@@ -1,11 +1,11 @@
 ---
 name: gh-create-pr
-description: Push the current branch and create a GitHub pull request with gh CLI. Use when Codex should inspect the current session, commits, and branch diff from the base branch, draft a brief PR title and concise PR description, push the branch, and create the PR with explicit non-interactive commands. Expect this skill to be extended by project-specific skills that override the PR title and description format.
+description: Push the current branch and create a GitHub pull request with gh CLI. Use when the user requests to create a PR. Expect this skill to be extended by project-specific skills that override the PR title and description format.
 ---
 
 # GH Create PR
 
-Use this skill when the user wants Codex to push the current branch and create a GitHub pull request with `gh`.
+Use this skill when the user requests to push the current branch and create a GitHub pull request with `gh`.
 
 ## Core Rules
 

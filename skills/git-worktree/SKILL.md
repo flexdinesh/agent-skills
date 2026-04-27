@@ -1,6 +1,6 @@
 ---
 name: git-worktree
-description: Create, inspect, use, clean up, and delete Git worktrees for a repository. Use when Codex needs to isolate parallel work in separate checkouts, prepare a branch in a new directory, ship from a worktree, inspect existing worktrees, repair stale worktree metadata, or remove worktrees safely, with the canonical base repo kept separate from managed sibling worktrees under `../<repo-name>-worktrees/` by default.
+description: Create, inspect, use, clean up, and delete Git worktrees for a repository. Use when the user requests to isolate parallel work in separate checkouts, prepare a branch in a new directory, ship from a worktree, inspect existing worktrees, repair stale worktree metadata, or remove worktrees safely, with the canonical base repo kept separate from managed sibling worktrees under `../<repo-name>-worktrees/` by default.
 ---
 
 # Git Worktree

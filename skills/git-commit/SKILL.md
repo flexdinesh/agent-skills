@@ -1,11 +1,11 @@
 ---
 name: git-commit
-description: Stage changes and create a Git commit for the current task. Use when Codex should inspect the repo, verify the commit scope matches the current session, prepare a brief commit subject, add a concise body summarizing the session changes, and create the commit with Git CLI. Expect this skill to be extended by project-specific skills that provide the required commit naming convention.
+description: Stage changes and create a Git commit for the current task. Use this skill when the user wants to prepare and create a Git commit for work completed in the current conversation. Expect this skill to be extended by project-specific skills that provide the required commit naming convention.
 ---
 
 # Git Commit
 
-Use this skill when the user wants Codex to prepare and create a Git commit for work completed in the current conversation.
+Use this skill when the user wants to prepare and create a Git commit for work completed in the current conversation.
 
 ## Preflight
 

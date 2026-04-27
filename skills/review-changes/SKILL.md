@@ -1,11 +1,11 @@
 ---
 name: review-changes
-description: Review local code changes from Git state or refs to find concrete bugs, regressions, security issues, compatibility risks, and missing tests. Use when Codex should review staged changes, unstaged changes, commits, or branch diffs with concise, evidence-based findings grounded in local code context.
+description: Review local code changes from Git state or refs to find concrete bugs, regressions, security issues, compatibility risks, and missing tests. Use when the user requests to review staged changes, unstaged changes, commits, or branch diffs with concise, evidence-based findings grounded in local code context.
 ---
 
 # Review Changes
 
-Use this skill when the user wants Codex to review local changes rather than a GitHub PR.
+Use this skill when the user wants to review local changes rather than a GitHub PR.
 
 ## Default Outcome
 
@@ -88,6 +88,74 @@ Ask only when the answer would materially change the review:
 - rollout, compatibility, or security expectations
 - missing external context that cannot be discovered locally
 
+## Review Priorities
+
+- Bugs:
+  - logic errors
+  - incorrect conditionals
+  - missing guards
+  - broken error handling
+  - null, empty, and malformed input cases
+  - concurrency or race issues when relevant
+- Security issues with explicit attention to OWASP Top 10 style risks:
+  - injection
+  - broken access control
+  - sensitive data exposure
+  - insecure defaults
+  - authentication flaws
+  - authorization bypasses
+  - unsafe deserialization or similar trust-boundary mistakes when relevant
+- Performance
+  - n+1 queries
+  - missing indexes
+  - caching opportunities
+  - algorithmic bottlenecks
+- Architecture
+  - system design decisions
+  - component boundaries
+  - dependency directions
+  - design patterns and anti-patterns
+  - code smells
+- Data
+  - migration checks
+  - breaking schema, api
+  - transaction boundaries
+  - referential integrity
+  - ID mappings
+  - rollback safety
+  - data validations and backwards compatibility
+- Frontend
+  - Detects race conditions in JavaScript and Stimulus controllers
+- Behavioral regressions:
+  - changed semantics
+  - missing compatibility handling
+  - broken migrations or upgrade paths
+- Test gaps:
+  - missing coverage for new branches, failure cases, or security-sensitive behavior
+- Fit with the existing codebase:
+  - whether the change follows current patterns and established abstractions
+  - whether a suspicious diff is actually correct in local context
+- Language specific
+  - Rails: Rails conventions, Turbo Streams patterns, model/controller responsibilities
+  - Go: Go conventions, code organisation conventions, patterns and boundaries
+  - Python: PEP 8 compliance, type hints, Pythonic idioms
+  - TypeScript: Type safety, modern ES patterns, clean architecture
+- Deployment
+  - pre-deploy checklists
+  - post-deploy verification steps
+  - rollback plans
+- Agent-native
+  - Ensures features are accessible to agents, not just humans
+
+Before flagging something:
+
+- Be certain.
+- Investigate first if unsure.
+- Do not invent hypothetical issues.
+- Explain the realistic failure scenario.
+- Do not be a zealot about style.
+- Performance findings are high priority only when the issue is concrete and obvious.
+
 ## Output Format
 
 Make the findings the product.
@@ -100,6 +168,20 @@ Make the findings the product.
 - Do not report speculative issues as findings.
 - If there are no actionable findings, say so explicitly and note any residual risk or validation gap.
 - After findings, include only short open questions, assumptions, or a compact summary if they help interpret the review.
+
+Example
+
+P1 - CRITICAL (must fix):
+[ ] SQL injection vulnerability in search query
+[ ] Missing transaction around user creation
+
+P2 - IMPORTANT (should fix):
+[ ] N+1 query in comments loading
+[ ] Controller doing business logic
+
+P3 - MINOR (nice to fix):
+[ ] Unused variable
+[ ] Could use guard clause
 
 ## Constraints
 
