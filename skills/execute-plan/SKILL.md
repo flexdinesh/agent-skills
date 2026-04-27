@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: "Use when executing a plan or implementing a set of changes making writes and edits."
+description: "MUST use when executing or implementing a plan or a planned set of changes making writes and edits."
 ---
 
 # Execute Plan

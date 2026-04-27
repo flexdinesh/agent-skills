@@ -1,6 +1,6 @@
 ---
 name: plan-mode
-description: "Use in plan mode or when planning work, clarifying intent, or producing a decision-complete execution plan. Explore first, ask aggressively, and keep the user in control of decisions. Read-only only. No implementation and no repo-tracked file changes."
+description: "MUST use in plan mode or when planning work, clarifying intent, or producing a decision-complete execution plan. Explore first, ask aggressively, and keep the user in control of decisions. Read-only only. No implementation and no repo-tracked file changes."
 ---
 
 # Plan Mode
