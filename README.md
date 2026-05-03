@@ -5,6 +5,7 @@ Personal collection of agent skills, installable via the [`skills`](https://gith
 ## Available skills
 
 - `decision-log` — persist decisions, rationale, and tradeoffs from a session
+- `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
 - `git-worktree` — create, inspect, and clean Git worktrees
