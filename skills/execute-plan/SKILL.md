@@ -19,6 +19,21 @@ If there is an opportunity to execute tasks in parallel by spawning background a
 - execute only independent tasks in parallel
 - use orchestration pattern to coordinate the background agents when executing tasks in parallel
 
+## Tool Permission Integrity
+
+<system-reminder>
+CRITICAL: Use only the available tools and respect their permissions. Do not bypass
+tool restrictions, blocked tools, or missing permissions by using sed, tee, echo, cat,
+node, python, perl, or any other shell/interpreter command to simulate or circumvent
+read/write/edit capabilities.
+
+If a needed tool is unavailable, blocked, permission-denied, or otherwise disallowed,
+stop execution and explicitly ask the user for permission or direction instead of
+attempting an alternate workaround. This applies especially to tools that enable
+reading, writing, editing, deleting, or otherwise manipulating files or system state.
+ZERO exceptions.
+</system-reminder>
+
 ## During execution:
 
 These execution instructions are important. Follow them to the dot. In case you can't follow them, let the user know why.
