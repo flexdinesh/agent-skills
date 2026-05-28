@@ -2,10 +2,10 @@
  * Complete server plugin reference showing every available hook.
  * Copy the hooks you need into your plugin.
  */
-import type { Plugin } from "@opencode-ai/plugin"
+import type { Plugin, PluginModule } from "@opencode-ai/plugin"
 import { tool } from "@opencode-ai/plugin"
 
-export const ServerHooksReference: Plugin = async ({
+const server: Plugin = async ({
   client,
   project,
   directory,
@@ -25,6 +25,19 @@ export const ServerHooksReference: Plugin = async ({
   })
 
   return {
+    // ---------------------------------------------------------------
+    // dispose -- cleanup on plugin unload
+    // ---------------------------------------------------------------
+    dispose: async () => {
+      await client.app.log({
+        body: {
+          service: "my-plugin",
+          level: "info",
+          message: "Plugin disposed",
+        },
+      })
+    },
+
     // ---------------------------------------------------------------
     // event -- receive all bus events
     // ---------------------------------------------------------------
@@ -51,24 +64,42 @@ export const ServerHooksReference: Plugin = async ({
           console.log("status changed", event.properties.status)
           break
         case "session.compacted":
-          console.log("session compacted", event.properties.info.id)
+          console.log("session compacted", event.properties.sessionID)
           break
         case "session.diff":
-          console.log("files changed", event.properties.files)
+          console.log("files changed", event.properties.diff)
+          break
+        case "session.next.prompted":
+          console.log("prompted", event.properties.sessionID)
+          break
+        case "session.next.text.delta":
+          console.log("text delta", event.properties.delta)
+          break
+        case "session.next.tool.called":
+          console.log("tool called", event.properties.tool)
+          break
+        case "session.next.tool.success":
+          console.log("tool succeeded", event.properties.callID)
+          break
+        case "session.next.tool.failed":
+          console.log("tool failed", event.properties.callID)
           break
 
         // Message events
+        case "message.part.delta":
+          console.log("part delta", event.properties.partID)
+          break
         case "message.updated":
           console.log("message updated", event.properties.info.id)
           break
         case "message.removed":
-          console.log("message removed", event.properties.info.id)
+          console.log("message removed", event.properties.messageID)
           break
         case "message.part.updated":
           console.log("part updated", event.properties.part.id)
           break
         case "message.part.removed":
-          console.log("part removed", event.properties.part.id)
+          console.log("part removed", event.properties.partID)
           break
 
         // File events
@@ -78,45 +109,112 @@ export const ServerHooksReference: Plugin = async ({
         case "file.watcher.updated":
           console.log("file watcher update", event.properties.file)
           break
-
-        // Tool events
-        case "tool.execute.before":
-          console.log("tool starting", event.properties.tool)
-          break
-        case "tool.execute.after":
-          console.log("tool finished", event.properties.tool)
+        case "project.updated":
+          console.log("project updated", event.properties.id)
           break
 
         // Permission events
         case "permission.asked":
-          console.log("permission asked", event.properties.permission)
+          console.log("permission asked", event.properties.id)
           break
         case "permission.replied":
-          console.log("permission replied", event.properties.status)
+          console.log("permission replied", event.properties.reply)
+          break
+
+        // Question events
+        case "question.asked":
+          console.log("question asked", event.properties.id)
+          break
+        case "question.replied":
+          console.log("question replied", event.properties.sessionID)
+          break
+        case "question.rejected":
+          console.log("question rejected", event.properties.sessionID)
           break
 
         // Command events
         case "command.executed":
-          console.log("command executed", event.properties.command)
+          console.log("command executed", event.properties.name)
           break
 
         // LSP events
         case "lsp.client.diagnostics":
-          console.log("lsp diagnostics", event.properties.diagnostics)
+          console.log("lsp diagnostics", event.properties.path)
           break
         case "lsp.updated":
           console.log("lsp updated")
+          break
+
+        // MCP events
+        case "mcp.tools.changed":
+          console.log("mcp tools changed", event.properties.server)
+          break
+        case "mcp.browser.open.failed":
+          console.log("mcp browser open failed", event.properties.mcpName)
+          break
+
+        // Workspace/worktree/pty events
+        case "workspace.ready":
+          console.log("workspace ready", event.properties.name)
+          break
+        case "workspace.failed":
+          console.log("workspace failed", event.properties.message)
+          break
+        case "workspace.status":
+          console.log("workspace status", event.properties.status)
+          break
+        case "worktree.ready":
+          console.log("worktree ready", event.properties.name)
+          break
+        case "worktree.failed":
+          console.log("worktree failed", event.properties.message)
+          break
+        case "pty.created":
+          console.log("pty created", event.properties.info.id)
+          break
+        case "pty.updated":
+          console.log("pty updated", event.properties.info.id)
+          break
+        case "pty.exited":
+          console.log("pty exited", event.properties.id)
+          break
+        case "pty.deleted":
+          console.log("pty deleted", event.properties.id)
           break
 
         // Other events
         case "server.connected":
           console.log("server connected")
           break
+        case "global.disposed":
+          console.log("global disposed")
+          break
+        case "server.instance.disposed":
+          console.log("server instance disposed", event.properties.directory)
+          break
         case "installation.updated":
           console.log("installation updated")
           break
+        case "installation.update-available":
+          console.log("installation update available", event.properties.version)
+          break
+        case "catalog.model.updated":
+          console.log("catalog model updated", event.properties.model.id)
+          break
+        case "models-dev.refreshed":
+          console.log("models dev refreshed")
+          break
+        case "account.added":
+          console.log("account added", event.properties.account.id)
+          break
+        case "account.removed":
+          console.log("account removed", event.properties.account.id)
+          break
+        case "account.switched":
+          console.log("account switched", event.properties.serviceID)
+          break
         case "todo.updated":
-          console.log("todo updated", event.properties.todo)
+          console.log("todo updated", event.properties.todos)
           break
       }
     },
@@ -154,7 +252,7 @@ export const ServerHooksReference: Plugin = async ({
         },
         async execute(args, context) {
           // ask for permission before fetching
-          context.ask({
+          await context.ask({
             permission: "network",
             patterns: [args.url],
             always: [new URL(args.url).hostname],
@@ -188,6 +286,7 @@ export const ServerHooksReference: Plugin = async ({
               placeholder: "sk-...",
               validate: (value) =>
                 value.startsWith("sk-") ? undefined : "Key must start with sk-",
+              when: { key: "auth_type", op: "eq", value: "api" },
             },
           ],
           async authorize(inputs) {
@@ -214,11 +313,11 @@ export const ServerHooksReference: Plugin = async ({
             return {
               url: `https://auth.example.com/oauth?region=${region}`,
               instructions: "Complete sign-in in your browser",
-              method: "auto" as const,
+              method: "auto",
               async callback() {
                 // poll or wait for OAuth callback
                 return {
-                  type: "success" as const,
+                  type: "success",
                   refresh: "refresh_token_value",
                   access: "access_token_value",
                   expires: Date.now() + 3600_000,
@@ -402,3 +501,5 @@ export const ServerHooksReference: Plugin = async ({
     },
   }
 }
+
+export default { id: "acme.server-reference", server } satisfies PluginModule & { id: string }
