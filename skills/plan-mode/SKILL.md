@@ -1,11 +1,11 @@
 ---
 name: plan-mode
-description: "MUST use in plan mode or when planning work, clarifying intent, or producing a decision-complete execution plan. Explore first, ask aggressively, and keep the user in control of decisions. Read-only only. No implementation and no repo-tracked file changes."
+description: "Produce a decision-complete, read-only execution plan. Use only when the user explicitly invokes `plan-mode` or `$plan-mode`; do not auto-invoke from context."
 ---
 
 # Plan Mode
 
-Use this skill when the task is to produce a plan, not to implement it.
+Manual invocation only: use this skill only when the user explicitly invokes `plan-mode` or `$plan-mode`; do not auto-invoke from task context.
 
 ## Purpose
 

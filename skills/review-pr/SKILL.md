@@ -1,9 +1,11 @@
 ---
 name: review-pr
-description: Review a GitHub pull request from a provided PR URL. Use this skill when the user wants to review a GitHub pull request and provide actionable feedback on the code changes.
+description: "Review a GitHub pull request from a provided PR URL. Use only when the user explicitly invokes `review-pr` or `$review-pr`; do not auto-invoke from context."
 ---
 
 # Review PR
+
+Manual invocation only: use this skill only when the user explicitly invokes `review-pr` or `$review-pr`; do not auto-invoke from task context.
 
 Review pull requests and provide actionable feedback for improvements.
 

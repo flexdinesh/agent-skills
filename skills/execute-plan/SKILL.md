@@ -1,11 +1,11 @@
 ---
 name: execute-plan
-description: "MUST use when executing or implementing a plan or a planned set of changes making writes and edits."
+description: "Execute or implement a plan. Use only when the user explicitly invokes `execute-plan` or `$execute-plan`; do not auto-invoke from context."
 ---
 
 # Execute Plan
 
-Use this skill when the task is to execute or implement a plan.
+Manual invocation only: use this skill only when the user explicitly invokes `execute-plan` or `$execute-plan`; do not auto-invoke from task context.
 
 ## Purpose
 

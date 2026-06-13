@@ -1,11 +1,11 @@
 ---
 name: decision-log
-description: Save a brief decision log from the current session when the user explicitly asks to persist decisions, rationale, tradeoffs, assumptions, ambiguities, or durable rules for future work.
+description: "Save a brief decision log from the current session. Use only when the user explicitly invokes `decision-log` or `$decision-log`; do not auto-invoke from context."
 ---
 
 # Decision Log
 
-Use only when the user explicitly wants a decision log saved.
+Manual invocation only: use this skill only when the user explicitly invokes `decision-log` or `$decision-log`; do not auto-invoke from task context.
 
 ## Rules
 

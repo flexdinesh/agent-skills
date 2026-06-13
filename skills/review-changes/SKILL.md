@@ -1,11 +1,11 @@
 ---
 name: review-changes
-description: Review local code changes from Git state or refs to find concrete bugs, regressions, security issues, compatibility risks, and missing tests. Use when the user requests to review staged changes, unstaged changes, commits, or branch diffs with concise, evidence-based findings grounded in local code context.
+description: "Review local code changes from Git state or refs. Use only when the user explicitly invokes `review-changes` or `$review-changes`; do not auto-invoke from context."
 ---
 
 # Review Changes
 
-Use this skill when the user wants to review local changes rather than a GitHub PR.
+Manual invocation only: use this skill only when the user explicitly invokes `review-changes` or `$review-changes`; do not auto-invoke from task context.
 
 ## Default Outcome
 

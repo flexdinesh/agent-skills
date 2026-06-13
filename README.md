@@ -2,6 +2,10 @@
 
 Personal collection of agent skills, installable via the [`skills`](https://github.com/vercel-labs/skills) CLI.
 
+## Invocation policy
+
+These skills are manual-invocation only. Agents should not auto-load them from task context; use a skill from this repo only when the user explicitly invokes it by name, for example `$plan-mode` or `$git-commit`.
+
 ## Available skills
 
 - `decision-log` — persist decisions, rationale, and tradeoffs from a session

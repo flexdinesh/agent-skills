@@ -1,9 +1,11 @@
 ---
 name: opencode-plugin
-description: "Build plugins for OpenCode. Use when creating, debugging, or extending an OpenCode plugin that hooks into events, tools, shell, chat, permissions, compaction, auth, or TUI."
+description: "Build plugins for OpenCode. Use only when the user explicitly invokes `opencode-plugin` or `$opencode-plugin`; do not auto-invoke from context."
 ---
 
 # OpenCode Plugin
+
+Manual invocation only: use this skill only when the user explicitly invokes `opencode-plugin` or `$opencode-plugin`; do not auto-invoke from task context.
 
 Guide for building opencode plugins that extend server behavior via hooks/tools/auth/providers or extend the terminal UI via commands, routes, slots, notifications, themes, and keymaps.
 

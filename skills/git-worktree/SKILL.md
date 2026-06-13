@@ -1,9 +1,11 @@
 ---
 name: git-worktree
-description: Create, inspect, use, clean up, and delete Git worktrees for a repository. Use when the user requests to create a worktree, inspect existing worktrees, repair stale worktree metadata, or remove worktrees safely.
+description: "Create, inspect, use, clean up, and delete Git worktrees. Use only when the user explicitly invokes `git-worktree` or `$git-worktree`; do not auto-invoke from context."
 ---
 
 # Git Worktree
+
+Manual invocation only: use this skill only when the user explicitly invokes `git-worktree` or `$git-worktree`; do not auto-invoke from task context.
 
 ## Overview
 

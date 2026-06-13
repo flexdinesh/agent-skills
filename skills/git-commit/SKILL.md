@@ -1,11 +1,11 @@
 ---
 name: git-commit
-description: Stage changes and create a Git commit for the current task. Use this skill when the user wants to prepare and create a Git commit for work completed in the current conversation. Expect this skill to be extended by project-specific skills that provide the required commit naming convention.
+description: "Stage changes and create a Git commit for the current task. Use only when the user explicitly invokes `git-commit` or `$git-commit`; do not auto-invoke from context."
 ---
 
 # Git Commit
 
-Use this skill when the user wants to prepare and create a Git commit for work completed in the current conversation.
+Manual invocation only: use this skill only when the user explicitly invokes `git-commit` or `$git-commit`; do not auto-invoke from task context.
 
 ## Preflight
 

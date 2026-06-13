@@ -1,11 +1,11 @@
 ---
 name: gh-create-pr
-description: Push the current branch and create a GitHub pull request with gh CLI. Use when the user requests to create a PR. Expect this skill to be extended by project-specific skills that override the PR title and description format.
+description: "Push the current branch and create a GitHub pull request with gh CLI. Use only when the user explicitly invokes `gh-create-pr` or `$gh-create-pr`; do not auto-invoke from context."
 ---
 
 # GH Create PR
 
-Use this skill when the user requests to push the current branch and create a GitHub pull request with `gh`.
+Manual invocation only: use this skill only when the user explicitly invokes `gh-create-pr` or `$gh-create-pr`; do not auto-invoke from task context.
 
 ## Core Rules
 
