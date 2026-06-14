@@ -8,7 +8,7 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 
 ## Available skills
 
-- `decision-log` — persist decisions, rationale, and tradeoffs from a session
+- `adr` — persist architectural decisions, rationale, and consequences from a session
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
