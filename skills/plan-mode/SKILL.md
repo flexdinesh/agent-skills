@@ -108,7 +108,7 @@ If the active environment defines a required plan wrapper or output schema, use 
 After the plan is finalized and before execution starts:
 
 - ask if the user wants to write the plan to a file. if yes, ask where to write the plan file
-- default path: `.ai/plans/YYYY-DD-MM-{slug}.md`
+- default path: `.scratch/.plans/YYYY-DD-MM-{slug}.md`
 - use a short slug
 - write the approved plan to the filesystem before implementation begins
 
