@@ -465,6 +465,16 @@ const server: Plugin = async ({
     },
 
     // ---------------------------------------------------------------
+    // experimental.provider.small_model -- override provider utility model
+    // ---------------------------------------------------------------
+    "experimental.provider.small_model": async (input, output) => {
+      // input: { provider }
+      // output: { model?: ModelV2 }
+      // Set output.model when a provider has a better utility model for title generation.
+      console.log("small model requested for provider", input.provider.id)
+    },
+
+    // ---------------------------------------------------------------
     // experimental.session.compacting -- customize compaction
     // ---------------------------------------------------------------
     "experimental.session.compacting": async (input, output) => {

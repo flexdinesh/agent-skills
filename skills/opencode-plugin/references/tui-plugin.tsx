@@ -57,6 +57,7 @@ function Panel(props: { api: TuiPluginApi; options: Options | undefined; meta: T
       </text>
       <text>id: {props.meta.id}</text>
       <text>state: {props.meta.state}</text>
+      <text>source: {props.meta.source}</text>
       <text>route params: {info()}</text>
       <box flexDirection="row" gap={1}>
         <text>providers: {props.api.state.provider.length}</text>
@@ -169,6 +170,9 @@ function registerCommands(api: TuiPluginApi, options: Options | undefined, meta:
   api.lifecycle.onDispose(() => {
     console.log(`TUI plugin disposed: ${meta.id}`)
   })
+
+  // Cleanup is reverse-order, awaited, and bounded by the host cleanup budget.
+  // api.lifecycle.signal is aborted before onDispose callbacks run.
 }
 
 function registerRoutes(api: TuiPluginApi, options: Options | undefined, meta: TuiPluginMeta) {
@@ -379,8 +383,27 @@ function inspectApi(api: TuiPluginApi) {
   const plugins = api.plugins.list()
   void api.plugins.activate("some-plugin-id")
   void api.plugins.deactivate("some-plugin-id")
+  // install patches tui.json/opencode.json but does not load into this session.
+  // Call add(spec) after a successful install when you want immediate runtime load.
   void api.plugins.install("opencode-some-plugin", { global: false })
   void api.plugins.add("opencode-some-plugin")
+
+  // Metadata is persisted by plugin id and helps detect first load vs update.
+  const metaFields = {
+    state: "first | updated | same",
+    id: "plugin id",
+    source: "file | npm | internal",
+    spec: "configured spec",
+    target: "resolved target",
+    requested: "npm requested version",
+    version: "npm installed version",
+    modified: "file mtime",
+    first_time: "first seen timestamp",
+    last_time: "last load timestamp",
+    time_changed: "fingerprint changed timestamp",
+    load_count: "load count",
+    fingerprint: "change detection key",
+  }
 
   console.log({
     version,
@@ -401,6 +424,7 @@ function inspectApi(api: TuiPluginApi) {
     setTheme,
     renderer,
     plugins,
+    metaFields,
   })
 }
 
