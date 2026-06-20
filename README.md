@@ -15,6 +15,7 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `git-worktree` — create, inspect, and clean Git worktrees
 - `opencode-plugin` — build plugins for OpenCode
 - `plan-mode` — produce a decision-complete plan, read-only
+- `pi-extension` — build extensions for Pi
 - `review-changes` — review local diffs for bugs and risks
 - `review-pr` — review a GitHub PR from a URL
 
