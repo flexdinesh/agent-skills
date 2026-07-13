@@ -14,12 +14,12 @@ Manual invocation only: use this skill only when the user explicitly invokes `ad
 - Use standard ADR sections: `Status`, `Context`, `Decision`, `Consequences`.
 - Add `Options Considered`, `Risks`, `Tradeoffs`, `Assumptions`, or `Gotchas` only when useful.
 - Ask the user to confirm the destination before creating the file.
-- Default directory: `docs/adr/`.
+- Default directory: `.scratch/adr/`.
 
 ## Workflow
 
 1. Extract the single decision future agents need.
-2. Propose `docs/adr/YYYY-MM-DD-<slug>.md` and ask for confirmation or override.
+2. Propose `.scratch/adr/YYYY-MM-DD-<slug>.md` and ask for confirmation or override.
 3. After confirmation, write markdown with YAML frontmatter.
 4. Update `AGENTS.md` only if the user explicitly wants durable project rules captured there.
 
