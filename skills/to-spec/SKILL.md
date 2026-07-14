@@ -1,6 +1,6 @@
 ---
 name: to-spec
-description: Turn the current conversation into a spec and save it under .scratch/specs/ — no interview, just synthesis of what you've already discussed.
+description: "Turn the current conversation into a spec and save it under .scratch/specs/ — no interview, just synthesis of what you've already discussed. Use only when the user explicitly invokes `to-spec` or `$to-spec`; do not auto-invoke from context."
 disable-model-invocation: true
 ---
 
