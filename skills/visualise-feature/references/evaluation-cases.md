@@ -17,8 +17,17 @@ wording or styling.
 - Each verified or runtime-derived interaction has repository-relative source evidence.
 - Runtime-derived values are expressions rather than invented deployed values.
 - Secrets and personal data are redacted.
+- Default output creates same-stem `.html` and `.md` sibling artifacts under
+  `.scratch/visualisations/`.
 - HTML is standalone, responsive, keyboard operable, and contains no unresolved
   `{{FLOW_DATA}}` marker.
+- Markdown contains the system map, decision-path index, complete ordered scenario
+  ledgers, and the runtime-derived/inferred/unknown detail summary.
+- HTML and Markdown agree on feature metadata, scenario order, interaction semantics,
+  decision effects, certainty, evidence, and redactions.
+- Markdown contains no Mermaid, ASCII diagram, generated timestamp, or raw interaction
+  model appendix.
+- An explicit HTML-only or Markdown-only request creates no unrequested sibling file.
 - ASCII output creates no visualization file.
 - Concurrent or delivery-uncertain operations label ordering certainty rather than
   implying unsupported causality.
@@ -39,8 +48,11 @@ Fixture characteristics:
 
 Additional checks:
 
+- Same-stem HTML and Markdown artifacts are created.
 - The redirect response and follow-up request are separate ordered steps.
 - `invite` is highlighted with its routing effect.
+- The Markdown decision-path index includes `query.invite`, its safe redacted value,
+  its effect, scenario, step, and source evidence.
 - Existing-email behaviour is a separate scenario tab.
 
 ## Case 2: Downstream failure and alternate code paths
@@ -75,7 +87,22 @@ Additional checks:
 - Multiple scenarios remain independently readable.
 - Protocols, URLs, statuses, decision inputs, certainty, and sources remain present.
 
-## Case 4: Redaction
+## Case 4: Explicit single-format output
+
+Prompts:
+
+> `$visualise-feature` Trace password reset and output Markdown only.
+
+> `$visualise-feature` Trace password reset and output HTML only.
+
+Additional checks:
+
+- Each run creates only the explicitly requested artifact.
+- The artifact uses the same directory and slug rules as paired output.
+- Markdown-only output retains all interaction details, decision effects, uncertainty,
+  and evidence even without the visual explorer.
+
+## Case 5: Redaction
 
 Prompt:
 
@@ -90,10 +117,12 @@ Fixture characteristics:
 Additional checks:
 
 - Field names may appear when relevant, but values are redacted.
-- No credential, code, token, cookie value, or personal value appears in the artifact.
+- No credential, code, token, cookie value, or personal value appears in either
+  artifact.
 - Redaction does not hide the decision effect.
+- Redacted values agree across HTML and Markdown.
 
-## Case 5: Runtime-derived URL
+## Case 6: Runtime-derived URL
 
 Prompt:
 
@@ -110,8 +139,10 @@ Additional checks:
   `https://${REPORTING_HOST}/v1/reports`.
 - Certainty is `runtime-derived`.
 - The skill does not substitute localhost, a production hostname, or another guess.
+- The Markdown non-verified detail summary identifies the runtime-derived hostname
+  expression and its evidence.
 
-## Case 6: Asynchronous interactions
+## Case 7: Asynchronous interactions
 
 Prompt:
 
@@ -131,3 +162,5 @@ Additional checks:
 - Queue publication and consumption are separate interactions when both occur.
 - Queue, webhook, and WebSocket interactions use distinct labels and line styles.
 - Their chronological relationship and any uncertainty are explicit.
+- The Markdown ledger preserves the known predecessors, concurrent groups, and ordering
+  notes without relying on sequence numbers as proof of causality.

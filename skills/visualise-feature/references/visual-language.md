@@ -1,6 +1,7 @@
 # Visual language
 
-Use this reference to create the feature interaction model and render it consistently.
+Use this reference to create one feature interaction model and render it consistently
+as HTML, Markdown, or explicitly requested ASCII.
 
 ## Visual grammar
 
@@ -90,7 +91,8 @@ Every interaction and decision needs at least one evidence item unless its certa
 
 ## Interaction model
 
-Embed one JSON object at the template's `{{FLOW_DATA}}` marker:
+Build one JSON object as the semantic source for every requested format. Embed it at the
+HTML template's `{{FLOW_DATA}}` marker when producing HTML:
 
 ```json
 {
@@ -223,6 +225,25 @@ when a collection has no entries.
 
 Do not include a generated timestamp: it creates noisy, non-semantic diffs.
 
+## Cross-format semantic contract
+
+HTML and Markdown are different views of the same interaction model:
+
+- Preserve feature name, description, and scope verbatim.
+- Preserve boundary and participant identity, names, types, and technologies.
+- Preserve scenario identity, order, names, summaries, and interaction order.
+- Preserve every interaction's number, kind, label, direction or actor, protocol,
+  method, URL, status, pair identifier, decision inputs, details, ordering, certainty,
+  and evidence.
+- Apply the same redactions in every format.
+- Use the vocabulary from this reference, including the uppercase interaction kinds
+  and the four certainty values.
+
+Markdown may derive a system map, decision-path index, and non-verified detail summary
+from the model to make agent retrieval easier. These are indexes over model facts, not
+an additional source of runtime behaviour. Do not add a claim that cannot be traced to
+an interaction and its evidence.
+
 ## HTML conventions
 
 - Scenario tabs use outcome-oriented names rather than implementation branch names.
@@ -234,6 +255,98 @@ Do not include a generated timestamp: it creates noisy, non-semantic diffs.
 - Decision inputs use a warm highlight distinct from errors or certainty states.
 - Colour is never the only carrier of meaning; include text and line-style differences.
 - Respect `prefers-reduced-motion` and keep all controls keyboard accessible.
+
+## Markdown conventions
+
+Markdown is a self-contained agent briefing, not a prose approximation of the visual
+diagram. Optimise it for accurate retrieval, code navigation, and comparison of paths.
+Use the following required structure and omit only explicitly optional subsections:
+
+````markdown
+# Feature flow: <feature name>
+
+<feature description>
+
+**Scope:** <feature scope>
+
+## System map
+
+| Boundary | Type | Participant | Technology |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+## Decision-path index
+
+| Scenario | Step | Decision input | Safe value | Effect | Evidence |
+|---|---:|---|---|---|---|
+| ... | ... | ... | ... | ... | `path:line` |
+
+## Scenarios
+
+### 1. <scenario name>
+
+**Outcome:** <scenario summary>
+
+#### Step 1 — `REQUEST`: <interaction label>
+
+- **Route:** <boundary / participant> → <boundary / participant>
+- **Transport:** `POST HTTPS https://${API_HOST}/signup`
+- **Pair:** `signup-request`
+- **Certainty:** `runtime-derived`
+- **Decision inputs:** `query.invite = <redacted invite token>` → Selects the
+  invited-user path
+- **Ordering:** verified; starts the scenario
+- **Evidence:** `src/signup.ts:42` — Request construction (`verified`)
+
+**Request headers**
+
+```json
+{
+  "Content-Type": "application/json"
+}
+```
+
+**Request body**
+
+```json
+{
+  "email": "<redacted email>"
+}
+```
+
+## Runtime-derived, inferred, and unknown details
+
+| Scenario | Step | Certainty | Detail | Evidence or tracing boundary |
+|---|---:|---|---|---|
+| ... | ... | ... | ... | ... |
+````
+
+Render every boundary and participant in the system map. Render every
+`decisionInputs` entry in the decision-path index, including entries on ordinary
+requests or responses. Also include path-changing `decision` interactions; use their
+label when they have no named input. If there are no path-changing decisions, state
+that explicitly instead of omitting the section.
+
+Under each scenario, render every interaction in number order. Use `REQUEST`,
+`RESPONSE`, `WEBHOOK`, `EVENT`, `QUEUE`, `WEBSOCKET`, or `DECISION` in the step heading.
+For boundary-crossing interactions include the fully qualified boundary and participant
+route plus transport data. For decisions use `**Actor:**` instead of `**Route:**` and do
+not invent transport data. Include `Pair` whenever `pairId` exists.
+
+Include every non-empty decision input, detail collection, ordering property, and
+evidence item. Keep structured headers, bodies, payloads, and response data in fenced
+`json` blocks when representable as JSON; use a text block otherwise. Evidence uses
+repository-relative `` `path:line` `` references followed by its label and certainty.
+When multiple values exist, use nested bullets or a compact table rather than
+flattening away field names.
+
+The final non-verified details section inventories every `runtime-derived`, `inferred`,
+and `unknown` interaction. Name the expression, inference, or tracing boundary that
+keeps it from being verified and cite available evidence. If every interaction is
+verified, state that explicitly.
+
+Do not include Mermaid, ASCII art, a generated timestamp, or a raw interaction-model
+JSON appendix. The numbered ledger is the Markdown representation of the flow.
 
 ## ASCII conventions
 

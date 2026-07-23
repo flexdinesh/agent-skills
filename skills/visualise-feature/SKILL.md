@@ -14,8 +14,13 @@ Trace a feature through its implementation and explain its runtime behaviour as 
 ordered sequence of interactions across boundaries such as browsers, application
 servers, downstream services, queues, and third-party services.
 
-Default to a standalone HTML sequence explorer. Produce ASCII directly in the
-harness only when the user explicitly requests ASCII.
+Default to two sibling artifacts built from one interaction model:
+
+- a standalone HTML sequence explorer for people to inspect visually
+- a structured Markdown briefing for agents to use as problem-solving context
+
+Produce only HTML or only Markdown when the user explicitly requests one format.
+Produce ASCII directly in the harness only when the user explicitly requests ASCII.
 
 ## Required resources
 
@@ -33,9 +38,10 @@ or modifying this skill.
 
 ### 1. Establish scope
 
-Identify the feature, entry point, repository root, and requested output format. Use
-HTML unless the user explicitly asks for ASCII. If the feature name or scope cannot be
-resolved from the request or repository, ask one targeted question before continuing.
+Identify the feature, entry point, repository root, and requested output format. Produce
+both HTML and Markdown unless the user explicitly asks for HTML only, Markdown only, or
+ASCII only. If the feature name or scope cannot be resolved from the request or
+repository, ask one targeted question before continuing.
 
 ### 2. Trace the implementation
 
@@ -104,22 +110,39 @@ when they help explain behaviour.
 
 ### 6. Render
 
-#### HTML (default)
+#### HTML and Markdown (default)
 
 Create `.scratch/visualisations/` if needed. Use a user-provided filename when present,
-but treat it as a basename: discard directory components, normalise its stem using the
-slug rule below, and force the `.html` extension. Otherwise write
-`.scratch/visualisations/<feature-slug>.html`, where the slug is lowercase ASCII with
-runs of non-alphanumeric characters replaced by `-`. Keep the output inside
+but treat it as a basename: discard directory components, discard its extension, and
+normalise its stem using the slug rule below. Otherwise use `<feature-slug>`, where the
+slug is lowercase ASCII with runs of non-alphanumeric characters replaced by `-`.
+Write sibling `.scratch/visualisations/<stem>.html` and
+`.scratch/visualisations/<stem>.md` artifacts. Keep both outputs inside
 `.scratch/visualisations/`.
 
-Copy the complete HTML template to the destination without changing the source asset.
-Replace the single `{{FLOW_DATA}}` marker with the interaction model described in the
-visual-language reference. Before embedding JSON, escape `<`, `>`, `&`, U+2028, and
-U+2029 as Unicode escapes so repository content cannot terminate the data script.
+Build the interaction model once and use it as the semantic source for both artifacts.
+Scenario names and order, interaction numbers and kinds, participants, transport
+details, pair identifiers, decision inputs and effects, ordering, certainty, and
+evidence must agree across both outputs.
 
-Keep the result standalone: no external scripts, styles, fonts, images, network calls,
-or build step. Do not automatically open a browser unless the user asks.
+For HTML, copy the complete HTML template to the destination without changing the
+source asset. Replace the single `{{FLOW_DATA}}` marker with the interaction model
+described in the visual-language reference. Before embedding JSON, escape `<`, `>`,
+`&`, U+2028, and U+2029 as Unicode escapes so repository content cannot terminate the
+data script. Keep the result standalone: no external scripts, styles, fonts, images,
+network calls, or build step. Do not automatically open a browser unless the user asks.
+
+For Markdown, follow the agent-oriented structure in the visual-language reference.
+Render all decision-relevant and diagnostic details from the interaction model, not
+only the compact text visible in the HTML sequence rows. Derived indexes and summaries
+may reorganise model facts, but must not introduce uncited runtime claims. Do not append
+the raw interaction-model JSON.
+
+#### Explicit single-format output
+
+When the user explicitly requests HTML only or Markdown only, create just the requested
+artifact using the same directory, stem, model, rendering, and validation rules. Do not
+create the sibling format.
 
 #### ASCII (explicit request only)
 
@@ -142,9 +165,14 @@ Before reporting completion:
 - search the output for secret-bearing values found during tracing
 - for HTML, confirm the marker was replaced and no external dependency was introduced
 - render or inspect HTML with available browser tools and correct clipping or overlap
+- for Markdown, confirm the system map, decision-path index, complete scenario ledgers,
+  and non-verified detail summary are present and internally consistent
+- when producing both, compare their feature metadata, scenario order, interaction
+  semantics, decision effects, certainty, and evidence for parity
+- for an explicit single-format request, confirm the unrequested sibling was not created
 - for ASCII, confirm no visualization file was created
 
-Report the artifact path for HTML. Briefly list the scenarios, any unresolved values,
+Report every artifact path created. Briefly list the scenarios, any unresolved values,
 and the evidence standard used. Do not claim inferred or unknown details are verified.
 
 ## Guardrails
