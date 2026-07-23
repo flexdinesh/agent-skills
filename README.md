@@ -18,6 +18,7 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `pi-extension` — build extensions for Pi
 - `review-changes` — review local diffs for bugs and risks
 - `review-pr` — review a GitHub PR from a URL
+- `visualise-feature` — trace and visualise ordered feature interactions across system boundaries
 
 ## Install from remote
 
