@@ -1,915 +1,1362 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <title>Feature sequence explorer</title>
-  <style>
-    :root {
-      --page: #f5f2ea;
-      --surface: #fffdf7;
-      --surface-strong: #ffffff;
-      --ink: #17212b;
-      --muted: #66717d;
-      --line: #c8c2b6;
-      --line-strong: #6f7a83;
-      --accent: #125f6b;
-      --accent-soft: #d9eef0;
-      --decision: #8a4b08;
-      --decision-soft: #fff0c9;
-      --danger: #a4342a;
-      --third-party: #6952a3;
-      --messaging: #8a5b16;
-      --browser: #176c56;
-      --application: #1f5e91;
-      --downstream: #9b4d62;
-      --unknown: #7d6d5e;
-      --shadow: 0 18px 48px rgba(35, 45, 55, 0.1);
-      --radius: 18px;
-      --participant-width: 220px;
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    @media (prefers-color-scheme: dark) {
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Feature sequence explorer</title>
+    <style>
       :root {
-        --page: #111820;
-        --surface: #17212b;
-        --surface-strong: #1c2833;
-        --ink: #edf2f4;
-        --muted: #aab5bd;
-        --line: #3a4650;
-        --line-strong: #89949d;
-        --accent: #63c8d4;
-        --accent-soft: #183d43;
-        --decision: #ffc56d;
-        --decision-soft: #46361c;
-        --danger: #ff9c92;
-        --third-party: #b7a4ef;
-        --messaging: #e8b55e;
-        --browser: #74d8b8;
-        --application: #7ec1f4;
-        --downstream: #e89aad;
-        --unknown: #b8aa9d;
-        --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+        --page: #f5f2ea;
+        --surface: #fffdf7;
+        --surface-strong: #ffffff;
+        --ink: #17212b;
+        --muted: #66717d;
+        --line: #c8c2b6;
+        --line-strong: #6f7a83;
+        --accent: #125f6b;
+        --accent-soft: #d9eef0;
+        --decision: #8a4b08;
+        --decision-soft: #fff0c9;
+        --danger: #a4342a;
+        --third-party: #6952a3;
+        --messaging: #8a5b16;
+        --browser: #176c56;
+        --application: #1f5e91;
+        --downstream: #9b4d62;
+        --unknown: #7d6d5e;
+        --shadow: 0 18px 48px rgba(35, 45, 55, 0.1);
+        --radius: 18px;
+        --participant-width: 220px;
+        font-family:
+          ui-sans-serif,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
       }
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background:
-        radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--accent-soft) 65%, transparent), transparent 34rem),
-        var(--page);
-      color: var(--ink);
-      min-height: 100vh;
-    }
-
-    button { font: inherit; }
-
-    .page {
-      width: min(1680px, 100%);
-      margin: 0 auto;
-      padding: 32px clamp(16px, 3vw, 48px) 48px;
-    }
-
-    .masthead {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 24px;
-      align-items: end;
-      margin-bottom: 24px;
-    }
-
-    .eyebrow {
-      color: var(--accent);
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      margin: 0 0 8px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 5vw, 4.6rem);
-      letter-spacing: -0.055em;
-      line-height: 0.96;
-      margin: 0;
-      max-width: 18ch;
-    }
-
-    .description {
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.55;
-      margin: 14px 0 0;
-      max-width: 72ch;
-    }
-
-    .scope {
-      border-left: 3px solid var(--accent);
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.4;
-      max-width: 30ch;
-      padding: 3px 0 3px 12px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin: 0 0 14px;
-      overflow-x: auto;
-      padding: 2px 2px 8px;
-      scrollbar-width: thin;
-    }
-
-    .tab {
-      background: transparent;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: var(--muted);
-      cursor: pointer;
-      flex: 0 0 auto;
-      font-weight: 720;
-      padding: 9px 14px;
-    }
-
-    .tab:hover { border-color: var(--accent); color: var(--ink); }
-    .tab[aria-selected="true"] {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--surface);
-    }
-
-    .tab:focus-visible,
-    .interaction:focus-visible,
-    .source-chip:focus-visible {
-      outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
-      outline-offset: 2px;
-    }
-
-    .scenario-intro {
-      align-items: baseline;
-      display: flex;
-      gap: 12px;
-      justify-content: space-between;
-      margin: 0 0 16px;
-    }
-
-    .scenario-intro h2 { font-size: 1.14rem; margin: 0; }
-    .scenario-intro p { color: var(--muted); margin: 0; text-align: right; }
-
-    .workspace {
-      display: grid;
-      gap: 18px;
-      grid-template-columns: minmax(0, 1fr) minmax(300px, 370px);
-      align-items: start;
-    }
-
-    .diagram-shell,
-    .detail-panel {
-      background: color-mix(in srgb, var(--surface) 96%, transparent);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .diagram-shell {
-      min-width: 0;
-      overflow: auto;
-      position: relative;
-    }
-
-    .diagram {
-      min-width: calc(var(--participant-count) * var(--participant-width));
-      position: relative;
-    }
-
-    .diagram-head {
-      background: color-mix(in srgb, var(--surface) 94%, transparent);
-      border-bottom: 1px solid var(--line);
-      position: sticky;
-      top: 0;
-      z-index: 8;
-      backdrop-filter: blur(12px);
-    }
-
-    .boundary-grid,
-    .participant-grid,
-    .interaction {
-      display: grid;
-      grid-template-columns: repeat(var(--participant-count), minmax(var(--participant-width), 1fr));
-    }
-
-    .boundary-grid { padding: 12px 12px 6px; }
-
-    .boundary {
-      border-top: 4px solid currentColor;
-      color: var(--accent);
-      min-width: 0;
-      padding: 7px 10px 4px;
-    }
-
-    .boundary + .boundary { border-left: 1px solid var(--line); }
-    .boundary.browser { color: var(--browser); }
-    .boundary.application { color: var(--application); }
-    .boundary.downstream { color: var(--downstream); }
-    .boundary.third-party { color: var(--third-party); }
-    .boundary.messaging { color: var(--messaging); }
-
-    .boundary-name {
-      color: var(--ink);
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 850;
-      letter-spacing: 0.08em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .boundary-type { font-size: 0.7rem; font-weight: 700; }
-
-    .participant-grid { padding: 0 12px 12px; }
-
-    .participant {
-      border-left: 1px solid var(--line);
-      min-width: 0;
-      padding: 8px 12px 9px;
-      text-align: center;
-    }
-
-    .participant:last-child { border-right: 1px solid var(--line); }
-    .participant strong,
-    .participant span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .participant strong { font-size: 0.84rem; }
-    .participant span { color: var(--muted); font-size: 0.69rem; margin-top: 2px; }
-
-    .sequence { padding: 8px 12px 18px; }
-
-    .interaction {
-      border: 0;
-      color: inherit;
-      cursor: pointer;
-      min-height: 112px;
-      padding: 0;
-      position: relative;
-      text-align: left;
-      width: 100%;
-    }
-
-    .interaction::after {
-      background: color-mix(in srgb, var(--accent-soft) 36%, transparent);
-      border-radius: 12px;
-      content: "";
-      inset: 5px 0;
-      opacity: 0;
-      pointer-events: none;
-      position: absolute;
-      transition: opacity 140ms ease;
-      z-index: 0;
-    }
-
-    .interaction:hover::after,
-    .interaction[aria-current="true"]::after { opacity: 1; }
-
-    .lane {
-      border-left: 1px dashed var(--line);
-      min-height: 112px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .lane:last-of-type { border-right: 1px dashed var(--line); }
-
-    .step {
-      align-items: center;
-      background: var(--surface-strong);
-      border: 2px solid var(--accent);
-      border-radius: 999px;
-      display: flex;
-      font-size: 0.72rem;
-      font-weight: 850;
-      height: 28px;
-      justify-content: center;
-      left: 8px;
-      position: absolute;
-      top: 8px;
-      width: 28px;
-      z-index: 5;
-    }
-
-    .flow-line {
-      border-top: 3px solid var(--accent);
-      height: 0;
-      position: absolute;
-      top: 62px;
-      z-index: 3;
-    }
-
-    .kind-response .flow-line { border-top-style: dashed; color: var(--line-strong); }
-    .kind-event .flow-line { border-top-style: dotted; }
-    .kind-webhook .flow-line { border-color: var(--third-party); }
-    .kind-queue .flow-line { border-top: 5px double var(--messaging); }
-    .kind-websocket .flow-line {
-      background: radial-gradient(circle at 3px 0, transparent 3px, var(--accent) 3.5px, var(--accent) 4.5px, transparent 5px) 0 0 / 12px 7px repeat-x;
-      border: 0;
-      height: 7px;
-    }
-
-    .arrow-tip {
-      border-bottom: 6px solid transparent;
-      border-top: 6px solid transparent;
-      height: 0;
-      position: absolute;
-      top: 57px;
-      width: 0;
-      z-index: 4;
-    }
-
-    .arrow-tip.forward { border-left: 10px solid var(--accent); transform: translateX(-1px); }
-    .arrow-tip.reverse { border-right: 10px solid var(--accent); transform: translateX(-9px); }
-    .kind-response .arrow-tip { border-left-color: var(--line-strong); border-right-color: var(--line-strong); }
-    .kind-webhook .arrow-tip { border-left-color: var(--third-party); border-right-color: var(--third-party); }
-    .kind-queue .arrow-tip { border-left-color: var(--messaging); border-right-color: var(--messaging); }
-
-    .message {
-      background: var(--surface-strong);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: 0 5px 16px rgba(20, 30, 40, 0.08);
-      max-width: min(420px, 46%);
-      overflow: hidden;
-      padding: 5px 8px;
-      position: absolute;
-      top: 30px;
-      transform: translateX(-50%);
-      z-index: 5;
-    }
-
-    .message-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .kind-badge,
-    .certainty {
-      border-radius: 999px;
-      font-size: 0.61rem;
-      font-weight: 850;
-      letter-spacing: 0.06em;
-      padding: 2px 5px;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .kind-badge { background: var(--accent-soft); color: var(--accent); }
-    .message-label { font-size: 0.77rem; font-weight: 760; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .message-meta { color: var(--muted); display: block; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 0.66rem; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    .decision-summary {
-      bottom: 7px;
-      color: var(--decision);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      left: 50%;
-      max-height: 24px;
-      max-width: 70%;
-      overflow: hidden;
-      position: absolute;
-      transform: translateX(-50%);
-      z-index: 5;
-    }
-
-    .decision-chip {
-      background: var(--decision-soft);
-      border: 1px solid color-mix(in srgb, var(--decision) 35%, transparent);
-      border-radius: 999px;
-      font-size: 0.64rem;
-      font-weight: 720;
-      padding: 2px 6px;
-      white-space: nowrap;
-    }
-
-    .decision-card {
-      align-self: center;
-      background: var(--decision-soft);
-      border: 1px solid var(--decision);
-      border-radius: 10px;
-      color: var(--decision);
-      margin: 18px 16px;
-      padding: 10px;
-      position: relative;
-      z-index: 4;
-    }
-
-    .decision-card strong { display: block; font-size: 0.76rem; }
-    .decision-card span { display: block; font-size: 0.68rem; margin-top: 3px; }
-
-    .detail-panel {
-      max-height: calc(100vh - 32px);
-      overflow: auto;
-      padding: 18px;
-      position: sticky;
-      top: 16px;
-    }
-
-    .detail-empty { color: var(--muted); line-height: 1.55; }
-
-    .detail-header {
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-    }
-
-    .detail-kicker { color: var(--accent); font-size: 0.69rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
-    .detail-header h3 { font-size: 1.16rem; margin: 5px 0 8px; }
-    .detail-route { color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
-
-    .certainty { display: inline-block; margin-top: 9px; }
-    .certainty.verified { background: #d9f4e5; color: #17603a; }
-    .certainty.runtime-derived { background: var(--accent-soft); color: var(--accent); }
-    .certainty.inferred { background: var(--decision-soft); color: var(--decision); }
-    .certainty.unknown { background: color-mix(in srgb, var(--unknown) 18%, transparent); color: var(--unknown); }
-
-    @media (prefers-color-scheme: dark) {
-      .certainty.verified { background: #183b2b; color: #82d9a7; }
-    }
-
-    .detail-section { margin-top: 17px; }
-    .detail-section h4 { font-size: 0.72rem; letter-spacing: 0.08em; margin: 0 0 8px; text-transform: uppercase; }
-    .detail-section pre {
-      background: var(--page);
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-      font-size: 0.7rem;
-      line-height: 1.5;
-      margin: 0;
-      overflow-wrap: anywhere;
-      padding: 10px;
-      white-space: pre-wrap;
-    }
-
-    .detail-list { display: grid; gap: 7px; margin: 0; padding: 0; }
-    .detail-list li { color: var(--muted); font-size: 0.77rem; line-height: 1.45; list-style: none; }
-    .detail-list strong { color: var(--ink); }
-
-    .sources { display: flex; flex-wrap: wrap; gap: 7px; }
-    .source-chip {
-      background: var(--surface-strong);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      color: var(--ink);
-      cursor: pointer;
-      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-      font-size: 0.68rem;
-      padding: 7px 8px;
-      text-align: left;
-    }
-    .source-chip:hover { border-color: var(--accent); color: var(--accent); }
-
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.72rem;
-    }
-
-    .legend-item { align-items: center; display: flex; gap: 6px; }
-    .legend-line { border-top: 3px solid var(--accent); display: inline-block; width: 28px; }
-    .legend-line.response { border-color: var(--line-strong); border-top-style: dashed; }
-    .legend-line.async { border-top-style: dotted; }
-    .legend-decision { background: var(--decision-soft); border: 1px solid var(--decision); border-radius: 4px; height: 12px; width: 20px; }
-
-    .error {
-      background: color-mix(in srgb, var(--danger) 12%, var(--surface));
-      border: 1px solid var(--danger);
-      border-radius: var(--radius);
-      color: var(--danger);
-      line-height: 1.5;
-      padding: 18px;
-    }
-
-    @media (max-width: 1000px) {
-      .workspace { grid-template-columns: 1fr; }
-      .detail-panel { max-height: none; position: static; }
-    }
-
-    @media (max-width: 700px) {
-      .page { padding-top: 20px; }
-      .masthead { grid-template-columns: 1fr; }
-      .scope { max-width: none; }
-      .scenario-intro { align-items: flex-start; flex-direction: column; }
-      .scenario-intro p { text-align: left; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
-    }
-
-    @media print {
-      body { background: white; }
-      .page { max-width: none; padding: 0; }
-      .tabs, .detail-panel { display: none; }
-      .workspace { display: block; }
-      .diagram-shell { box-shadow: none; overflow: visible; }
-      .diagram { min-width: 0; }
-      .diagram-head { position: static; }
-    }
-  </style>
-</head>
-<body>
-  <main class="page">
-    <header class="masthead">
-      <div>
-        <p class="eyebrow">Feature sequence explorer</p>
-        <h1 id="feature-name">Loading visualization…</h1>
-        <p class="description" id="feature-description"></p>
-      </div>
-      <div class="scope" id="feature-scope"></div>
-    </header>
-
-    <nav class="tabs" id="scenario-tabs" role="tablist" aria-label="Feature scenarios"></nav>
-    <section class="scenario-intro" aria-live="polite">
-      <h2 id="scenario-name"></h2>
-      <p id="scenario-summary"></p>
-    </section>
-
-    <div class="workspace" id="workspace">
-      <section class="diagram-shell" aria-label="Ordered system interactions">
-        <div class="diagram" id="diagram">
-          <header class="diagram-head">
-            <div class="boundary-grid" id="boundaries"></div>
-            <div class="participant-grid" id="participants"></div>
-          </header>
-          <div class="sequence" id="sequence"></div>
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --page: #111820;
+          --surface: #17212b;
+          --surface-strong: #1c2833;
+          --ink: #edf2f4;
+          --muted: #aab5bd;
+          --line: #3a4650;
+          --line-strong: #89949d;
+          --accent: #63c8d4;
+          --accent-soft: #183d43;
+          --decision: #ffc56d;
+          --decision-soft: #46361c;
+          --danger: #ff9c92;
+          --third-party: #b7a4ef;
+          --messaging: #e8b55e;
+          --browser: #74d8b8;
+          --application: #7ec1f4;
+          --downstream: #e89aad;
+          --unknown: #b8aa9d;
+          --shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(
+            circle at 8% 0%,
+            color-mix(in srgb, var(--accent-soft) 65%, transparent),
+            transparent 34rem
+          ),
+          var(--page);
+        color: var(--ink);
+        min-height: 100vh;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .page {
+        width: minmax(1680px, 100%);
+        margin: 0 auto;
+        padding: 32px clamp(16px, 3vw, 48px) 48px;
+      }
+
+      .masthead {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 4.6rem);
+        letter-spacing: -0.055em;
+        line-height: 0.96;
+        margin: 0;
+        max-width: 18ch;
+      }
+
+      .description {
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.55;
+        margin: 14px 0 0;
+        max-width: 72ch;
+      }
+
+      .scope {
+        border-left: 3px solid var(--accent);
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.4;
+        max-width: 30ch;
+        padding: 3px 0 3px 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin: 0 0 14px;
+        overflow-x: auto;
+        padding: 2px 2px 8px;
+        scrollbar-width: thin;
+      }
+
+      .tab {
+        background: transparent;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        cursor: pointer;
+        flex: 0 0 auto;
+        font-weight: 720;
+        padding: 9px 14px;
+      }
+
+      .tab:hover {
+        border-color: var(--accent);
+        color: var(--ink);
+      }
+      .tab[aria-selected="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--surface);
+      }
+
+      .tab:focus-visible,
+      .interaction:focus-visible,
+      .source-chip:focus-visible {
+        outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+        outline-offset: 2px;
+      }
+
+      .scenario-intro {
+        align-items: baseline;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin: 0 0 16px;
+      }
+
+      .scenario-intro h2 {
+        font-size: 1.14rem;
+        margin: 0;
+      }
+      .scenario-intro p {
+        color: var(--muted);
+        margin: 0;
+        text-align: right;
+      }
+
+      .workspace {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1fr) minmax(300px, 370px);
+        align-items: start;
+      }
+
+      .diagram-shell,
+      .detail-panel {
+        background: color-mix(in srgb, var(--surface) 96%, transparent);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+      }
+
+      .diagram-shell {
+        min-width: 0;
+        overflow: auto;
+        position: relative;
+      }
+
+      .diagram {
+        min-width: calc(var(--participant-count) * var(--participant-width));
+        position: relative;
+      }
+
+      .diagram-head {
+        background: color-mix(in srgb, var(--surface) 94%, transparent);
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 8;
+        backdrop-filter: blur(12px);
+      }
+
+      .boundary-grid,
+      .participant-grid,
+      .interaction {
+        display: grid;
+        grid-template-columns: repeat(
+          var(--participant-count),
+          minmax(var(--participant-width), 1fr)
+        );
+      }
+
+      .boundary-grid {
+        padding: 12px 12px 6px;
+      }
+
+      .boundary {
+        border-top: 4px solid currentColor;
+        color: var(--accent);
+        min-width: 0;
+        padding: 7px 10px 4px;
+      }
+
+      .boundary + .boundary {
+        border-left: 1px solid var(--line);
+      }
+      .boundary.browser {
+        color: var(--browser);
+      }
+      .boundary.application {
+        color: var(--application);
+      }
+      .boundary.downstream {
+        color: var(--downstream);
+      }
+      .boundary.third-party {
+        color: var(--third-party);
+      }
+      .boundary.messaging {
+        color: var(--messaging);
+      }
+
+      .boundary-name {
+        color: var(--ink);
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .boundary-type {
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+
+      .participant-grid {
+        padding: 0 12px 12px;
+      }
+
+      .participant {
+        border-left: 1px solid var(--line);
+        min-width: 0;
+        padding: 8px 12px 9px;
+        text-align: center;
+      }
+
+      .participant:last-child {
+        border-right: 1px solid var(--line);
+      }
+      .participant strong,
+      .participant span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .participant strong {
+        font-size: 0.84rem;
+      }
+      .participant span {
+        color: var(--muted);
+        font-size: 0.69rem;
+        margin-top: 2px;
+      }
+
+      .sequence {
+        padding: 8px 12px 18px;
+      }
+
+      .interaction {
+        border: 0;
+        color: inherit;
+        cursor: pointer;
+        min-height: 112px;
+        padding: 0;
+        position: relative;
+        text-align: left;
+        width: 100%;
+      }
+
+      .interaction::after {
+        background: color-mix(in srgb, var(--accent-soft) 36%, transparent);
+        border-radius: 12px;
+        content: "";
+        inset: 5px 0;
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        transition: opacity 140ms ease;
+        z-index: 0;
+      }
+
+      .interaction:hover::after,
+      .interaction[aria-current="true"]::after {
+        opacity: 1;
+      }
+
+      .lane {
+        border-left: 1px dashed var(--line);
+        min-height: 112px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .lane:last-of-type {
+        border-right: 1px dashed var(--line);
+      }
+
+      .step {
+        align-items: center;
+        background: var(--surface-strong);
+        border: 2px solid var(--accent);
+        border-radius: 999px;
+        display: flex;
+        font-size: 0.72rem;
+        font-weight: 850;
+        height: 28px;
+        justify-content: center;
+        left: 8px;
+        position: absolute;
+        top: 8px;
+        width: 28px;
+        z-index: 5;
+      }
+
+      .flow-line {
+        border-top: 3px solid var(--accent);
+        height: 0;
+        position: absolute;
+        top: 62px;
+        z-index: 3;
+      }
+
+      .kind-response .flow-line {
+        border-top-style: dashed;
+        color: var(--line-strong);
+      }
+      .kind-event .flow-line {
+        border-top-style: dotted;
+      }
+      .kind-webhook .flow-line {
+        border-color: var(--third-party);
+      }
+      .kind-queue .flow-line {
+        border-top: 5px double var(--messaging);
+      }
+      .kind-websocket .flow-line {
+        background: radial-gradient(
+            circle at 3px 0,
+            transparent 3px,
+            var(--accent) 3.5px,
+            var(--accent) 4.5px,
+            transparent 5px
+          )
+          0 0 / 12px 7px repeat-x;
+        border: 0;
+        height: 7px;
+      }
+
+      .arrow-tip {
+        border-bottom: 6px solid transparent;
+        border-top: 6px solid transparent;
+        height: 0;
+        position: absolute;
+        top: 57px;
+        width: 0;
+        z-index: 4;
+      }
+
+      .arrow-tip.forward {
+        border-left: 10px solid var(--accent);
+        transform: translateX(-1px);
+      }
+      .arrow-tip.reverse {
+        border-right: 10px solid var(--accent);
+        transform: translateX(-9px);
+      }
+      .kind-response .arrow-tip {
+        border-left-color: var(--line-strong);
+        border-right-color: var(--line-strong);
+      }
+      .kind-webhook .arrow-tip {
+        border-left-color: var(--third-party);
+        border-right-color: var(--third-party);
+      }
+      .kind-queue .arrow-tip {
+        border-left-color: var(--messaging);
+        border-right-color: var(--messaging);
+      }
+
+      .message {
+        background: var(--surface-strong);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: 0 5px 16px rgba(20, 30, 40, 0.08);
+        max-width: min(420px, 46%);
+        overflow: hidden;
+        padding: 5px 8px;
+        position: absolute;
+        top: 30px;
+        transform: translateX(-50%);
+        z-index: 5;
+      }
+
+      .message-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .kind-badge,
+      .certainty {
+        border-radius: 999px;
+        font-size: 0.61rem;
+        font-weight: 850;
+        letter-spacing: 0.06em;
+        padding: 2px 5px;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .kind-badge {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .message-label {
+        font-size: 0.77rem;
+        font-weight: 760;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .message-meta {
+        color: var(--muted);
+        display: block;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 0.66rem;
+        margin-top: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .decision-summary {
+        bottom: 7px;
+        color: var(--decision);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        left: 50%;
+        max-height: 24px;
+        max-width: 70%;
+        overflow: hidden;
+        position: absolute;
+        transform: translateX(-50%);
+        z-index: 5;
+      }
+
+      .decision-chip {
+        background: var(--decision-soft);
+        border: 1px solid color-mix(in srgb, var(--decision) 35%, transparent);
+        border-radius: 999px;
+        font-size: 0.64rem;
+        font-weight: 720;
+        padding: 2px 6px;
+        white-space: nowrap;
+      }
+
+      .decision-card {
+        align-self: center;
+        background: var(--decision-soft);
+        border: 1px solid var(--decision);
+        border-radius: 10px;
+        color: var(--decision);
+        margin: 18px 16px;
+        padding: 10px;
+        position: relative;
+        z-index: 4;
+      }
+
+      .decision-card strong {
+        display: block;
+        font-size: 0.76rem;
+      }
+      .decision-card span {
+        display: block;
+        font-size: 0.68rem;
+        margin-top: 3px;
+      }
+
+      .detail-panel {
+        max-height: calc(100vh - 32px);
+        overflow: auto;
+        padding: 18px;
+        position: sticky;
+        top: 16px;
+      }
+
+      .detail-empty {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .detail-header {
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 16px;
+        padding-bottom: 14px;
+      }
+
+      .detail-kicker {
+        color: var(--accent);
+        font-size: 0.69rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .detail-header h3 {
+        font-size: 1.16rem;
+        margin: 5px 0 8px;
+      }
+      .detail-route {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+
+      .certainty {
+        display: inline-block;
+        margin-top: 9px;
+      }
+      .certainty.verified {
+        background: #d9f4e5;
+        color: #17603a;
+      }
+      .certainty.runtime-derived {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
+      .certainty.inferred {
+        background: var(--decision-soft);
+        color: var(--decision);
+      }
+      .certainty.unknown {
+        background: color-mix(in srgb, var(--unknown) 18%, transparent);
+        color: var(--unknown);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .certainty.verified {
+          background: #183b2b;
+          color: #82d9a7;
+        }
+      }
+
+      .detail-section {
+        margin-top: 17px;
+      }
+      .detail-section h4 {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+      }
+      .detail-section pre {
+        background: var(--page);
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 0.7rem;
+        line-height: 1.5;
+        margin: 0;
+        overflow-wrap: anywhere;
+        padding: 10px;
+        white-space: pre-wrap;
+      }
+
+      .detail-list {
+        display: grid;
+        gap: 7px;
+        margin: 0;
+        padding: 0;
+      }
+      .detail-list li {
+        color: var(--muted);
+        font-size: 0.77rem;
+        line-height: 1.45;
+        list-style: none;
+      }
+      .detail-list strong {
+        color: var(--ink);
+      }
+
+      .sources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+      .source-chip {
+        background: var(--surface-strong);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--ink);
+        cursor: pointer;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 0.68rem;
+        padding: 7px 8px;
+        text-align: left;
+      }
+      .source-chip:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 18px;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 0.72rem;
+      }
+
+      .legend-item {
+        align-items: center;
+        display: flex;
+        gap: 6px;
+      }
+      .legend-line {
+        border-top: 3px solid var(--accent);
+        display: inline-block;
+        width: 28px;
+      }
+      .legend-line.response {
+        border-color: var(--line-strong);
+        border-top-style: dashed;
+      }
+      .legend-line.async {
+        border-top-style: dotted;
+      }
+      .legend-decision {
+        background: var(--decision-soft);
+        border: 1px solid var(--decision);
+        border-radius: 4px;
+        height: 12px;
+        width: 20px;
+      }
+
+      .error {
+        background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+        border: 1px solid var(--danger);
+        border-radius: var(--radius);
+        color: var(--danger);
+        line-height: 1.5;
+        padding: 18px;
+      }
+
+      @media (max-width: 1000px) {
+        .workspace {
+          grid-template-columns: 1fr;
+        }
+        .detail-panel {
+          max-height: none;
+          position: static;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .page {
+          padding-top: 20px;
+        }
+        .masthead {
+          grid-template-columns: 1fr;
+        }
+        .scope {
+          max-width: none;
+        }
+        .scenario-intro {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .scenario-intro p {
+          text-align: left;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+        }
+        .page {
+          max-width: none;
+          padding: 0;
+        }
+        .tabs,
+        .detail-panel {
+          display: none;
+        }
+        .workspace {
+          display: block;
+        }
+        .diagram-shell {
+          box-shadow: none;
+          overflow: visible;
+        }
+        .diagram {
+          min-width: 0;
+        }
+        .diagram-head {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Feature sequence explorer</p>
+          <h1 id="feature-name">Loading visualization…</h1>
+          <p class="description" id="feature-description"></p>
         </div>
+        <div class="scope" id="feature-scope"></div>
+      </header>
+
+      <nav
+        class="tabs"
+        id="scenario-tabs"
+        role="tablist"
+        aria-label="Feature scenarios"
+      ></nav>
+      <section class="scenario-intro" aria-live="polite">
+        <h2 id="scenario-name"></h2>
+        <p id="scenario-summary"></p>
       </section>
-      <aside class="detail-panel" id="details" aria-live="polite">
-        <p class="detail-empty">Select an interaction to inspect its request, response, decision inputs, and source evidence.</p>
-      </aside>
-    </div>
 
-    <footer class="legend" aria-label="Diagram legend">
-      <span class="legend-item"><i class="legend-line"></i> Request</span>
-      <span class="legend-item"><i class="legend-line response"></i> Response</span>
-      <span class="legend-item"><i class="legend-line async"></i> Async message</span>
-      <span class="legend-item"><i class="legend-decision"></i> Path-changing decision</span>
-      <span class="legend-item">Evidence: verified · runtime-derived · inferred · unknown</span>
-    </footer>
-  </main>
+      <div class="workspace" id="workspace">
+        <section class="diagram-shell" aria-label="Ordered system interactions">
+          <div class="diagram" id="diagram">
+            <header class="diagram-head">
+              <div class="boundary-grid" id="boundaries"></div>
+              <div class="participant-grid" id="participants"></div>
+            </header>
+            <div class="sequence" id="sequence"></div>
+          </div>
+        </section>
+        <aside class="detail-panel" id="details" aria-live="polite">
+          <p class="detail-empty">
+            Select an interaction to inspect its request, response, decision
+            inputs, and source evidence.
+          </p>
+        </aside>
+      </div>
 
-  <script type="application/json" id="flow-data">{{FLOW_DATA}}</script>
-  <script>
-    (() => {
-      "use strict";
+      <footer class="legend" aria-label="Diagram legend">
+        <span class="legend-item"><i class="legend-line"></i> Request</span>
+        <span class="legend-item"
+          ><i class="legend-line response"></i> Response</span
+        >
+        <span class="legend-item"
+          ><i class="legend-line async"></i> Async message</span
+        >
+        <span class="legend-item"
+          ><i class="legend-decision"></i> Path-changing decision</span
+        >
+        <span class="legend-item"
+          >Evidence: verified · runtime-derived · inferred · unknown</span
+        >
+      </footer>
+    </main>
 
-      const byId = (id) => document.getElementById(id);
-      const elements = {
-        name: byId("feature-name"),
-        description: byId("feature-description"),
-        scope: byId("feature-scope"),
-        tabs: byId("scenario-tabs"),
-        scenarioName: byId("scenario-name"),
-        scenarioSummary: byId("scenario-summary"),
-        diagram: byId("diagram"),
-        boundaries: byId("boundaries"),
-        participants: byId("participants"),
-        sequence: byId("sequence"),
-        details: byId("details"),
-        workspace: byId("workspace")
-      };
+    <script type="application/json" id="flow-data">
+      {{FLOW_DATA}}
+    </script>
+    <script>
+      (() => {
+        "use strict";
 
-      const make = (tag, className, text) => {
-        const element = document.createElement(tag);
-        if (className) element.className = className;
-        if (text !== undefined && text !== null) element.textContent = String(text);
-        return element;
-      };
+        const byId = (id) => document.getElementById(id);
+        const elements = {
+          name: byId("feature-name"),
+          description: byId("feature-description"),
+          scope: byId("feature-scope"),
+          tabs: byId("scenario-tabs"),
+          scenarioName: byId("scenario-name"),
+          scenarioSummary: byId("scenario-summary"),
+          diagram: byId("diagram"),
+          boundaries: byId("boundaries"),
+          participants: byId("participants"),
+          sequence: byId("sequence"),
+          details: byId("details"),
+          workspace: byId("workspace"),
+        };
 
-      const knownBoundaryTypes = new Set(["browser", "application", "downstream", "third-party", "messaging"]);
-      const knownKinds = new Set(["request", "response", "webhook", "event", "queue", "websocket", "decision"]);
+        const make = (tag, className, text) => {
+          const element = document.createElement(tag);
+          if (className) element.className = className;
+          if (text !== undefined && text !== null)
+            element.textContent = String(text);
+          return element;
+        };
 
-      let model;
-      try {
-        model = JSON.parse(byId("flow-data").textContent);
-        if (!model || model.version !== 1) throw new Error("Expected interaction model version 1.");
-        if (!Array.isArray(model.boundaries) || !model.boundaries.length) throw new Error("At least one system boundary is required.");
-        if (!Array.isArray(model.scenarios) || !model.scenarios.length) throw new Error("At least one scenario is required.");
-      } catch (error) {
-        elements.name.textContent = "Visualization unavailable";
-        elements.workspace.replaceChildren(make("div", "error", `The embedded interaction model could not be loaded: ${error.message}`));
-        return;
-      }
+        const knownBoundaryTypes = new Set([
+          "browser",
+          "application",
+          "downstream",
+          "third-party",
+          "messaging",
+        ]);
+        const knownKinds = new Set([
+          "request",
+          "response",
+          "webhook",
+          "event",
+          "queue",
+          "websocket",
+          "decision",
+        ]);
 
-      const participants = [];
-      const participantIndex = new Map();
-      const participantById = new Map();
-      const modelErrors = [];
-      model.boundaries.forEach((boundary) => {
-        if (!Array.isArray(boundary.participants) || !boundary.participants.length) {
-          modelErrors.push(`Boundary ${boundary.name || boundary.id || "unknown"} has no participants.`);
-        }
-        (boundary.participants || []).forEach((participant) => {
-          if (!participant.id) modelErrors.push("Every participant needs an id.");
-          if (participantIndex.has(participant.id)) modelErrors.push(`Duplicate participant id: ${participant.id}.`);
-          participantIndex.set(participant.id, participants.length);
-          participantById.set(participant.id, { ...participant, boundary });
-          participants.push({ ...participant, boundary });
-        });
-      });
-
-      if (!participants.length) {
-        elements.workspace.replaceChildren(make("div", "error", "No participants were defined inside the system boundaries."));
-        return;
-      }
-
-      if (model.scenarios.length > 6) modelErrors.push("A visualization can contain at most six scenarios.");
-      model.scenarios.forEach((scenario) => {
-        let previousNumber = -Infinity;
-        const openPairs = new Map();
-        (scenario.interactions || []).forEach((interaction) => {
-          const context = `${scenario.name || scenario.id || "scenario"} step ${interaction.number ?? "?"}`;
-          if (typeof interaction.number !== "number" || interaction.number <= previousNumber) {
-            modelErrors.push(`${context} does not have a monotonically increasing numeric sequence number.`);
-          }
-          previousNumber = interaction.number;
-          if (!knownKinds.has(interaction.kind)) modelErrors.push(`${context} has an unsupported interaction kind.`);
-          if (interaction.kind === "decision") {
-            if (!participantIndex.has(interaction.actor)) modelErrors.push(`${context} references an unknown decision actor.`);
-          } else {
-            if (!participantIndex.has(interaction.from)) modelErrors.push(`${context} references an unknown sender.`);
-            if (!participantIndex.has(interaction.to)) modelErrors.push(`${context} references an unknown receiver.`);
-            if (!interaction.protocol) modelErrors.push(`${context} has no protocol.`);
-            if (!interaction.url) modelErrors.push(`${context} has no URL or endpoint expression.`);
-          }
-          if (["verified", "runtime-derived"].includes(interaction.certainty) && !(interaction.evidence || []).length) {
-            modelErrors.push(`${context} has no source evidence.`);
-          }
-          if (interaction.kind === "request" && interaction.pairId) openPairs.set(interaction.pairId, interaction);
-          if (interaction.kind === "response") {
-            const request = openPairs.get(interaction.pairId);
-            if (!interaction.pairId || !request) modelErrors.push(`${context} has no earlier paired request.`);
-            else if (request.from !== interaction.to || request.to !== interaction.from) {
-              modelErrors.push(`${context} does not reverse its paired request direction.`);
-            }
-          }
-        });
-      });
-
-      if (modelErrors.length) {
-        elements.workspace.replaceChildren(make("div", "error", `The interaction model is invalid: ${modelErrors.join(" ")}`));
-        return;
-      }
-
-      const participantCount = participants.length;
-      elements.diagram.style.setProperty("--participant-count", participantCount);
-      elements.name.textContent = model.feature?.name || "Untitled feature";
-      elements.description.textContent = model.feature?.description || "";
-      elements.scope.textContent = model.feature?.scope ? `Scope · ${model.feature.scope}` : "";
-      document.title = `${elements.name.textContent} · Feature sequence explorer`;
-
-      const boundaryFragment = document.createDocumentFragment();
-      model.boundaries.forEach((boundary) => {
-        const count = Math.max(1, (boundary.participants || []).length);
-        const block = make("div", "boundary");
-        const type = knownBoundaryTypes.has(boundary.type) ? boundary.type : "";
-        if (type) block.classList.add(type);
-        block.style.gridColumn = `span ${count}`;
-        block.append(make("span", "boundary-name", boundary.name || boundary.id));
-        block.append(make("span", "boundary-type", boundary.type || "boundary"));
-        boundaryFragment.append(block);
-      });
-      elements.boundaries.replaceChildren(boundaryFragment);
-
-      const participantFragment = document.createDocumentFragment();
-      participants.forEach((participant) => {
-        const block = make("div", "participant");
-        block.append(make("strong", "", participant.name || participant.id));
-        block.append(make("span", "", participant.technology || "interaction endpoint"));
-        participantFragment.append(block);
-      });
-      elements.participants.replaceChildren(participantFragment);
-
-      const participantLabel = (id) => {
-        const item = participantById.get(id);
-        return item ? `${item.boundary.name} / ${item.name}` : id || "unknown participant";
-      };
-
-      const interactionMeta = (interaction) => {
-        const parts = [];
-        if (interaction.method) parts.push(interaction.method);
-        parts.push(interaction.protocol || "UNKNOWN PROTOCOL");
-        if (interaction.status !== undefined && interaction.status !== null) parts.push(String(interaction.status));
-        if (interaction.url) parts.push(interaction.url);
-        else if (interaction.kind !== "decision") parts.push("unknown URL");
-        if (interaction.ordering?.certainty && interaction.ordering.certainty !== "verified") {
-          parts.push(`ORDER ${interaction.ordering.certainty.toUpperCase()}`);
-        }
-        return parts.join(" · ");
-      };
-
-      const safeKind = (kind) => knownKinds.has(kind) ? kind : "event";
-      const percentageFor = (index) => ((index + 0.5) / participantCount) * 100;
-
-      const addDetailSection = (parent, title, content) => {
-        if (content === undefined || content === null) return;
-        if (Array.isArray(content) && content.length === 0) return;
-        if (!Array.isArray(content) && typeof content === "object" && Object.keys(content).length === 0) return;
-        const section = make("section", "detail-section");
-        section.append(make("h4", "", title));
-        section.append(make("pre", "", typeof content === "string" ? content : JSON.stringify(content, null, 2)));
-        parent.append(section);
-      };
-
-      const copySource = async (button, value) => {
-        const original = button.textContent;
+        let model;
         try {
-          await navigator.clipboard.writeText(value);
-        } catch (_) {
-          const textarea = make("textarea");
-          textarea.value = value;
-          textarea.setAttribute("readonly", "");
-          textarea.style.position = "fixed";
-          textarea.style.opacity = "0";
-          document.body.append(textarea);
-          textarea.select();
-          document.execCommand("copy");
-          textarea.remove();
+          model = JSON.parse(byId("flow-data").textContent);
+          if (!model || model.version !== 1)
+            throw new Error("Expected interaction model version 1.");
+          if (!Array.isArray(model.boundaries) || !model.boundaries.length)
+            throw new Error("At least one system boundary is required.");
+          if (!Array.isArray(model.scenarios) || !model.scenarios.length)
+            throw new Error("At least one scenario is required.");
+        } catch (error) {
+          elements.name.textContent = "Visualization unavailable";
+          elements.workspace.replaceChildren(
+            make(
+              "div",
+              "error",
+              `The embedded interaction model could not be loaded: ${error.message}`,
+            ),
+          );
+          return;
         }
-        button.textContent = "Copied source reference";
-        window.setTimeout(() => { button.textContent = original; }, 1200);
-      };
 
-      const showDetails = (interaction, row) => {
-        elements.sequence.querySelectorAll(".interaction").forEach((item) => item.setAttribute("aria-current", "false"));
-        row.setAttribute("aria-current", "true");
-
-        const fragment = document.createDocumentFragment();
-        const header = make("header", "detail-header");
-        header.append(make("div", "detail-kicker", `Step ${interaction.number} · ${safeKind(interaction.kind)}`));
-        header.append(make("h3", "", interaction.label || "Unnamed interaction"));
-        const route = interaction.kind === "decision"
-          ? `Inside ${participantLabel(interaction.actor)}`
-          : `${participantLabel(interaction.from)} → ${participantLabel(interaction.to)}`;
-        header.append(make("div", "detail-route", route));
-        if (interaction.kind !== "decision") header.append(make("div", "detail-route", interactionMeta(interaction)));
-        const certainty = make("span", "certainty", interaction.certainty || "unknown");
-        certainty.classList.add(["verified", "runtime-derived", "inferred", "unknown"].includes(interaction.certainty) ? interaction.certainty : "unknown");
-        header.append(certainty);
-        fragment.append(header);
-
-        if ((interaction.decisionInputs || []).length) {
-          const section = make("section", "detail-section");
-          section.append(make("h4", "", "Decision inputs"));
-          const list = make("ul", "detail-list");
-          interaction.decisionInputs.forEach((input) => {
-            const item = make("li");
-            const label = make("strong", "", `${input.location || "input"}.${input.name || "unknown"}`);
-            item.append(label, document.createTextNode(` = ${input.value ?? "unknown"} → ${input.effect || "affects this path"}`));
-            list.append(item);
+        const participants = [];
+        const participantIndex = new Map();
+        const participantById = new Map();
+        const modelErrors = [];
+        model.boundaries.forEach((boundary) => {
+          if (
+            !Array.isArray(boundary.participants) ||
+            !boundary.participants.length
+          ) {
+            modelErrors.push(
+              `Boundary ${boundary.name || boundary.id || "unknown"} has no participants.`,
+            );
+          }
+          (boundary.participants || []).forEach((participant) => {
+            if (!participant.id)
+              modelErrors.push("Every participant needs an id.");
+            if (participantIndex.has(participant.id))
+              modelErrors.push(`Duplicate participant id: ${participant.id}.`);
+            participantIndex.set(participant.id, participants.length);
+            participantById.set(participant.id, { ...participant, boundary });
+            participants.push({ ...participant, boundary });
           });
-          section.append(list);
-          fragment.append(section);
-        }
-
-        const details = interaction.details || {};
-        addDetailSection(fragment, "Request headers", details.requestHeaders);
-        addDetailSection(fragment, "Request body", details.requestBody);
-        addDetailSection(fragment, "Response headers", details.responseHeaders);
-        addDetailSection(fragment, "Response body", details.responseBody);
-        addDetailSection(fragment, "Payload", details.payload);
-        addDetailSection(fragment, "Notes", details.notes);
-        addDetailSection(fragment, "Ordering", interaction.ordering);
-
-        const evidence = interaction.evidence || [];
-        if (evidence.length) {
-          const section = make("section", "detail-section");
-          section.append(make("h4", "", "Source evidence · click to copy"));
-          const sources = make("div", "sources");
-          evidence.forEach((source) => {
-            const reference = `${source.path || "unknown"}:${source.line || "?"}`;
-            const button = make("button", "source-chip", reference);
-            button.type = "button";
-            button.title = source.label || "Copy source reference";
-            button.addEventListener("click", () => copySource(button, reference));
-            sources.append(button);
-          });
-          section.append(sources);
-          fragment.append(section);
-        }
-        elements.details.replaceChildren(fragment);
-      };
-
-      const buildInteraction = (interaction) => {
-        const kind = safeKind(interaction.kind);
-        const row = make("button", `interaction kind-${kind}`);
-        row.type = "button";
-        row.setAttribute("aria-label", `Step ${interaction.number}: ${interaction.label || kind}`);
-        row.setAttribute("aria-current", "false");
-        row.append(make("span", "step", interaction.number));
-
-        for (let index = 0; index < participantCount; index += 1) row.append(make("span", "lane"));
-
-        if (kind === "decision") {
-          const actorIndex = participantIndex.get(interaction.actor) ?? 0;
-          const card = make("span", "decision-card");
-          card.style.gridColumn = String(actorIndex + 1);
-          card.append(make("strong", "", interaction.label || "Decision"));
-          const effect = (interaction.decisionInputs || []).map((item) => item.effect).filter(Boolean).join("; ");
-          if (effect) card.append(make("span", "", effect));
-          row.append(card);
-        } else {
-          const fromIndex = participantIndex.get(interaction.from) ?? 0;
-          const toIndex = participantIndex.get(interaction.to) ?? fromIndex;
-          const fromX = percentageFor(fromIndex);
-          const toX = percentageFor(toIndex);
-          const left = Math.min(fromX, toX);
-          const width = Math.max(1.8, Math.abs(toX - fromX));
-          const forward = toX >= fromX;
-
-          const line = make("span", "flow-line");
-          line.style.left = `${left}%`;
-          line.style.width = `${width}%`;
-          row.append(line);
-
-          const tip = make("span", `arrow-tip ${forward ? "forward" : "reverse"}`);
-          tip.style.left = `${toX}%`;
-          row.append(tip);
-
-          const message = make("span", "message");
-          message.style.left = `${(fromX + toX) / 2}%`;
-          const title = make("span", "message-title");
-          title.append(make("span", "kind-badge", kind));
-          title.append(make("span", "message-label", interaction.label || "Unnamed interaction"));
-          message.append(title, make("span", "message-meta", interactionMeta(interaction)));
-          row.append(message);
-        }
-
-        if ((interaction.decisionInputs || []).length) {
-          const summary = make("span", "decision-summary");
-          interaction.decisionInputs.slice(0, 3).forEach((input) => {
-            summary.append(make("span", "decision-chip", `${input.location || "input"}.${input.name || "unknown"} → ${input.effect || "path decision"}`));
-          });
-          row.append(summary);
-        }
-
-        row.addEventListener("click", () => showDetails(interaction, row));
-        return row;
-      };
-
-      const renderScenario = (scenario, selectedTab) => {
-        elements.tabs.querySelectorAll(".tab").forEach((tab) => {
-          const selected = tab === selectedTab;
-          tab.setAttribute("aria-selected", String(selected));
-          tab.tabIndex = selected ? 0 : -1;
         });
-        elements.scenarioName.textContent = scenario.name || scenario.id || "Unnamed scenario";
-        elements.scenarioSummary.textContent = scenario.summary || "";
 
-        const fragment = document.createDocumentFragment();
-        (scenario.interactions || []).forEach((interaction) => fragment.append(buildInteraction(interaction)));
-        elements.sequence.replaceChildren(fragment);
-        elements.details.replaceChildren(make("p", "detail-empty", "Select an interaction to inspect its request, response, decision inputs, and source evidence."));
-        const first = elements.sequence.querySelector(".interaction");
-        if (first && scenario.interactions?.[0]) showDetails(scenario.interactions[0], first);
-      };
+        if (!participants.length) {
+          elements.workspace.replaceChildren(
+            make(
+              "div",
+              "error",
+              "No participants were defined inside the system boundaries.",
+            ),
+          );
+          return;
+        }
 
-      const tabFragment = document.createDocumentFragment();
-      model.scenarios.forEach((scenario, index) => {
-        const tab = make("button", "tab", scenario.name || scenario.id || `Scenario ${index + 1}`);
-        tab.type = "button";
-        tab.role = "tab";
-        tab.setAttribute("aria-selected", String(index === 0));
-        tab.tabIndex = index === 0 ? 0 : -1;
-        tab.addEventListener("click", () => renderScenario(scenario, tab));
-        tab.addEventListener("keydown", (event) => {
-          if (!new Set(["ArrowLeft", "ArrowRight", "Home", "End"]).has(event.key)) return;
-          event.preventDefault();
-          const tabs = [...elements.tabs.querySelectorAll(".tab")];
-          const current = tabs.indexOf(tab);
-          let next = current;
-          if (event.key === "ArrowLeft") next = (current - 1 + tabs.length) % tabs.length;
-          if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
-          if (event.key === "Home") next = 0;
-          if (event.key === "End") next = tabs.length - 1;
-          tabs[next].focus();
-          tabs[next].click();
+        if (model.scenarios.length > 6)
+          modelErrors.push(
+            "A visualization can contain at most six scenarios.",
+          );
+        model.scenarios.forEach((scenario) => {
+          let previousNumber = -Infinity;
+          const openPairs = new Map();
+          (scenario.interactions || []).forEach((interaction) => {
+            const context = `${scenario.name || scenario.id || "scenario"} step ${interaction.number ?? "?"}`;
+            if (
+              typeof interaction.number !== "number" ||
+              interaction.number <= previousNumber
+            ) {
+              modelErrors.push(
+                `${context} does not have a monotonically increasing numeric sequence number.`,
+              );
+            }
+            previousNumber = interaction.number;
+            if (!knownKinds.has(interaction.kind))
+              modelErrors.push(
+                `${context} has an unsupported interaction kind.`,
+              );
+            if (interaction.kind === "decision") {
+              if (!participantIndex.has(interaction.actor))
+                modelErrors.push(
+                  `${context} references an unknown decision actor.`,
+                );
+            } else {
+              if (!participantIndex.has(interaction.from))
+                modelErrors.push(`${context} references an unknown sender.`);
+              if (!participantIndex.has(interaction.to))
+                modelErrors.push(`${context} references an unknown receiver.`);
+              if (!interaction.protocol)
+                modelErrors.push(`${context} has no protocol.`);
+              if (!interaction.url)
+                modelErrors.push(
+                  `${context} has no URL or endpoint expression.`,
+                );
+            }
+            if (
+              ["verified", "runtime-derived"].includes(interaction.certainty) &&
+              !(interaction.evidence || []).length
+            ) {
+              modelErrors.push(`${context} has no source evidence.`);
+            }
+            if (interaction.kind === "request" && interaction.pairId)
+              openPairs.set(interaction.pairId, interaction);
+            if (interaction.kind === "response") {
+              const request = openPairs.get(interaction.pairId);
+              if (!interaction.pairId || !request)
+                modelErrors.push(`${context} has no earlier paired request.`);
+              else if (
+                request.from !== interaction.to ||
+                request.to !== interaction.from
+              ) {
+                modelErrors.push(
+                  `${context} does not reverse its paired request direction.`,
+                );
+              }
+            }
+          });
         });
-        tabFragment.append(tab);
-      });
-      elements.tabs.replaceChildren(tabFragment);
-      renderScenario(model.scenarios[0], elements.tabs.querySelector(".tab"));
-    })();
-  </script>
-</body>
+
+        if (modelErrors.length) {
+          elements.workspace.replaceChildren(
+            make(
+              "div",
+              "error",
+              `The interaction model is invalid: ${modelErrors.join(" ")}`,
+            ),
+          );
+          return;
+        }
+
+        const participantCount = participants.length;
+        elements.diagram.style.setProperty(
+          "--participant-count",
+          participantCount,
+        );
+        elements.name.textContent = model.feature?.name || "Untitled feature";
+        elements.description.textContent = model.feature?.description || "";
+        elements.scope.textContent = model.feature?.scope
+          ? `Scope · ${model.feature.scope}`
+          : "";
+        document.title = `${elements.name.textContent} · Feature sequence explorer`;
+
+        const boundaryFragment = document.createDocumentFragment();
+        model.boundaries.forEach((boundary) => {
+          const count = Math.max(1, (boundary.participants || []).length);
+          const block = make("div", "boundary");
+          const type = knownBoundaryTypes.has(boundary.type)
+            ? boundary.type
+            : "";
+          if (type) block.classList.add(type);
+          block.style.gridColumn = `span ${count}`;
+          block.append(
+            make("span", "boundary-name", boundary.name || boundary.id),
+          );
+          block.append(
+            make("span", "boundary-type", boundary.type || "boundary"),
+          );
+          boundaryFragment.append(block);
+        });
+        elements.boundaries.replaceChildren(boundaryFragment);
+
+        const participantFragment = document.createDocumentFragment();
+        participants.forEach((participant) => {
+          const block = make("div", "participant");
+          block.append(make("strong", "", participant.name || participant.id));
+          block.append(
+            make("span", "", participant.technology || "interaction endpoint"),
+          );
+          participantFragment.append(block);
+        });
+        elements.participants.replaceChildren(participantFragment);
+
+        const participantLabel = (id) => {
+          const item = participantById.get(id);
+          return item
+            ? `${item.boundary.name} / ${item.name}`
+            : id || "unknown participant";
+        };
+
+        const interactionMeta = (interaction) => {
+          const parts = [];
+          if (interaction.method) parts.push(interaction.method);
+          parts.push(interaction.protocol || "UNKNOWN PROTOCOL");
+          if (interaction.status !== undefined && interaction.status !== null)
+            parts.push(String(interaction.status));
+          if (interaction.url) parts.push(interaction.url);
+          else if (interaction.kind !== "decision") parts.push("unknown URL");
+          if (
+            interaction.ordering?.certainty &&
+            interaction.ordering.certainty !== "verified"
+          ) {
+            parts.push(`ORDER ${interaction.ordering.certainty.toUpperCase()}`);
+          }
+          return parts.join(" · ");
+        };
+
+        const safeKind = (kind) => (knownKinds.has(kind) ? kind : "event");
+        const percentageFor = (index) =>
+          ((index + 0.5) / participantCount) * 100;
+
+        const addDetailSection = (parent, title, content) => {
+          if (content === undefined || content === null) return;
+          if (Array.isArray(content) && content.length === 0) return;
+          if (
+            !Array.isArray(content) &&
+            typeof content === "object" &&
+            Object.keys(content).length === 0
+          )
+            return;
+          const section = make("section", "detail-section");
+          section.append(make("h4", "", title));
+          section.append(
+            make(
+              "pre",
+              "",
+              typeof content === "string"
+                ? content
+                : JSON.stringify(content, null, 2),
+            ),
+          );
+          parent.append(section);
+        };
+
+        const copySource = async (button, value) => {
+          const original = button.textContent;
+          try {
+            await navigator.clipboard.writeText(value);
+          } catch (_) {
+            const textarea = make("textarea");
+            textarea.value = value;
+            textarea.setAttribute("readonly", "");
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.append(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            textarea.remove();
+          }
+          button.textContent = "Copied source reference";
+          window.setTimeout(() => {
+            button.textContent = original;
+          }, 1200);
+        };
+
+        const showDetails = (interaction, row) => {
+          elements.sequence
+            .querySelectorAll(".interaction")
+            .forEach((item) => item.setAttribute("aria-current", "false"));
+          row.setAttribute("aria-current", "true");
+
+          const fragment = document.createDocumentFragment();
+          const header = make("header", "detail-header");
+          header.append(
+            make(
+              "div",
+              "detail-kicker",
+              `Step ${interaction.number} · ${safeKind(interaction.kind)}`,
+            ),
+          );
+          header.append(
+            make("h3", "", interaction.label || "Unnamed interaction"),
+          );
+          const route =
+            interaction.kind === "decision"
+              ? `Inside ${participantLabel(interaction.actor)}`
+              : `${participantLabel(interaction.from)} → ${participantLabel(interaction.to)}`;
+          header.append(make("div", "detail-route", route));
+          if (interaction.kind !== "decision")
+            header.append(
+              make("div", "detail-route", interactionMeta(interaction)),
+            );
+          const certainty = make(
+            "span",
+            "certainty",
+            interaction.certainty || "unknown",
+          );
+          certainty.classList.add(
+            ["verified", "runtime-derived", "inferred", "unknown"].includes(
+              interaction.certainty,
+            )
+              ? interaction.certainty
+              : "unknown",
+          );
+          header.append(certainty);
+          fragment.append(header);
+
+          if ((interaction.decisionInputs || []).length) {
+            const section = make("section", "detail-section");
+            section.append(make("h4", "", "Decision inputs"));
+            const list = make("ul", "detail-list");
+            interaction.decisionInputs.forEach((input) => {
+              const item = make("li");
+              const label = make(
+                "strong",
+                "",
+                `${input.location || "input"}.${input.name || "unknown"}`,
+              );
+              item.append(
+                label,
+                document.createTextNode(
+                  ` = ${input.value ?? "unknown"} → ${input.effect || "affects this path"}`,
+                ),
+              );
+              list.append(item);
+            });
+            section.append(list);
+            fragment.append(section);
+          }
+
+          const details = interaction.details || {};
+          addDetailSection(fragment, "Request headers", details.requestHeaders);
+          addDetailSection(fragment, "Request body", details.requestBody);
+          addDetailSection(
+            fragment,
+            "Response headers",
+            details.responseHeaders,
+          );
+          addDetailSection(fragment, "Response body", details.responseBody);
+          addDetailSection(fragment, "Payload", details.payload);
+          addDetailSection(fragment, "Notes", details.notes);
+          addDetailSection(fragment, "Ordering", interaction.ordering);
+
+          const evidence = interaction.evidence || [];
+          if (evidence.length) {
+            const section = make("section", "detail-section");
+            section.append(make("h4", "", "Source evidence · click to copy"));
+            const sources = make("div", "sources");
+            evidence.forEach((source) => {
+              const reference = `${source.path || "unknown"}:${source.line || "?"}`;
+              const button = make("button", "source-chip", reference);
+              button.type = "button";
+              button.title = source.label || "Copy source reference";
+              button.addEventListener("click", () =>
+                copySource(button, reference),
+              );
+              sources.append(button);
+            });
+            section.append(sources);
+            fragment.append(section);
+          }
+          elements.details.replaceChildren(fragment);
+        };
+
+        const buildInteraction = (interaction) => {
+          const kind = safeKind(interaction.kind);
+          const row = make("button", `interaction kind-${kind}`);
+          row.type = "button";
+          row.setAttribute(
+            "aria-label",
+            `Step ${interaction.number}: ${interaction.label || kind}`,
+          );
+          row.setAttribute("aria-current", "false");
+          row.append(make("span", "step", interaction.number));
+
+          for (let index = 0; index < participantCount; index += 1)
+            row.append(make("span", "lane"));
+
+          if (kind === "decision") {
+            const actorIndex = participantIndex.get(interaction.actor) ?? 0;
+            const card = make("span", "decision-card");
+            card.style.gridColumn = String(actorIndex + 1);
+            card.append(make("strong", "", interaction.label || "Decision"));
+            const effect = (interaction.decisionInputs || [])
+              .map((item) => item.effect)
+              .filter(Boolean)
+              .join("; ");
+            if (effect) card.append(make("span", "", effect));
+            row.append(card);
+          } else {
+            const fromIndex = participantIndex.get(interaction.from) ?? 0;
+            const toIndex = participantIndex.get(interaction.to) ?? fromIndex;
+            const fromX = percentageFor(fromIndex);
+            const toX = percentageFor(toIndex);
+            const left = Math.min(fromX, toX);
+            const width = Math.max(1.8, Math.abs(toX - fromX));
+            const forward = toX >= fromX;
+
+            const line = make("span", "flow-line");
+            line.style.left = `${left}%`;
+            line.style.width = `${width}%`;
+            row.append(line);
+
+            const tip = make(
+              "span",
+              `arrow-tip ${forward ? "forward" : "reverse"}`,
+            );
+            tip.style.left = `${toX}%`;
+            row.append(tip);
+
+            const message = make("span", "message");
+            message.style.left = `${(fromX + toX) / 2}%`;
+            const title = make("span", "message-title");
+            title.append(make("span", "kind-badge", kind));
+            title.append(
+              make(
+                "span",
+                "message-label",
+                interaction.label || "Unnamed interaction",
+              ),
+            );
+            message.append(
+              title,
+              make("span", "message-meta", interactionMeta(interaction)),
+            );
+            row.append(message);
+          }
+
+          if ((interaction.decisionInputs || []).length) {
+            const summary = make("span", "decision-summary");
+            interaction.decisionInputs.slice(0, 3).forEach((input) => {
+              summary.append(
+                make(
+                  "span",
+                  "decision-chip",
+                  `${input.location || "input"}.${input.name || "unknown"} → ${input.effect || "path decision"}`,
+                ),
+              );
+            });
+            row.append(summary);
+          }
+
+          row.addEventListener("click", () => showDetails(interaction, row));
+          return row;
+        };
+
+        const renderScenario = (scenario, selectedTab) => {
+          elements.tabs.querySelectorAll(".tab").forEach((tab) => {
+            const selected = tab === selectedTab;
+            tab.setAttribute("aria-selected", String(selected));
+            tab.tabIndex = selected ? 0 : -1;
+          });
+          elements.scenarioName.textContent =
+            scenario.name || scenario.id || "Unnamed scenario";
+          elements.scenarioSummary.textContent = scenario.summary || "";
+
+          const fragment = document.createDocumentFragment();
+          (scenario.interactions || []).forEach((interaction) =>
+            fragment.append(buildInteraction(interaction)),
+          );
+          elements.sequence.replaceChildren(fragment);
+          elements.details.replaceChildren(
+            make(
+              "p",
+              "detail-empty",
+              "Select an interaction to inspect its request, response, decision inputs, and source evidence.",
+            ),
+          );
+          const first = elements.sequence.querySelector(".interaction");
+          if (first && scenario.interactions?.[0])
+            showDetails(scenario.interactions[0], first);
+        };
+
+        const tabFragment = document.createDocumentFragment();
+        model.scenarios.forEach((scenario, index) => {
+          const tab = make(
+            "button",
+            "tab",
+            scenario.name || scenario.id || `Scenario ${index + 1}`,
+          );
+          tab.type = "button";
+          tab.role = "tab";
+          tab.setAttribute("aria-selected", String(index === 0));
+          tab.tabIndex = index === 0 ? 0 : -1;
+          tab.addEventListener("click", () => renderScenario(scenario, tab));
+          tab.addEventListener("keydown", (event) => {
+            if (
+              !new Set(["ArrowLeft", "ArrowRight", "Home", "End"]).has(
+                event.key,
+              )
+            )
+              return;
+            event.preventDefault();
+            const tabs = [...elements.tabs.querySelectorAll(".tab")];
+            const current = tabs.indexOf(tab);
+            let next = current;
+            if (event.key === "ArrowLeft")
+              next = (current - 1 + tabs.length) % tabs.length;
+            if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
+            if (event.key === "Home") next = 0;
+            if (event.key === "End") next = tabs.length - 1;
+            tabs[next].focus();
+            tabs[next].click();
+          });
+          tabFragment.append(tab);
+        });
+        elements.tabs.replaceChildren(tabFragment);
+        renderScenario(model.scenarios[0], elements.tabs.querySelector(".tab"));
+      })();
+    </script>
+  </body>
 </html>
