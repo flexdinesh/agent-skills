@@ -18,6 +18,9 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `pi-extension` — build extensions for Pi
 - `review-changes` — review local diffs for bugs and risks
 - `review-pr` — review a GitHub PR from a URL
+- `tanstack-form` — build with tanstack form
+- `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration
+- `tanstack-router` — build type-safe React and TypeScript applications with TanStack Router
 - `visualise-feature` — trace and visualise ordered feature interactions across system boundaries
 
 ## Install from remote
@@ -105,4 +108,4 @@ npx skills list              # show installed skills
 npx skills remove plan-mode  # remove a skill
 ```
 
-Full CLI reference: https://github.com/vercel-labs/skills
+Full CLI reference: <https://github.com/vercel-labs/skills>
