@@ -1,0 +1,2071 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Visual learning lesson</title>
+    <style>
+      :root {
+        --page: #f4f1e9;
+        --surface: #fffdf8;
+        --surface-2: #f8f4eb;
+        --ink: #17212b;
+        --muted: #66717d;
+        --line: #c9c2b5;
+        --line-strong: #7c858d;
+        --accent: #126a72;
+        --accent-strong: #084c53;
+        --accent-soft: #d9eff0;
+        --ownership: #275f9a;
+        --ownership-soft: #e0ebf7;
+        --state: #7050a0;
+        --state-soft: #ede5f7;
+        --decision: #8c560b;
+        --decision-soft: #fff0c9;
+        --danger: #a43e34;
+        --danger-soft: #fbe4df;
+        --success: #27714e;
+        --success-soft: #dff1e7;
+        --shadow: 0 18px 52px rgba(46, 51, 55, 0.1);
+        --radius: 20px;
+        --radius-small: 12px;
+        font-family:
+          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --page: #10171d;
+          --surface: #172129;
+          --surface-2: #1d2932;
+          --ink: #edf2f4;
+          --muted: #aeb8bf;
+          --line: #3d4951;
+          --line-strong: #89969e;
+          --accent: #67ced3;
+          --accent-strong: #94e4e7;
+          --accent-soft: #173e42;
+          --ownership: #88bff2;
+          --ownership-soft: #213b55;
+          --state: #c0a0ef;
+          --state-soft: #382b4b;
+          --decision: #f2c168;
+          --decision-soft: #47391d;
+          --danger: #ff9c91;
+          --danger-soft: #4c2927;
+          --success: #7dd6a6;
+          --success-soft: #1f4432;
+          --shadow: 0 18px 52px rgba(0, 0, 0, 0.28);
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 10% -5%, var(--accent-soft), transparent 32rem),
+          var(--page);
+        color: var(--ink);
+      }
+
+      body,
+      button,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: 16px clamp(10px, 1vw, 18px) 40px;
+      }
+
+      .masthead {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(250px, 34rem);
+        gap: 28px;
+        align-items: end;
+        margin-bottom: 24px;
+      }
+
+      .eyebrow,
+      .micro-label {
+        color: var(--accent);
+        font-size: 0.73rem;
+        font-weight: 850;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+      }
+
+      h1 {
+        max-width: 18ch;
+        margin: 0;
+        font-size: clamp(2.25rem, 5.4vw, 5.3rem);
+        letter-spacing: -0.06em;
+        line-height: 0.92;
+      }
+
+      .problem {
+        max-width: 72ch;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.5vw, 1.22rem);
+        line-height: 1.55;
+      }
+
+      .objective-card {
+        border-left: 4px solid var(--accent);
+        border-radius: 0 var(--radius-small) var(--radius-small) 0;
+        background: color-mix(in srgb, var(--surface) 78%, transparent);
+        padding: 15px 18px;
+      }
+
+      .objective-card p {
+        margin: 6px 0 0;
+        line-height: 1.5;
+      }
+
+      .meta-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .chip,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 760;
+        line-height: 1;
+        padding: 7px 10px;
+      }
+
+      .lesson-shell {
+        width: 100%;
+        min-height: calc(100svh - 210px);
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .lesson-toolbar {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 16px;
+      }
+
+      .scenario-tabs,
+      .view-tabs,
+      .step-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .scenario-tabs {
+        min-width: 0;
+        overflow-x: auto;
+        padding: 3px;
+        scrollbar-width: thin;
+      }
+
+      .tab,
+      .view-button,
+      .icon-button,
+      .primary-button,
+      .artifact-button {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: transparent;
+        cursor: pointer;
+        font-weight: 760;
+      }
+
+      .tab,
+      .view-button {
+        flex: 0 0 auto;
+        padding: 9px 13px;
+        color: var(--muted);
+        font-size: 0.83rem;
+      }
+
+      .tab:hover,
+      .view-button:hover,
+      .icon-button:hover,
+      .artifact-button:hover {
+        border-color: var(--accent);
+        color: var(--ink);
+      }
+
+      .tab[aria-selected="true"] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--surface);
+      }
+
+      .view-button[aria-pressed="true"] {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+      }
+
+      .learning-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(320px, 0.75fr);
+        min-height: max(590px, calc(100svh - 300px));
+      }
+
+      .canvas-column {
+        min-width: 0;
+        border-right: 1px solid var(--line);
+      }
+
+      .canvas-head {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+      }
+
+      .canvas-head p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .progress-text {
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-variant-numeric: tabular-nums;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .map-scroll {
+        overflow-x: auto;
+        padding: 0 18px 18px;
+      }
+
+      .map-region {
+        position: relative;
+        min-width: 680px;
+        min-height: max(430px, calc(100svh - 470px));
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        background:
+          linear-gradient(var(--surface-2), var(--surface-2)) padding-box,
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 39px,
+            color-mix(in srgb, var(--line) 35%, transparent) 40px
+          );
+        padding: 18px;
+      }
+
+      .boundary-grid {
+        position: relative;
+        z-index: 2;
+        display: grid;
+        grid-template-columns: repeat(var(--boundary-count, 3), minmax(190px, 1fr));
+        gap: 14px;
+        min-height: 360px;
+      }
+
+      .boundary {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        border: 2px solid var(--line-strong);
+        border-radius: 15px;
+        background: color-mix(in srgb, var(--surface) 88%, transparent);
+        padding: 13px;
+      }
+
+      .boundary::before {
+        content: attr(data-boundary-type);
+        position: absolute;
+        top: -9px;
+        right: 9px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 0.63rem;
+        font-weight: 820;
+        letter-spacing: 0.08em;
+        padding: 3px 7px;
+        text-transform: uppercase;
+      }
+
+      .boundary-name {
+        margin: 3px 0 2px;
+        font-size: 0.9rem;
+      }
+
+      .boundary-owner {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 0.71rem;
+        line-height: 1.35;
+      }
+
+      .actor-stack {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 16px;
+        justify-content: space-around;
+      }
+
+      .actor {
+        position: relative;
+        width: 100%;
+        min-height: 96px;
+        border: 2px solid var(--line);
+        border-radius: 13px;
+        background: var(--surface);
+        color: var(--ink);
+        cursor: pointer;
+        padding: 13px;
+        text-align: left;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+      }
+
+      .actor:hover {
+        border-color: var(--accent);
+      }
+
+      .actor.is-active {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-soft);
+        transform: translateY(-2px);
+      }
+
+      .actor.is-sender::after,
+      .actor.is-receiver::after,
+      .actor.is-owner::after {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        border-radius: 999px;
+        color: white;
+        font-size: 0.62rem;
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        padding: 4px 7px;
+        text-transform: uppercase;
+      }
+
+      .actor.is-sender::after {
+        content: "Sends";
+        background: var(--accent-strong);
+      }
+
+      .actor.is-receiver::after {
+        content: "Receives";
+        background: var(--ownership);
+      }
+
+      .actor.is-owner::after {
+        content: "Owns step";
+        background: var(--state);
+      }
+
+      .actor-kind {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 0.65rem;
+        font-weight: 820;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .actor-name {
+        display: block;
+        font-size: 0.94rem;
+        font-weight: 820;
+      }
+
+      .actor-role {
+        display: -webkit-box;
+        overflow: hidden;
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 0.73rem;
+        line-height: 1.35;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+
+      .connection-layer {
+        position: absolute;
+        z-index: 3;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+      }
+
+      .connection-layer marker path {
+        fill: var(--accent);
+      }
+
+      .flow-line {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 4;
+        marker-end: url("#arrowhead");
+      }
+
+      .flow-line.response {
+        stroke-dasharray: 10 7;
+      }
+
+      .flow-line.event {
+        stroke-dasharray: 2 8;
+        stroke-linecap: round;
+      }
+
+      .flow-line.queue {
+        stroke-width: 7;
+        stroke-dasharray: 2 3;
+      }
+
+      .flow-pulse {
+        fill: var(--surface);
+        stroke: var(--accent);
+        stroke-width: 4;
+      }
+
+      .flow-label {
+        position: absolute;
+        z-index: 4;
+        max-width: 230px;
+        transform: translate(-50%, -50%);
+        border: 1px solid var(--accent);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--accent-strong);
+        font-size: 0.7rem;
+        font-weight: 820;
+        line-height: 1.2;
+        padding: 6px 10px;
+        pointer-events: none;
+        text-align: center;
+      }
+
+      .start-cue {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin: 13px 2px 0;
+        color: var(--accent-strong);
+        font-size: 0.82rem;
+        font-weight: 760;
+      }
+
+      .start-dot {
+        width: 11px;
+        height: 11px;
+        flex: 0 0 auto;
+        border: 3px solid var(--surface);
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 2px var(--accent);
+      }
+
+      .artifact-shelf {
+        min-height: 92px;
+        border-top: 1px solid var(--line);
+        padding: 14px 18px 16px;
+      }
+
+      .artifact-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .artifact-button {
+        border-radius: 9px;
+        background: var(--state-soft);
+        color: var(--state);
+        padding: 8px 10px;
+        font-size: 0.76rem;
+      }
+
+      .empty-note {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-style: italic;
+      }
+
+      .teaching-column {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        background: color-mix(in srgb, var(--surface-2) 70%, var(--surface));
+      }
+
+      .step-card {
+        flex: 1;
+        padding: 24px clamp(18px, 2.3vw, 30px);
+      }
+
+      .step-kicker {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .step-number {
+        color: var(--accent);
+        font-size: 0.78rem;
+        font-weight: 850;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .kind-badge {
+        border-color: var(--accent);
+        color: var(--accent-strong);
+        text-transform: uppercase;
+      }
+
+      .step-card h2 {
+        margin: 14px 0 12px;
+        font-size: clamp(1.55rem, 2.4vw, 2.35rem);
+        letter-spacing: -0.04em;
+        line-height: 1.05;
+      }
+
+      .step-what {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+
+      .explain-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .explain-box {
+        border-left: 3px solid var(--accent);
+        background: var(--surface);
+        padding: 10px 12px;
+      }
+
+      .explain-box.owner {
+        border-color: var(--ownership);
+      }
+
+      .explain-box strong {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 0.72rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .explain-box p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.86rem;
+        line-height: 1.45;
+      }
+
+      .risk-box {
+        margin-top: 16px;
+        border: 1px solid var(--danger);
+        border-radius: var(--radius-small);
+        background: var(--danger-soft);
+        padding: 12px;
+      }
+
+      .risk-box strong {
+        color: var(--danger);
+        font-size: 0.78rem;
+      }
+
+      .risk-box p {
+        margin: 5px 0 0;
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .tradeoff-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 14px;
+      }
+
+      .tradeoff-link {
+        border: 1px solid var(--decision);
+        border-radius: 999px;
+        background: var(--decision-soft);
+        color: var(--decision);
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 780;
+        padding: 7px 10px;
+      }
+
+      .step-nav {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 9px;
+        border-top: 1px solid var(--line);
+        padding: 14px 18px;
+      }
+
+      .icon-button,
+      .primary-button {
+        min-height: 42px;
+        padding: 9px 14px;
+      }
+
+      .icon-button:disabled,
+      .primary-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.45;
+      }
+
+      .primary-button {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--surface);
+      }
+
+      .progress-track {
+        position: relative;
+        align-self: center;
+        height: 5px;
+        overflow: hidden;
+        border-radius: 99px;
+        background: var(--line);
+      }
+
+      .progress-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0;
+        border-radius: inherit;
+        background: var(--accent);
+        transition: width 220ms ease;
+      }
+
+      .inspector {
+        border-top: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .inspector-head {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 18px 8px;
+      }
+
+      .inspector-tabs {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 3px 18px 10px;
+      }
+
+      .inspector-tab {
+        flex: 0 0 auto;
+        border: 0;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 0.79rem;
+        font-weight: 780;
+        padding: 8px 10px;
+      }
+
+      .inspector-tab[aria-selected="true"] {
+        border-color: var(--accent);
+        color: var(--ink);
+      }
+
+      .inspector-content {
+        min-height: 180px;
+        border-top: 1px solid var(--line);
+        padding: 18px;
+      }
+
+      .inspect-grid,
+      .state-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .inspect-panel {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-small);
+        background: var(--surface-2);
+        padding: 12px;
+      }
+
+      .inspect-panel h3 {
+        margin: 0 0 8px;
+        font-size: 0.8rem;
+      }
+
+      .inspect-panel pre {
+        overflow: auto;
+        margin: 0;
+        color: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 0.72rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .state-list,
+      .detail-list,
+      .responsibility-list {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .state-list li,
+      .detail-list li,
+      .responsibility-list li {
+        margin: 5px 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.4;
+      }
+
+      .state-before {
+        border-top: 4px solid var(--line-strong);
+      }
+
+      .state-after {
+        border-top: 4px solid var(--state);
+      }
+
+      .actor-detail h3,
+      .artifact-detail h3 {
+        margin: 0 0 5px;
+      }
+
+      .actor-detail p,
+      .artifact-detail p {
+        margin: 0 0 12px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .deep-dive {
+        display: grid;
+        gap: 22px;
+        margin-top: 30px;
+      }
+
+      .section-card {
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        padding: clamp(18px, 3vw, 32px);
+      }
+
+      .section-heading {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 38rem);
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+
+      .section-heading h2 {
+        margin: 5px 0 0;
+        font-size: clamp(1.55rem, 3vw, 2.7rem);
+        letter-spacing: -0.04em;
+      }
+
+      .section-heading p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+        gap: 14px;
+      }
+
+      .concept-card {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: var(--surface-2);
+        padding: 16px;
+      }
+
+      .concept-card h3 {
+        margin: 0 0 8px;
+        font-size: 1rem;
+      }
+
+      .concept-card p {
+        margin: 6px 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.48;
+      }
+
+      .concept-card .constraint {
+        border-left: 3px solid var(--decision);
+        color: var(--ink);
+        padding-left: 9px;
+      }
+
+      .option-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .option {
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        background: var(--surface);
+        padding: 12px;
+      }
+
+      .option h4 {
+        margin: 0 0 8px;
+      }
+
+      .option .gain {
+        color: var(--success);
+      }
+
+      .option .cost {
+        color: var(--danger);
+      }
+
+      .failure-card {
+        border-top: 4px solid var(--danger);
+      }
+
+      .recall-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      details.recall {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        background: var(--surface-2);
+        padding: 0 15px;
+      }
+
+      details.recall summary {
+        cursor: pointer;
+        font-weight: 760;
+        line-height: 1.4;
+        padding: 15px 0;
+      }
+
+      details.recall p {
+        border-top: 1px solid var(--line);
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+        padding: 14px 0 16px;
+      }
+
+      .reference-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .reference-grid h3 {
+        margin-top: 0;
+      }
+
+      .glossary-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .glossary-list div {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 9px;
+      }
+
+      .glossary-list dt {
+        font-weight: 820;
+      }
+
+      .glossary-list dd {
+        margin: 3px 0 0;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.45;
+      }
+
+      .source-list,
+      .simplification-list {
+        margin: 0;
+        padding-left: 19px;
+      }
+
+      .source-list li,
+      .simplification-list li {
+        margin: 7px 0;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .source-list a {
+        color: var(--accent-strong);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        clip-path: inset(50%);
+      }
+
+      @media (max-width: 980px) {
+        .masthead,
+        .section-heading {
+          grid-template-columns: 1fr;
+        }
+
+        .learning-grid {
+          grid-template-columns: 1fr;
+          min-height: 0;
+        }
+
+        .canvas-column {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .teaching-column {
+          min-height: 520px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          padding: 10px 6px 32px;
+        }
+
+        .lesson-toolbar,
+        .canvas-head,
+        .inspector-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .lesson-toolbar {
+          display: flex;
+        }
+
+        .scenario-tabs {
+          width: 100%;
+        }
+
+        .view-tabs {
+          width: 100%;
+          overflow-x: auto;
+        }
+
+        .map-scroll {
+          padding-right: 10px;
+          padding-left: 10px;
+        }
+
+        .inspect-grid,
+        .state-grid,
+        .reference-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .section-card {
+          border-radius: 15px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.001ms !important;
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+
+        .page {
+          max-width: none;
+          padding: 0;
+        }
+
+        .lesson-shell,
+        .section-card {
+          break-inside: avoid;
+          box-shadow: none;
+        }
+
+        .lesson-toolbar,
+        .step-nav,
+        .inspector-tabs {
+          display: none;
+        }
+
+        .learning-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .canvas-column {
+          border: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">Interactive visual lesson</p>
+          <h1 id="topic-title">Technical concept</h1>
+          <p class="problem" id="topic-problem"></p>
+        </div>
+        <aside class="objective-card" aria-labelledby="objective-label">
+          <span class="micro-label" id="objective-label">Learning objective</span>
+          <p id="topic-objective"></p>
+          <div class="meta-line" id="topic-meta"></div>
+        </aside>
+      </header>
+
+      <section class="lesson-shell" aria-label="Guided system lesson">
+        <div class="lesson-toolbar">
+          <div class="scenario-tabs" id="scenario-tabs" role="tablist" aria-label="Scenarios"></div>
+          <div class="view-tabs" aria-label="System map view">
+            <button class="view-button" type="button" data-view="flow" aria-pressed="true">Flow</button>
+            <button class="view-button" type="button" data-view="ownership" aria-pressed="false">Ownership</button>
+            <button class="view-button" type="button" data-view="state" aria-pressed="false">State</button>
+          </div>
+        </div>
+
+        <div class="learning-grid">
+          <div class="canvas-column">
+            <div class="canvas-head">
+              <div>
+                <span class="micro-label">System canvas</span>
+                <p id="scenario-summary"></p>
+              </div>
+              <span class="progress-text" id="progress-text" aria-live="polite"></span>
+            </div>
+
+            <div class="map-scroll">
+              <div class="map-region" id="map-region">
+                <div class="boundary-grid" id="boundary-grid"></div>
+                <svg class="connection-layer" id="connection-layer" aria-hidden="true">
+                  <defs>
+                    <marker
+                      id="arrowhead"
+                      markerWidth="10"
+                      markerHeight="10"
+                      refX="8"
+                      refY="5"
+                      orient="auto-start-reverse"
+                    >
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"></path>
+                    </marker>
+                  </defs>
+                  <path id="flow-line" class="flow-line"></path>
+                  <circle id="flow-pulse" class="flow-pulse" r="7"></circle>
+                </svg>
+                <div class="flow-label" id="flow-label" hidden></div>
+              </div>
+              <div class="start-cue">
+                <span class="start-dot" aria-hidden="true"></span>
+                <span id="start-cue-text"></span>
+              </div>
+            </div>
+
+            <div class="artifact-shelf">
+              <span class="micro-label">Artifacts active in this step</span>
+              <div class="artifact-list" id="artifact-list"></div>
+              <p class="empty-note" id="artifact-empty">No material artifact crosses this boundary.</p>
+            </div>
+          </div>
+
+          <aside class="teaching-column" aria-label="Current step explanation">
+            <div class="step-card">
+              <div class="step-kicker">
+                <span class="step-number" id="step-number"></span>
+                <span class="badge kind-badge" id="step-kind"></span>
+              </div>
+              <h2 id="step-title"></h2>
+              <p class="step-what" id="step-what"></p>
+              <div class="explain-grid">
+                <div class="explain-box">
+                  <strong>Why this happens</strong>
+                  <p id="step-why"></p>
+                </div>
+                <div class="explain-box owner">
+                  <strong>Who owns this step</strong>
+                  <p id="step-owner"></p>
+                </div>
+              </div>
+              <div class="risk-box" id="risk-box" hidden>
+                <strong>What can go wrong here</strong>
+                <p id="risk-text"></p>
+              </div>
+              <div class="tradeoff-links" id="tradeoff-links"></div>
+            </div>
+
+            <div class="step-nav">
+              <button class="icon-button" id="previous-step" type="button" aria-label="Previous step">
+                ← Previous
+              </button>
+              <div class="progress-track" aria-hidden="true">
+                <span class="progress-fill" id="progress-fill"></span>
+              </div>
+              <button class="primary-button" id="next-step" type="button">Next →</button>
+            </div>
+            <div class="step-actions" style="justify-content: center; padding: 0 18px 14px">
+              <button class="icon-button" id="restart-flow" type="button">↺ Restart</button>
+              <button class="icon-button" id="play-flow" type="button" aria-pressed="false">▶ Play flow</button>
+            </div>
+          </aside>
+        </div>
+
+        <section class="inspector" aria-labelledby="inspector-title">
+          <div class="inspector-head">
+            <div>
+              <span class="micro-label">Inspect</span>
+              <strong id="inspector-title">What changed?</strong>
+            </div>
+            <span class="badge" id="transport-badge" hidden></span>
+          </div>
+          <div class="inspector-tabs" id="inspector-tabs" role="tablist" aria-label="Step details">
+            <button class="inspector-tab" type="button" data-inspector="state" aria-selected="true">
+              State change
+            </button>
+            <button class="inspector-tab" type="button" data-inspector="exchange" aria-selected="false">
+              Exchange
+            </button>
+            <button class="inspector-tab" type="button" data-inspector="ownership" aria-selected="false">
+              Responsibility
+            </button>
+          </div>
+          <div class="inspector-content" id="inspector-content"></div>
+        </section>
+      </section>
+
+      <div class="deep-dive">
+        <section class="section-card" id="variants-section">
+          <div class="section-heading">
+            <div>
+              <span class="micro-label">Compare</span>
+              <h2>What changes under different constraints?</h2>
+            </div>
+            <p>
+              Variants are changes to the system model, not merely different names for the same flow.
+            </p>
+          </div>
+          <div class="card-grid" id="variant-grid"></div>
+        </section>
+
+        <section class="section-card" id="failures-section">
+          <div class="section-heading">
+            <div>
+              <span class="micro-label">Stress the model</span>
+              <h2>Where assumptions fail</h2>
+            </div>
+            <p>Failures are attached to the point where they become detectable and recoverable.</p>
+          </div>
+          <div class="card-grid" id="failure-grid"></div>
+        </section>
+
+        <section class="section-card" id="tradeoffs-section">
+          <div class="section-heading">
+            <div>
+              <span class="micro-label">Decide</span>
+              <h2>Tradeoffs created by the constraints</h2>
+            </div>
+            <p>Each choice connects an assumption to what it gains and what it costs.</p>
+          </div>
+          <div class="card-grid" id="tradeoff-grid"></div>
+        </section>
+
+        <section class="section-card" id="recall-section">
+          <div class="section-heading">
+            <div>
+              <span class="micro-label">Active recall</span>
+              <h2>Can you reconstruct the model?</h2>
+            </div>
+            <p>Answer before revealing. Recognition is easier than understanding.</p>
+          </div>
+          <div class="recall-grid" id="recall-grid"></div>
+        </section>
+
+        <section class="section-card" id="reference-section">
+          <div class="section-heading">
+            <div>
+              <span class="micro-label">Reference</span>
+              <h2>Terms, simplifications, and sources</h2>
+            </div>
+            <p id="key-idea"></p>
+          </div>
+          <div class="reference-grid">
+            <div>
+              <h3>Glossary</h3>
+              <dl class="glossary-list" id="glossary-list"></dl>
+            </div>
+            <div>
+              <h3>Simplifications</h3>
+              <ul class="simplification-list" id="simplification-list"></ul>
+              <h3>Sources</h3>
+              <ul class="source-list" id="source-list"></ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script id="lesson-data" type="application/json">{{LESSON_DATA}}</script>
+    <script>
+      (() => {
+        "use strict";
+
+        const lesson = JSON.parse(document.getElementById("lesson-data").textContent);
+        const $ = (selector, root = document) => root.querySelector(selector);
+        const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+        const byId = (items, id) => (items || []).find((item) => item.id === id);
+        const asArray = (value) => (Array.isArray(value) ? value : value ? [value] : []);
+        const text = (node, value, fallback = "Not specified") => {
+          node.textContent = value || fallback;
+        };
+
+        const state = {
+          scenarioIndex: 0,
+          stepIndex: 0,
+          view: "flow",
+          inspector: "state",
+          selectedActorId: null,
+          selectedArtifactId: null,
+          playTimer: null,
+        };
+
+        const topic = lesson.topic || {};
+        const actors = lesson.actors || [];
+        const boundaries = lesson.boundaries || [];
+        const artifacts = lesson.artifacts || [];
+        const scenarios = lesson.scenarios || [];
+        const tradeoffs = lesson.tradeoffs || [];
+
+        if (!scenarios.length) {
+          throw new Error("The visual lesson needs at least one scenario.");
+        }
+
+        function currentScenario() {
+          return scenarios[state.scenarioIndex];
+        }
+
+        function currentSteps() {
+          return currentScenario().steps || [];
+        }
+
+        function currentStep() {
+          return currentSteps()[state.stepIndex] || {};
+        }
+
+        function actorName(id) {
+          return byId(actors, id)?.name || id || "Not assigned";
+        }
+
+        function appendChip(container, value) {
+          if (!value) return;
+          const chip = document.createElement("span");
+          chip.className = "chip";
+          chip.textContent = value;
+          container.append(chip);
+        }
+
+        function appendList(container, values, emptyText = "None for this step.") {
+          const items = asArray(values);
+          if (!items.length) {
+            const item = document.createElement("li");
+            item.textContent = emptyText;
+            container.append(item);
+            return;
+          }
+          items.forEach((value) => {
+            const item = document.createElement("li");
+            item.textContent = value;
+            container.append(item);
+          });
+        }
+
+        function createList(values, className = "detail-list", emptyText) {
+          const list = document.createElement("ul");
+          list.className = className;
+          appendList(list, values, emptyText);
+          return list;
+        }
+
+        function createPanel(title, className = "") {
+          const panel = document.createElement("section");
+          panel.className = `inspect-panel ${className}`.trim();
+          const heading = document.createElement("h3");
+          heading.textContent = title;
+          panel.append(heading);
+          return panel;
+        }
+
+        function safeSourceUrl(url) {
+          try {
+            const parsed = new URL(url);
+            return ["http:", "https:"].includes(parsed.protocol) ? parsed.href : null;
+          } catch {
+            return null;
+          }
+        }
+
+        function renderHeader() {
+          document.title = `${topic.title || "Technical concept"} — visual lesson`;
+          text($("#topic-title"), topic.title);
+          text($("#topic-problem"), topic.problem);
+          text($("#topic-objective"), topic.objective);
+          text($("#key-idea"), topic.keyIdea, "");
+
+          const meta = $("#topic-meta");
+          meta.replaceChildren();
+          appendChip(meta, topic.level);
+          appendChip(meta, topic.scope);
+          appendChip(meta, topic.modelType);
+        }
+
+        function renderScenarioTabs() {
+          const tabs = $("#scenario-tabs");
+          tabs.replaceChildren();
+          scenarios.forEach((scenario, index) => {
+            const button = document.createElement("button");
+            button.className = "tab";
+            button.type = "button";
+            button.role = "tab";
+            button.textContent = scenario.name;
+            button.setAttribute("aria-selected", String(index === state.scenarioIndex));
+            button.addEventListener("click", () => {
+              stopPlaying();
+              state.scenarioIndex = index;
+              state.stepIndex = 0;
+              state.selectedActorId = null;
+              state.selectedArtifactId = null;
+              renderLesson();
+            });
+            tabs.append(button);
+          });
+        }
+
+        function renderMap() {
+          const grid = $("#boundary-grid");
+          grid.replaceChildren();
+          grid.style.setProperty("--boundary-count", String(Math.max(boundaries.length, 1)));
+
+          boundaries.forEach((boundary) => {
+            const region = document.createElement("section");
+            region.className = "boundary";
+            region.dataset.boundaryId = boundary.id;
+            region.dataset.boundaryType = boundary.type || "system";
+            region.title = boundary.description || "";
+
+            const name = document.createElement("h3");
+            name.className = "boundary-name";
+            name.textContent = boundary.name;
+
+            const owner = document.createElement("p");
+            owner.className = "boundary-owner";
+            owner.textContent = boundary.owner ? `Controlled by ${boundary.owner}` : boundary.description || "";
+
+            const stack = document.createElement("div");
+            stack.className = "actor-stack";
+
+            actors
+              .filter((actor) => actor.boundaryId === boundary.id)
+              .forEach((actor) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "actor";
+                button.dataset.actorId = actor.id;
+                button.setAttribute("aria-label", `${actor.name}: ${actor.role || actor.kind || "actor"}`);
+
+                const kind = document.createElement("span");
+                kind.className = "actor-kind";
+                kind.textContent = actor.kind || "actor";
+
+                const actorTitle = document.createElement("span");
+                actorTitle.className = "actor-name";
+                actorTitle.textContent = actor.name;
+
+                const role = document.createElement("span");
+                role.className = "actor-role";
+                role.textContent = actor.role || "";
+
+                button.append(kind, actorTitle, role);
+                button.addEventListener("click", () => {
+                  state.selectedActorId = actor.id;
+                  state.selectedArtifactId = null;
+                  state.inspector = "ownership";
+                  renderInspectorTabs();
+                  renderInspector();
+                });
+                stack.append(button);
+              });
+
+            region.append(name, owner, stack);
+            grid.append(region);
+          });
+
+          applyStepToMap();
+        }
+
+        function applyStepToMap() {
+          const step = currentStep();
+          $$(".actor").forEach((node) => {
+            node.classList.remove("is-active", "is-sender", "is-receiver", "is-owner");
+          });
+
+          const sender = step.from ? $(`[data-actor-id="${CSS.escape(step.from)}"]`) : null;
+          const receiver = step.to ? $(`[data-actor-id="${CSS.escape(step.to)}"]`) : null;
+          const ownerId =
+            actors.some((actor) => actor.id === step.owner) ? step.owner : step.actor || null;
+          const owner = ownerId ? $(`[data-actor-id="${CSS.escape(ownerId)}"]`) : null;
+
+          if (state.view === "flow") {
+            if (sender) sender.classList.add("is-active", "is-sender");
+            if (receiver) receiver.classList.add("is-active", "is-receiver");
+            if (!sender && !receiver && owner) owner.classList.add("is-active", "is-owner");
+          } else if (state.view === "ownership") {
+            actors.forEach((actor) => {
+              if (actor.id === ownerId || actor.name === step.owner) {
+                $(`[data-actor-id="${CSS.escape(actor.id)}"]`)?.classList.add("is-active", "is-owner");
+              }
+            });
+          } else if (state.view === "state") {
+            const holders = new Set(
+              asArray(step.artifacts)
+                .map((id) => byId(artifacts, id))
+                .filter(Boolean)
+                .flatMap((artifact) => asArray(artifact.heldBy)),
+            );
+            holders.forEach((id) =>
+              $(`[data-actor-id="${CSS.escape(id)}"]`)?.classList.add("is-active"),
+            );
+          }
+
+          requestAnimationFrame(drawConnection);
+        }
+
+        function drawConnection() {
+          const step = currentStep();
+          const map = $("#map-region");
+          const svg = $("#connection-layer");
+          const line = $("#flow-line");
+          const pulse = $("#flow-pulse");
+          const label = $("#flow-label");
+          const fromNode = step.from ? $(`[data-actor-id="${CSS.escape(step.from)}"]`) : null;
+          const toNode = step.to ? $(`[data-actor-id="${CSS.escape(step.to)}"]`) : null;
+
+          const width = map.clientWidth;
+          const height = map.clientHeight;
+          svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+          if (state.view !== "flow" || !fromNode || !toNode || fromNode === toNode) {
+            line.setAttribute("d", "");
+            pulse.hidden = true;
+            label.hidden = true;
+            return;
+          }
+
+          const mapRect = map.getBoundingClientRect();
+          const fromRect = fromNode.getBoundingClientRect();
+          const toRect = toNode.getBoundingClientRect();
+          const leftToRight = fromRect.left < toRect.left;
+          const startX = (leftToRight ? fromRect.right : fromRect.left) - mapRect.left;
+          const endX = (leftToRight ? toRect.left : toRect.right) - mapRect.left;
+          const startY = fromRect.top + fromRect.height / 2 - mapRect.top;
+          const endY = toRect.top + toRect.height / 2 - mapRect.top;
+          const distance = Math.abs(endX - startX);
+          const bend = Math.max(38, distance * 0.36);
+          const control1 = startX + (leftToRight ? bend : -bend);
+          const control2 = endX + (leftToRight ? -bend : bend);
+          const path = `M ${startX} ${startY} C ${control1} ${startY}, ${control2} ${endY}, ${endX} ${endY}`;
+
+          line.className.baseVal = `flow-line ${step.kind || "request"}`;
+          line.setAttribute("d", path);
+          pulse.hidden = true;
+          const length = line.getTotalLength();
+          if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            line.getAnimations().forEach((animation) => animation.cancel());
+            line.animate(
+              [
+                { strokeDasharray: `0 ${length}`, opacity: 0.4 },
+                { strokeDasharray: `${length} 0`, opacity: 1 },
+              ],
+              { duration: 620, easing: "ease-out" },
+            );
+          }
+
+          const midpoint = line.getPointAtLength(length / 2);
+          label.textContent = step.label || step.title;
+          label.style.left = `${midpoint.x}px`;
+          label.style.top = `${midpoint.y - 17}px`;
+          label.hidden = false;
+        }
+
+        function renderStep() {
+          const scenario = currentScenario();
+          const steps = currentSteps();
+          const step = currentStep();
+          const number = state.stepIndex + 1;
+
+          text($("#scenario-summary"), scenario.summary);
+          text($("#start-cue-text"), `Start here: ${scenario.start || steps[0]?.title || "first step"}`);
+          text($("#progress-text"), `Step ${number} of ${steps.length}`);
+          text($("#step-number"), `Step ${number}`);
+          text($("#step-kind"), step.kind || "step");
+          text($("#step-title"), step.title);
+          text($("#step-what"), step.what);
+          text($("#step-why"), step.why);
+          text(
+            $("#step-owner"),
+            step.owner ? `${actorName(step.owner)}.` : "Responsibility is shared or contextual.",
+          );
+
+          const riskBox = $("#risk-box");
+          const risk = step.risk;
+          riskBox.hidden = !risk;
+          if (risk) {
+            const parts = [risk.trigger, risk.effect, risk.response].filter(Boolean);
+            text($("#risk-text"), parts.join(" "));
+          }
+
+          const transport = $("#transport-badge");
+          transport.hidden = !step.transport;
+          text(transport, step.transport, "");
+
+          $("#previous-step").disabled = state.stepIndex === 0;
+          const last = state.stepIndex === steps.length - 1;
+          $("#next-step").disabled = last;
+          $("#next-step").textContent = last ? "Flow complete" : "Next →";
+          $("#progress-fill").style.width = `${(number / Math.max(steps.length, 1)) * 100}%`;
+
+          renderTradeoffLinks();
+          renderArtifacts();
+          applyStepToMap();
+        }
+
+        function renderTradeoffLinks() {
+          const container = $("#tradeoff-links");
+          container.replaceChildren();
+          asArray(currentStep().tradeoffIds).forEach((id) => {
+            const tradeoff = byId(tradeoffs, id);
+            if (!tradeoff) return;
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "tradeoff-link";
+            button.textContent = `Decision: ${tradeoff.decision}`;
+            button.addEventListener("click", () => {
+              document.getElementById(`tradeoff-${id}`)?.scrollIntoView({ block: "center" });
+            });
+            container.append(button);
+          });
+        }
+
+        function renderArtifacts() {
+          const list = $("#artifact-list");
+          list.replaceChildren();
+          const active = asArray(currentStep().artifacts)
+            .map((id) => byId(artifacts, id))
+            .filter(Boolean);
+          $("#artifact-empty").hidden = active.length > 0;
+
+          active.forEach((artifact) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "artifact-button";
+            button.textContent = `${artifact.name} · ${artifact.kind || "artifact"}`;
+            button.addEventListener("click", () => {
+              state.selectedArtifactId = artifact.id;
+              state.selectedActorId = null;
+              state.inspector = "exchange";
+              renderInspectorTabs();
+              renderInspector();
+            });
+            list.append(button);
+          });
+        }
+
+        function renderInspectorTabs() {
+          $$(".inspector-tab").forEach((button) => {
+            button.setAttribute("aria-selected", String(button.dataset.inspector === state.inspector));
+          });
+        }
+
+        function renderInspector() {
+          const container = $("#inspector-content");
+          container.replaceChildren();
+
+          if (state.inspector === "state") renderStateInspector(container);
+          if (state.inspector === "exchange") renderExchangeInspector(container);
+          if (state.inspector === "ownership") renderOwnershipInspector(container);
+        }
+
+        function renderStateInspector(container) {
+          const step = currentStep();
+          const grid = document.createElement("div");
+          grid.className = "state-grid";
+          const before = createPanel("Before this step", "state-before");
+          const after = createPanel("After this step", "state-after");
+          before.append(createList(step.stateBefore, "state-list", "No relevant state is established yet."));
+          after.append(createList(step.stateAfter, "state-list", "No material state change."));
+          grid.append(before, after);
+          container.append(grid);
+        }
+
+        function renderExchangeInspector(container) {
+          if (state.selectedArtifactId) {
+            const artifact = byId(artifacts, state.selectedArtifactId);
+            if (artifact) {
+              const detail = document.createElement("article");
+              detail.className = "artifact-detail";
+              const title = document.createElement("h3");
+              title.textContent = artifact.name;
+              const description = document.createElement("p");
+              description.textContent = artifact.description || artifact.kind || "";
+              detail.append(title, description);
+
+              const grid = document.createElement("div");
+              grid.className = "inspect-grid";
+              [
+                ["Created by", actorName(artifact.createdBy)],
+                ["Held by", asArray(artifact.heldBy).map(actorName).join(", ") || "Not specified"],
+                ["Validated by", asArray(artifact.validatedBy).map(actorName).join(", ") || "Not specified"],
+                ["Lifetime", artifact.lifetime || "Not specified"],
+                ["Sensitivity", artifact.sensitivity || "Not specified"],
+                ["Representative form", artifact.representation || "Not shown"],
+              ].forEach(([heading, value]) => {
+                const panel = createPanel(heading);
+                const pre = document.createElement("pre");
+                pre.textContent = value;
+                panel.append(pre);
+                grid.append(panel);
+              });
+              detail.append(grid);
+              container.append(detail);
+              return;
+            }
+          }
+
+          const inspect = currentStep().inspect || {};
+          const entries = Object.entries(inspect);
+          if (!entries.length) {
+            const note = document.createElement("p");
+            note.className = "empty-note";
+            note.textContent = "No protocol-level exchange is needed to understand this step.";
+            container.append(note);
+            return;
+          }
+
+          const grid = document.createElement("div");
+          grid.className = "inspect-grid";
+          entries.forEach(([key, value]) => {
+            const panel = createPanel(key.replace(/([A-Z])/g, " $1").replace(/^./, (c) => c.toUpperCase()));
+            const pre = document.createElement("pre");
+            pre.textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2);
+            panel.append(pre);
+            grid.append(panel);
+          });
+          container.append(grid);
+        }
+
+        function renderOwnershipInspector(container) {
+          const selected =
+            byId(actors, state.selectedActorId) ||
+            byId(actors, currentStep().from) ||
+            byId(actors, currentStep().to);
+
+          if (!selected) {
+            const note = document.createElement("p");
+            note.className = "empty-note";
+            note.textContent = `Step owner: ${currentStep().owner || "shared or contextual"}.`;
+            container.append(note);
+            return;
+          }
+
+          const detail = document.createElement("article");
+          detail.className = "actor-detail";
+          const title = document.createElement("h3");
+          title.textContent = selected.name;
+          const role = document.createElement("p");
+          role.textContent = selected.role || "";
+          detail.append(title, role);
+
+          const grid = document.createElement("div");
+          grid.className = "inspect-grid";
+          const owns = createPanel("Responsible for");
+          owns.append(createList(selected.responsibilities, "responsibility-list", "No responsibilities listed."));
+          const notOwn = createPanel("Does not own");
+          notOwn.append(createList(selected.doesNotOwn, "responsibility-list", "No explicit exclusion listed."));
+          grid.append(owns, notOwn);
+          detail.append(grid);
+          container.append(detail);
+        }
+
+        function makeConceptCard(title, className = "") {
+          const card = document.createElement("article");
+          card.className = `concept-card ${className}`.trim();
+          const heading = document.createElement("h3");
+          heading.textContent = title;
+          card.append(heading);
+          return card;
+        }
+
+        function addLabeledText(card, label, value, className = "") {
+          if (!value) return;
+          const paragraph = document.createElement("p");
+          paragraph.className = className;
+          const strong = document.createElement("strong");
+          strong.textContent = `${label}: `;
+          paragraph.append(strong, document.createTextNode(value));
+          card.append(paragraph);
+        }
+
+        function renderDeepDive() {
+          renderVariants();
+          renderFailures();
+          renderTradeoffs();
+          renderRecall();
+          renderReference();
+        }
+
+        function renderVariants() {
+          const variants = lesson.variants || [];
+          const section = $("#variants-section");
+          section.hidden = variants.length === 0;
+          const grid = $("#variant-grid");
+          grid.replaceChildren();
+          variants.forEach((variant) => {
+            const card = makeConceptCard(variant.name);
+            addLabeledText(card, "Changed constraint", variant.constraint, "constraint");
+            addLabeledText(card, "What changes", asArray(variant.changes).join(" "));
+            addLabeledText(card, "What it gains", asArray(variant.benefits).join(" "));
+            addLabeledText(card, "What it costs", asArray(variant.costs).join(" "));
+            addLabeledText(card, "Must remain true", asArray(variant.assumptions).join(" "));
+            grid.append(card);
+          });
+        }
+
+        function renderFailures() {
+          const failures = lesson.failures || [];
+          const section = $("#failures-section");
+          section.hidden = failures.length === 0;
+          const grid = $("#failure-grid");
+          grid.replaceChildren();
+          failures.forEach((failure) => {
+            const card = makeConceptCard(failure.name, "failure-card");
+            const scenario = byId(scenarios, failure.scenarioId);
+            const location = [
+              scenario?.name,
+              failure.atStep ? `step ${failure.atStep}` : null,
+            ].filter(Boolean).join(", ");
+            addLabeledText(card, "Appears at", location);
+            addLabeledText(card, "Trigger", failure.trigger);
+            addLabeledText(card, "Detected by", actorName(failure.detectedBy));
+            addLabeledText(card, "Visible effect", failure.effect);
+            addLabeledText(card, "Recovery", failure.recovery);
+            addLabeledText(card, "Prevention", failure.prevention);
+            grid.append(card);
+          });
+        }
+
+        function renderTradeoffs() {
+          const section = $("#tradeoffs-section");
+          section.hidden = tradeoffs.length === 0;
+          const grid = $("#tradeoff-grid");
+          grid.replaceChildren();
+          tradeoffs.forEach((tradeoff) => {
+            const card = makeConceptCard(tradeoff.decision);
+            card.id = `tradeoff-${tradeoff.id}`;
+            addLabeledText(card, "Constraint", tradeoff.context, "constraint");
+
+            const optionGrid = document.createElement("div");
+            optionGrid.className = "option-grid";
+            asArray(tradeoff.options).forEach((option) => {
+              const optionCard = document.createElement("div");
+              optionCard.className = "option";
+              const title = document.createElement("h4");
+              title.textContent = option.name;
+              optionCard.append(title);
+              addLabeledText(optionCard, "Gain", asArray(option.benefits).join(" "), "gain");
+              addLabeledText(optionCard, "Cost", asArray(option.costs).join(" "), "cost");
+              addLabeledText(optionCard, "Choose when", option.chooseWhen);
+              addLabeledText(optionCard, "Invalid when", option.invalidWhen);
+              optionGrid.append(optionCard);
+            });
+            card.append(optionGrid);
+            grid.append(card);
+          });
+        }
+
+        function renderRecall() {
+          const checkpoints = lesson.checkpoints || [];
+          const section = $("#recall-section");
+          section.hidden = checkpoints.length === 0;
+          const grid = $("#recall-grid");
+          grid.replaceChildren();
+          checkpoints.forEach((checkpoint, index) => {
+            const details = document.createElement("details");
+            details.className = "recall";
+            const summary = document.createElement("summary");
+            summary.textContent = `${index + 1}. ${checkpoint.question}`;
+            const answer = document.createElement("p");
+            answer.textContent = checkpoint.answer;
+            details.append(summary, answer);
+            grid.append(details);
+          });
+        }
+
+        function renderReference() {
+          const glossary = $("#glossary-list");
+          glossary.replaceChildren();
+          asArray(lesson.glossary).forEach((entry) => {
+            const wrapper = document.createElement("div");
+            const term = document.createElement("dt");
+            term.textContent = entry.term;
+            const definition = document.createElement("dd");
+            definition.textContent = entry.definition;
+            wrapper.append(term, definition);
+            glossary.append(wrapper);
+          });
+          if (!lesson.glossary?.length) {
+            const wrapper = document.createElement("div");
+            const definition = document.createElement("dd");
+            definition.textContent = "No specialized terms need defining.";
+            wrapper.append(definition);
+            glossary.append(wrapper);
+          }
+
+          const simplifications = $("#simplification-list");
+          simplifications.replaceChildren();
+          appendList(
+            simplifications,
+            lesson.simplifications,
+            "No material conceptual simplifications are declared.",
+          );
+
+          const sources = $("#source-list");
+          sources.replaceChildren();
+          asArray(lesson.sources).forEach((source) => {
+            const item = document.createElement("li");
+            const url = safeSourceUrl(source.url);
+            if (url) {
+              const link = document.createElement("a");
+              link.href = url;
+              link.textContent = source.title;
+              link.target = "_blank";
+              link.rel = "noreferrer";
+              item.append(link);
+            } else {
+              item.append(document.createTextNode(source.title));
+            }
+            if (source.kind) item.append(document.createTextNode(` — ${source.kind}`));
+            sources.append(item);
+          });
+          if (!lesson.sources?.length) appendList(sources, [], "No external source was required.");
+        }
+
+        function changeStep(delta) {
+          const next = Math.max(0, Math.min(currentSteps().length - 1, state.stepIndex + delta));
+          if (next === state.stepIndex) return;
+          state.stepIndex = next;
+          state.selectedActorId = null;
+          state.selectedArtifactId = null;
+          renderStep();
+          renderInspector();
+        }
+
+        function stopPlaying() {
+          if (state.playTimer) window.clearInterval(state.playTimer);
+          state.playTimer = null;
+          const button = $("#play-flow");
+          button.setAttribute("aria-pressed", "false");
+          button.textContent = "▶ Play flow";
+        }
+
+        function togglePlaying() {
+          if (state.playTimer) {
+            stopPlaying();
+            return;
+          }
+          if (state.stepIndex === currentSteps().length - 1) state.stepIndex = 0;
+          const button = $("#play-flow");
+          button.setAttribute("aria-pressed", "true");
+          button.textContent = "Ⅱ Pause";
+          renderStep();
+          renderInspector();
+          state.playTimer = window.setInterval(() => {
+            if (state.stepIndex >= currentSteps().length - 1) {
+              stopPlaying();
+              return;
+            }
+            changeStep(1);
+          }, 2600);
+        }
+
+        function renderLesson() {
+          renderScenarioTabs();
+          renderMap();
+          renderStep();
+          renderInspectorTabs();
+          renderInspector();
+        }
+
+        $("#previous-step").addEventListener("click", () => {
+          stopPlaying();
+          changeStep(-1);
+        });
+        $("#next-step").addEventListener("click", () => {
+          stopPlaying();
+          changeStep(1);
+        });
+        $("#restart-flow").addEventListener("click", () => {
+          stopPlaying();
+          state.stepIndex = 0;
+          state.selectedActorId = null;
+          state.selectedArtifactId = null;
+          renderStep();
+          renderInspector();
+        });
+        $("#play-flow").addEventListener("click", togglePlaying);
+
+        $$(".view-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.view = button.dataset.view;
+            $$(".view-button").forEach((candidate) =>
+              candidate.setAttribute("aria-pressed", String(candidate === button)),
+            );
+            applyStepToMap();
+            if (state.view === "state") state.inspector = "state";
+            if (state.view === "ownership") state.inspector = "ownership";
+            renderInspectorTabs();
+            renderInspector();
+          });
+        });
+
+        $$(".inspector-tab").forEach((button) => {
+          button.addEventListener("click", () => {
+            state.inspector = button.dataset.inspector;
+            state.selectedActorId = null;
+            state.selectedArtifactId = null;
+            renderInspectorTabs();
+            renderInspector();
+          });
+        });
+
+        window.addEventListener("resize", () => requestAnimationFrame(drawConnection));
+        window.addEventListener("beforeunload", stopPlaying);
+
+        renderHeader();
+        renderLesson();
+        renderDeepDive();
+      })();
+    </script>
+  </body>
+</html>
