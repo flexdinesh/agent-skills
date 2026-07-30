@@ -1,6 +1,6 @@
 ---
 name: visual-learning
-description: "Teach a technical concept as a progressive, interactive visual lesson built around systems, boundaries, ownership, state, and message flow. Use only when the user explicitly invokes `visual-learning` or `$visual-learning`; do not auto-invoke from context."
+description: "Teach a technical concept through a concrete, example-driven visual lesson. Choose the visual form that best fits the idea; use systems, boundaries, state, and message flow when they clarify the concept, not as a mandatory output schema. Use only when the user explicitly invokes `visual-learning` or `$visual-learning`; do not auto-invoke from context."
 ---
 
 # Visual Learning
@@ -8,203 +8,176 @@ description: "Teach a technical concept as a progressive, interactive visual les
 Manual invocation only: use this skill only when the user explicitly invokes
 `visual-learning` or `$visual-learning`; do not auto-invoke it from task context.
 
-## Purpose
+## Intent
 
-Transform a technical concept into a self-contained browser lesson that helps the
-learner construct a mental model. Teach in this order:
+Help the learner build a mental model they can use to explain, predict, and reason about
+a technical concept.
 
-> boundaries → ownership → actors → state → messages → transformations → failures →
-> tradeoffs
+Treat this skill as a set of teaching heuristics and examples, not a rigid lesson
+format. Adapt the structure, depth, visuals, and interaction to the concept and the
+learner. Do not include a section, control, diagram element, or model field merely
+because it appears in this skill or its references.
 
-The output is not merely a diagram or an illustrated article. It is a guided,
-interactive explanation in which the system view, current step, visible data, and
-teaching text stay synchronized.
+Examples should carry the lesson. Start with a small, concrete situation the learner can
+follow, let them observe what happens, and extract the abstraction from it. Add a second
+example when contrast reveals an important rule, edge case, or tradeoff.
 
-Optimise for these learner questions:
+## What is flexible
 
-1. What problem does this solve?
-2. Who participates, and what does each participant own?
-3. Where are the system, trust, and security boundaries?
-4. Where does the interaction begin?
-5. What happens next?
-6. What data or state exists before and after each step?
-7. Who creates, holds, sends, changes, and validates each artifact?
-8. What assumptions does the design rely on?
-9. What variants are common, and why would someone choose one?
-10. What breaks when an assumption fails?
+Choose the representation that makes the concept easiest to understand. Depending on
+the topic, that might be:
 
-## Required resources
+- an animated request or event flow
+- a timeline of state changes
+- annotated code that changes one line at a time
+- a before-and-after comparison
+- a memory, ownership, or dependency map
+- a small simulation with a few meaningful controls
+- a layered diagram
+- a worked example with lightweight visuals
+- prose or ASCII when a browser artifact would add ceremony without insight
 
-Before creating a lesson, read:
+The common systems lens—boundaries, ownership, actors, state, messages,
+transformations, failures, and tradeoffs—is a useful menu. Select the parts that explain
+the topic. Reorder or omit the rest.
 
-- [references/lesson-design.md](references/lesson-design.md) in full for the learning
-  sequence, visual grammar, lesson model, research rules, and quality bar.
-- [assets/lesson-template.html](assets/lesson-template.html) in full. Treat it as an
-  immutable source template.
+For example:
 
-## Default output
+- OAuth benefits from actors, trust boundaries, messages, artifacts, and validation.
+- A closure may be clearer as annotated code plus a changing environment diagram; it
+  does not need trust boundaries or a protocol inspector.
+- Eventual consistency may need two replicas, a timeline, and a failure toggle; it does
+  not necessarily need an ownership section or glossary.
+- Type inference may work best as a series of expressions with inferred types revealed
+  on demand; a system canvas would be artificial.
 
-Create one standalone HTML lesson at
-`.scratch/visual-learning/<topic-slug>.html`, unless the user provides another output
-path. A user-provided path takes precedence.
+Use interaction and visual detail sparingly. Every device should answer a learner
+question or make a change, relationship, or consequence easier to see.
 
-Use lowercase ASCII for the default slug, replacing runs of non-alphanumeric characters
-with `-`. Do not create a project, package manifest, build configuration, or dependency
-tree. The lesson must work by opening the HTML file directly in a modern browser.
+## What is not flexible
 
-If the user explicitly requests ASCII or a prose explanation instead, provide that
-format without creating HTML. Keep the same learning sequence and visual semantics as
-far as the requested medium permits.
+- Follow an explicit user request for format, scope, path, audience, or depth.
+- Keep technical claims accurate. Research authoritative primary sources for current,
+  standards-based, repository-specific, or security-sensitive material.
+- Distinguish verified behavior, common convention, simplification, and inference.
+- Never invent protocol fields, guarantees, security properties, or implementation
+  details.
+- Never expose secrets, personal data, credentials, private URLs, or live tokens.
+- If producing an interactive lesson, make its core teaching usable with a keyboard,
+  visible focus, reduced motion, sufficient contrast, and more than colour alone.
 
-## Workflow
+These are quality and safety constraints. The suggested lesson sequence and visual
+patterns are not.
 
-### 1. Frame the lesson
+## Resources
 
-Resolve the topic, the learner's goal, and the desired depth from the request and
-conversation. Infer sensible defaults rather than interviewing the learner:
+Read [references/lesson-design.md](references/lesson-design.md) for a pattern library,
+worked examples, research guidance, and quality prompts. Use only the patterns relevant
+to the lesson.
 
-- start conceptual, then reveal protocol or implementation detail
-- use a common concrete scenario
-- teach one primary happy path before alternatives
-- include security, failure modes, and tradeoffs when they materially shape the concept
+[assets/lesson-template.html](assets/lesson-template.html) is an optional starting point
+for lessons whose main idea is an ordered flow across actors and boundaries. Read it in
+full only if using it. Copy it to the destination before adapting it; do not modify the
+source asset. Its JSON shape is the template's rendering API, not the required shape of
+every visual lesson.
 
-Ask one targeted question only when the topic is genuinely ambiguous or when choosing
-the wrong scenario would substantially change the lesson.
+You may build a different standalone HTML structure when another visual grammar fits the
+topic better.
 
-Write a one-sentence learning objective. Define the lesson scope and explicitly name
-important material that is out of scope.
+## Output
 
-### 2. Build the mental model before the page
+Honor a user-provided output path or requested medium.
 
-Identify:
+When the user does not specify either, create the smallest useful self-contained lesson.
+A standalone HTML file at `.scratch/visual-learning/<topic-slug>.html` is a good default
+when interaction, animation, or synchronized views improve understanding. A focused
+static visual, ASCII walkthrough, or conversational explanation is also valid when it
+teaches the concept more directly.
 
-- the problem and the key idea that solves it
-- human and machine actors
-- system, ownership, trust, network, and security boundaries
-- durable state, transient state, and exchanged artifacts
-- the starting event and primary sequence
-- transformations and validation decisions
-- common variants
-- meaningful failures and recovery paths
-- decisions whose alternatives have real benefits and costs
-
-Do not start from page layout or decorative styling. First make the system coherent.
-
-### 3. Research and calibrate certainty
-
-For standards, protocols, security-sensitive topics, or current product behaviour,
-research authoritative primary sources. Prefer specifications, official documentation,
-and original papers. For repository-specific lessons, inspect the real implementation
-and configuration.
-
-Separate:
-
-- required behaviour from common convention
-- conceptual simplification from protocol detail
-- standard-defined roles from product-specific names
-- verified claims from inference
-
-Never invent request fields, token contents, guarantees, deployment topologies, or
-security properties. Include source links inside the lesson. Do not embed third-party
-scripts, fonts, images, analytics, or other runtime dependencies.
-
-### 4. Design progressive disclosure
-
-Structure the lesson in layers:
-
-1. **Orient** — problem, objective, smallest useful map, and obvious starting point
-2. **Follow** — one step at a time through the primary flow
-3. **Inspect** — requests, responses, artifacts, and state changes
-4. **Own** — responsibilities, visibility, validation, and trust
-5. **Compare** — common variants under different constraints
-6. **Stress** — failures, attacks, expiry, retries, or invalid assumptions
-7. **Decide** — tradeoffs connected to the step or constraint that creates them
-8. **Recall** — questions that require prediction or reconstruction
-
-Do not reveal every arrow, warning, token, and variant at once. The first view must remain
-understandable without opening any detail panel.
-
-### 5. Build the lesson model
-
-Create one lesson model using the schema and vocabulary in
-[references/lesson-design.md](references/lesson-design.md).
-
-Every flow step must state:
-
-- what happens
-- why it happens
-- who is responsible
-- what crosses a boundary
-- what state or artifact changes
-- what can fail at that moment, when material
-
-Every tradeoff must connect a constraint or assumption to benefits, costs, and a choice
-context. Avoid generic “pros and cons” lists.
-
-### 6. Render the HTML
-
-Copy the entire lesson template to the destination without modifying the source asset.
-Replace the single `{{LESSON_DATA}}` marker with the lesson model.
-
-Before embedding JSON, escape `<`, `>`, `&`, U+2028, and U+2029 as Unicode escapes so
-lesson content cannot terminate the data script. Keep the result standalone.
-
-The template provides the instructional shell and interaction mechanics. Adapt lesson
-content to the template; do not replace it with a generic dashboard, slide deck, blog
-post, Mermaid diagram, or static SVG.
+For a default slug, use lowercase ASCII and replace runs of non-alphanumeric characters
+with `-`. Avoid creating a package, build configuration, or dependency tree unless the
+chosen lesson genuinely needs one. Prefer an artifact that opens directly in a modern
+browser without external runtime dependencies.
 
 Do not automatically open a browser unless the user asks.
 
-### 7. Validate the learning experience
+## A lightweight way to work
 
-Inspect the rendered lesson in a browser when browser tools are available. Verify:
+Use the following as prompts, not gates.
 
-- the starting point is obvious
-- the initial system map is small enough to parse
-- previous, next, play, restart, scenario, layer, and inspector controls work
-- keyboard focus is visible and controls have meaningful labels
-- the lesson remains usable at narrow and wide viewport sizes
-- the workspace uses the available viewport width and height instead of sitting inside
-  a conventional centered page-width wrapper
-- reduced-motion preferences are respected
-- colour is never the only carrier of meaning
-- actor, boundary, artifact, and flow labels do not overlap or clip
-- every step keeps the system highlight, explanation, payload, and state synchronized
-- variants preserve a stable reference model so differences are perceptible
-- tradeoffs identify their triggering constraint or assumption
-- checkpoints require recall rather than copying adjacent text
-- conceptual simplifications, unknowns, and sources are visible
-- there are no external runtime requests or exposed secrets
+### Find the teaching example
 
-Correct problems before reporting completion.
+Choose one concrete scenario that exposes the key mechanism. State what the learner
+will be able to explain or predict after the lesson. Infer a sensible audience and depth
+from the conversation rather than interviewing by default.
 
-## Teaching rules
+Ask one targeted question only when ambiguity would materially change the lesson.
 
-- Lead with a concrete scenario, then name the abstraction.
-- Keep one stable spatial layout while steps advance; movement should represent meaning,
-  not compensate for an unstable diagram.
-- Use animation to show change or direction, never as decoration.
-- Prefer one strong primary flow plus a few materially different variants.
-- Show state before and after important steps.
-- Show an artifact's lifecycle: creator, holder, visibility, validation, and lifetime.
-- Place failure and tradeoff explanations where their cause appears in the flow.
-- Label simplifications explicitly.
-- Explain acronyms on first use and use protocol terminology consistently.
-- Map generic roles to familiar products only after teaching the generic model.
-- End with a compact reconstruction of the mental model.
+### Build the mental model
 
-## Guardrails
+Work out what actually changes in the example and why. Identify only the participants,
+state, boundaries, messages, transformations, constraints, and failures needed to
+explain that change.
 
-- Do not equate visual richness with learning quality.
-- Do not produce a giant all-paths architecture diagram.
-- Do not make ordinary internal function calls into system actors.
-- Do not use unexplained arrows or colour-only categories.
-- Do not hide essential teaching content behind hover interactions.
-- Do not use drag-and-drop as the main interaction; navigation and comparison matter
-  more than rearrangement.
-- Do not constrain the lesson to a conventional article or dashboard max width; let the
-  system canvas expand with the viewport.
-- Do not present one popular implementation as the only valid architecture.
-- Do not flatten properties, consequences, costs, and decisions into one undifferentiated
-  tradeoff list.
-- Never expose secrets, personal data, credentials, private URLs, or live tokens.
+Start from the concept, not from the supplied HTML template or a predetermined page
+layout.
+
+### Pick a visual grammar
+
+Match the representation to the mechanism:
+
+- sequence or causality → steps, timeline, or message flow
+- ownership or containment → nested regions, memory map, or annotated objects
+- transformation → before/after values or staged code
+- alternatives → stable side-by-side comparison
+- feedback or emergence → a small simulation
+- failure → perturb the happy-path example and show the consequence
+
+Combine views only when their synchronization adds insight. A lesson with one excellent
+visual and one worked example is better than a tour of every available widget.
+
+### Teach through progression
+
+Reveal enough context to orient the learner, then let the example unfold in meaningful
+increments. At each increment, explain the important change and the reason for it.
+
+Use questions, predictions, or small experiments where they create useful friction.
+Do not force a quiz, inspector, variant, failure mode, or tradeoff section when it would
+be filler.
+
+### Validate proportionately
+
+Inspect the result in a browser when browser tools are available and an HTML artifact
+was created. Test the interactions and responsive layout that actually exist. Check that
+the example remains coherent, labels are legible, and text and visuals agree.
+
+Apply the relevant quality prompts from the design reference. Do not treat its full list
+as a mandatory completion checklist.
+
+## Teaching preferences
+
+- Prefer showing over announcing: demonstrate the mechanism, then name it.
+- Change one meaningful thing at a time.
+- Keep stable visual anchors when the learner needs to compare steps or variants.
+- Show concrete values, payload shapes, code, or state snapshots when they make an
+  abstraction tangible; keep them short and clearly illustrative.
+- Put an explanation near the example detail that motivates it.
+- Surface a failure or tradeoff at the moment it becomes understandable.
+- Label simplifications when they could otherwise be mistaken for reality.
+- Explain acronyms on first use and keep terminology consistent.
+- End with a compact restatement or reconstruction of the core idea.
+
+These preferences may be bent when the learner, topic, or requested medium calls for a
+different approach.
+
+## Avoid
+
+- forcing every topic into a distributed-systems actor-and-arrow diagram
+- reproducing the reference sequence as page sections by default
+- filling optional schema fields or panels with low-value content
+- adding animation, controls, or visual richness for decoration
+- giant all-paths diagrams
+- unexplained arrows, unstable layouts, or colour-only categories
+- hiding essential teaching behind hover-only interactions
+- presenting one common implementation as the only valid design
+- exhaustive edge cases before the primary example is understood
