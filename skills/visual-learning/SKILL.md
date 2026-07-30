@@ -1,6 +1,6 @@
 ---
 name: visual-learning
-description: "Teach a technical concept through a concrete, example-driven visual lesson. Choose the visual form that best fits the idea; use systems, boundaries, state, and message flow when they clarify the concept, not as a mandatory output schema. Use only when the user explicitly invokes `visual-learning` or `$visual-learning`; do not auto-invoke from context."
+description: "Teach a technical concept through a context-first, progressively example-driven lesson, then choose the visual form that best supports it. Use systems, boundaries, state, and message flow when they clarify the concept, not as a mandatory output schema. Use only when the user explicitly invokes `visual-learning` or `$visual-learning`; do not auto-invoke from context."
 ---
 
 # Visual Learning
@@ -18,9 +18,25 @@ format. Adapt the structure, depth, visuals, and interaction to the concept and 
 learner. Do not include a section, control, diagram element, or model field merely
 because it appears in this skill or its references.
 
-Examples should carry the lesson. Start with a small, concrete situation the learner can
-follow, let them observe what happens, and extract the abstraction from it. Add a second
-example when contrast reveals an important rule, edge case, or tradeoff.
+## Teaching priority
+
+When guidance in this skill competes, use this order:
+
+1. **Orient the learner to the topic.** Establish what it is, how it can be used, why it
+   helps, and the important contextual subtopics needed to understand it well. Give the
+   learner a useful map of the territory, not an exhaustive taxonomy.
+2. **Teach through progressively developed examples.** Begin with the smallest concrete
+   example that makes the core idea observable. Iterate on that example—or add a closely
+   related one—one meaningful change at a time so each step motivates the next concept,
+   rule, edge case, or tradeoff. Let the learner see what happens before extracting the
+   abstraction.
+3. **Apply the visual preferences in this skill.** Once the topic map and example
+   progression are clear, choose the visual grammar, interaction, systems lens, and
+   level of polish that best support them.
+
+The first two priorities may override any visualization prescription, template, or
+pattern in this skill and its references. A simple sequence of worked examples is
+preferable to a richer visual artifact when it teaches the topic more clearly.
 
 ## What is flexible
 
@@ -66,14 +82,15 @@ question or make a change, relationship, or consequence easier to see.
 - If producing an interactive lesson, make its core teaching usable with a keyboard,
   visible focus, reduced motion, sufficient contrast, and more than colour alone.
 
-These are quality and safety constraints. The suggested lesson sequence and visual
-patterns are not.
+These are quality and safety constraints. The teaching priority governs lesson
+sequencing; the suggested visual patterns are flexible.
 
 ## Resources
 
 Read [references/lesson-design.md](references/lesson-design.md) for a pattern library,
 worked examples, research guidance, and quality prompts. Use only the patterns relevant
-to the lesson.
+to the lesson. The teaching priority above governs when the reference suggests a
+different starting point or sequence.
 
 [assets/lesson-template.html](assets/lesson-template.html) is an optional starting point
 for lessons whose main idea is an ordered flow across actors and boundaries. Read it in
@@ -103,15 +120,31 @@ Do not automatically open a browser unless the user asks.
 
 ## A lightweight way to work
 
-Use the following as prompts, not gates.
+Follow the teaching priority above. Within that order, use the following as prompts, not
+gates.
 
-### Find the teaching example
+### Orient the learner
 
-Choose one concrete scenario that exposes the key mechanism. State what the learner
-will be able to explain or predict after the lesson. Infer a sensible audience and depth
-from the conversation rather than interviewing by default.
+Briefly establish what the topic is, where it is used, why it is useful, and which
+surrounding ideas the learner needs. Turn those contextual subtopics into a small
+learning path: prerequisites first, the core mechanism next, and important consequences
+or tradeoffs after they become meaningful.
+
+State what the learner will be able to explain or predict after the lesson. Infer a
+sensible audience and depth from the conversation rather than interviewing by default.
 
 Ask one targeted question only when ambiguity would materially change the lesson.
+
+### Design the example progression
+
+Choose the smallest concrete scenario that exposes the key mechanism. Then plan a short
+series of iterations that each change one meaningful thing and introduce only the
+contextual subtopic needed to explain that change.
+
+Prefer extending a stable example so the learner can compare each step. Add a
+contrasting example when contrast reveals an important rule, edge case, or tradeoff
+more clearly. Do not make the example artificially visual; annotated code, concrete
+values, a worked calculation, prose, or ASCII may be the best teaching form.
 
 ### Build the mental model
 
@@ -138,8 +171,9 @@ visual and one worked example is better than a tour of every available widget.
 
 ### Teach through progression
 
-Reveal enough context to orient the learner, then let the example unfold in meaningful
-increments. At each increment, explain the important change and the reason for it.
+Let the example unfold in meaningful increments. At each increment, explain the
+important change, the reason for it, and how it connects to the topic map. Keep earlier
+parts stable where possible so the learner can see exactly what the new concept changes.
 
 Use questions, predictions, or small experiments where they create useful friction.
 Do not force a quiz, inspector, variant, failure mode, or tradeoff section when it would
