@@ -13,6 +13,7 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
 - `git-worktree` — create, inspect, and clean Git worktrees
+- `obsidian-daily` — manage daily tasks, notes, wins, events, and project summaries in Obsidian
 - `opencode-plugin` — build plugins for OpenCode
 - `plan-mode` — produce a decision-complete plan, read-only
 - `pi-extension` — build extensions for Pi
