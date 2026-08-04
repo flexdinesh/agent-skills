@@ -79,6 +79,18 @@ Use these in priority order. Do not force every lens into every review.
 - Documentation
   - Did a contract, assumption, or operator expectation change enough to need docs or comments?
 
+## Coding Style
+
+Optimize for code that is straightforward for humans to read and reason about.
+
+- Apply the Rule of Three aggressively. Keep small, single-use logic inline, tolerate duplication across two places, and extract an abstraction only when the same meaningful logic appears in roughly three or more places or files.
+- Look across changed files and relevant existing code for the same abstraction being recreated independently. When reuse is justified under the Rule of Three, recommend moving a small, stable abstraction into an existing reusable module or shared utility instead of maintaining parallel versions in multiple files.
+- Prefer explicit code over indirection. Do not introduce wrappers that merely forward to standard-library or framework APIs such as request or response methods; call those APIs directly where they are used.
+- For enums and other small, fixed sets, including fixed arrays, prefer explicit `switch` cases over loop-driven lookup or dispatch when every possible entry is known and can be handled directly.
+- Prefer direct named property access and assignment when property names are known. Avoid dynamic destructuring, computed access, spreading, or object reconstruction that makes the same operation harder to follow.
+- Favor readability over marginal or speculative performance gains. Prefer a clear operation such as `map` over a less-readable loop unless the readable implementation has a concrete, material performance cost.
+- Treat these as secondary readability signals. Report them only when changed code adds meaningful indirection, complexity, or maintenance cost; do not turn the review into a cosmetic style pass.
+
 ## Questions To Ask The User
 
 Ask only when the answer would materially change the review:
@@ -160,7 +172,11 @@ Before flagging something:
 
 Make the findings the product.
 
-- Present findings first, ordered by severity.
+- When there are meaningful readability suggestions, present a `Human readability suggestions` section first.
+- Keep readability suggestions concise and non-blocking. Include file paths, line numbers, and a direct improvement where applicable.
+- Omit the readability section when there are no meaningful suggestions.
+- Follow it with a `Priority findings` section containing actionable findings ordered by severity.
+- Do not repeat a readability suggestion as a priority finding unless it creates a concrete maintenance or behavioral risk.
 - Keep each finding brief, concrete, and fix-oriented.
 - Include file paths and line numbers when citing code.
 - Explain the failure mode or risk in real behavior, safety, compatibility, or maintenance terms.
@@ -170,6 +186,11 @@ Make the findings the product.
 - After findings, include only short open questions, assumptions, or a compact summary if they help interpret the review.
 
 Example
+
+Human readability suggestions:
+[ ] Inline a single-use request wrapper so the request flow is visible at the call site
+
+Priority findings:
 
 P1 - CRITICAL (must fix):
 [ ] SQL injection vulnerability in search query
