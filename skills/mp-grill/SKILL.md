@@ -1,6 +1,6 @@
 ---
-name: grill
-description: "A relentless interview to sharpen a plan or design, maintain the domain language, and chart large efforts until their route is clear. Use only when the user explicitly invokes `grill` or `$grill`; do not auto-invoke from context."
+name: mp-grill
+description: "A relentless interview to sharpen a plan or design, maintain the domain language, and chart large efforts until their route is clear. Use only when the user explicitly invokes `mp-grill` or `$mp-grill`; do not auto-invoke from context."
 disable-model-invocation: true
 ---
 

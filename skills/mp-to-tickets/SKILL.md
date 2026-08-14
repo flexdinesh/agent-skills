@@ -1,6 +1,6 @@
 ---
-name: to-tickets
-description: "Break a plan, spec, or the current conversation into tracer-bullet tickets under .scratch/, each declaring its blocking edges. Use only when the user explicitly invokes `to-tickets` or `$to-tickets`; do not auto-invoke from context."
+name: mp-to-tickets
+description: "Break a plan, spec, or the current conversation into tracer-bullet tickets under .scratch/, each declaring its blocking edges. Use only when the user explicitly invokes `mp-to-tickets` or `$mp-to-tickets`; do not auto-invoke from context."
 disable-model-invocation: true
 ---
 

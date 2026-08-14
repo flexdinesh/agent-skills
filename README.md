@@ -13,6 +13,10 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
 - `git-worktree` — create, inspect, and clean Git worktrees
+- `mp-grill` — sharpen plans and designs through a decision-focused interview
+- `mp-implement` — implement work from an approved spec or set of tickets
+- `mp-to-spec` — synthesize the current conversation into a local specification
+- `mp-to-tickets` — break plans and specifications into blocked tracer-bullet tickets
 - `obsidian-daily` — manage daily tasks, notes, wins, events, and project summaries in Obsidian
 - `obsidian-projects` — manage project-specific notes, plans, tasks, and backlog in Obsidian
 - `opencode-plugin` — build plugins for OpenCode
