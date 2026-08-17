@@ -27,6 +27,7 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `tanstack-form` — build with tanstack form
 - `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration
 - `tanstack-router` — build type-safe React and TypeScript applications with TanStack Router
+- `ts-guidance` — example-driven TypeScript code guidance
 - `visual-learning` — learn technical concepts through interactive systems, state, flow, failure, and tradeoff lessons
 - `visualise-feature` — trace and visualise ordered feature interactions across system boundaries
 
