@@ -13,12 +13,10 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
 - `git-worktree` — create, inspect, and clean Git worktrees
-- `mp-grill` — sharpen plans and designs through a decision-focused interview
-- `mp-implement` — implement work from an approved spec or set of tickets
-- `mp-to-spec` — synthesize the current conversation into a local specification
-- `mp-to-tickets` — break plans and specifications into blocked tracer-bullet tickets
-- `obsidian-daily` — manage daily tasks, notes, wins, events, and project summaries in Obsidian
-- `obsidian-projects` — manage project-specific notes, plans, tasks, and backlog in Obsidian
+- `mp-grill` — Matt Pocock's `grill` skill, vendored. Sharpen plans and designs through a decision-focused interview
+- `mp-implement` — Matt Pocock's `implement` skill, vendored. Implement work from an approved spec or set of tickets
+- `mp-to-spec` — Matt Pocock's `to-spec` skill, vendored. Synthesize the current conversation into a local specification
+- `mp-to-tickets` — Matt Pocock's `to-tickets` skill, vendored. Break plans and specifications into blocked tracer-bullet tickets
 - `opencode-plugin` — build plugins for OpenCode
 - `plan-mode` — produce a decision-complete plan, read-only
 - `pi-extension` — build extensions for Pi
@@ -28,8 +26,6 @@ These skills are manual-invocation only. Agents should not auto-load them from t
 - `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration
 - `tanstack-router` — build type-safe React and TypeScript applications with TanStack Router
 - `ts-guidance` — example-driven TypeScript code guidance
-- `visual-learning` — learn technical concepts through interactive systems, state, flow, failure, and tradeoff lessons
-- `visualise-feature` — trace and visualise ordered feature interactions across system boundaries
 
 ## Install from remote
 
