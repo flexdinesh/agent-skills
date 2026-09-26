@@ -1,6 +1,6 @@
 ---
 name: react-patterns
-description: "Write, audit, debug, and refactor React code with cohesive components, deliberate state ownership, composable providers, minimal effects, reliable async recovery, and good rendering performance. Use only when the user explicitly invokes `react-patterns` or `$react-patterns`; do not auto-invoke from context."
+description: "Write, audit, debug, and refactor React code with cohesive components, deliberate state ownership, composable providers, minimal effects, reliable async recovery, consistent naming, and good rendering performance. Use only when the user explicitly invokes `react-patterns` or `$react-patterns`; do not auto-invoke from context."
 ---
 
 # React Patterns
@@ -21,7 +21,7 @@ that every task must pass through:
 | Use | Action |
 | --- | --- |
 | Write | Design and implement new components, hooks, providers, pages, or features using the rules from the start. |
-| Audit | Analyze ownership, behavior, and performance; report supported findings and proposed changes. Stay read-only. |
+| Audit | Analyze ownership, behavior, naming, and performance; report supported findings and proposed changes. Stay read-only. |
 | Conform | Refactor existing code within the requested scope; preserve behavior and verify the change. |
 
 If the user invokes the skill without a clear action, default to a read-only
@@ -35,7 +35,7 @@ separate audit or confirmation before routine scoped changes.
 3. Inspect installed React, framework/router, state/cache/form libraries,
    TypeScript, React Compiler, lint, and test configurations.
 4. Identify client/server boundaries, application entry points, page routes,
-   provider composition, and existing ownership conventions.
+   provider composition, and existing ownership and naming conventions.
 5. Read the relevant references below. Verify version-sensitive APIs against
    installed packages and their primary documentation; do not assume latest
    guidance applies to an older repository.
@@ -49,6 +49,9 @@ equivalents in React Native.
 
 - Build components around one purpose or a few related responsibilities.
   Extract by behavior, purpose, dependencies, and lifecycle, not line count.
+- Use consistent, descriptive names that express domain purpose and contract.
+  Follow React naming requirements and documented repository conventions; apply
+  the naming reference where conventions are absent.
 - Keep page-level composition and files isolated from shared primitives. Follow
   framework file conventions and colocate page/feature internals.
 - Keep state minimal and near its owner. Calculate derived values during render;
@@ -87,6 +90,7 @@ exceptions, verification guidance, and primary sources. Read only what applies.
 
 | Concern | Rules | Reference |
 | --- | --- | --- |
+| Symbols, events, state contracts, domain vocabulary, files | `naming-react-symbols`, `naming-event-contracts`, `naming-state-contracts`, `naming-domain-language`, `naming-repository-consistency` | [Naming](references/naming.md) |
 | Component and page ownership | `component-cohesion`, `page-boundaries`, `component-explicit-contracts` | [Component boundaries](references/component-boundaries.md) |
 | Minimal state, domain hooks, reducers | `state-single-owner`, `state-derived-values`, `state-coherent-updates`, `hook-domain-behavior`, `state-reducer-preference` | [State and hooks](references/state-and-hooks.md) |
 | App context, compound UI, provider contracts | `provider-scope`, `provider-consumer-contract`, `composition-provider-boundary`, `composition-independent-instances` | [Providers and composition](references/providers-and-composition.md) |
@@ -142,6 +146,12 @@ Give each finding a rule ID, file/line, concrete evidence, impact, confidence,
 smallest proposed fix, and validation scenario. Judge severity by consequences,
 not category. Mark unmeasured performance concerns as hypotheses with a way to
 measure them; do not invent speedup percentages or pad reports with style nits.
+
+Classify naming inconsistencies as policy findings unless they cause a concrete
+bug, such as a lowercase JSX component identifier being treated as a DOM tag.
+Report material ambiguity or inconsistent contracts, not subjective preferences
+that contradict established repository conventions. Keep renames scoped and
+preserve public APIs unless their migration is authorized.
 
 For reducer proposals, show retain/replace tradeoffs and make user acceptance
 explicit. A justified reducer needs no violation finding.

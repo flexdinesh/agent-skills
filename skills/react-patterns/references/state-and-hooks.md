@@ -118,6 +118,8 @@ typed inputs, outputs, and named actions. Separate independent lifecycles. Keep
 pure calculations as ordinary functions; use a Hook only when it calls Hooks.
 Mount the behavior once in a provider when callers need the same state instance.
 
+See [Naming](naming.md) for Hook prefixes, domain vocabulary, and action names.
+
 **Exception:** a cohesive complex hook can be larger than a trivial component.
 Extraction need not wait for reuse when it establishes a meaningful boundary.
 

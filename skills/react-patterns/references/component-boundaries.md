@@ -97,6 +97,8 @@ Give controlled/uncontrolled APIs an explicit owner. Name initial-only props
 local state. Preserve semantic markup, accessible names, and focus behavior when
 splitting controls.
 
+See [Naming](naming.md) for state, callback, and initialization naming contracts.
+
 **Exception:** independent booleans such as `disabled`, `required`, and `open` are
 valid contracts. Render props are useful when children need runtime data; prefer
 children for structural composition without banning render props.
