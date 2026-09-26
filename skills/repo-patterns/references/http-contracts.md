@@ -41,6 +41,13 @@ Retain these checks in fixture profiles. Bound bodies, uploads, computational
 work, and relevant request rates. Authentication and CORS do not establish object
 permission. Public CORS policies can be legitimate; select them for actual clients.
 
+For local browser-facing servers, define the bind address, allowed origins, and
+mutation trust model explicitly. Loopback binding, CORS, and Origin/Fetch Metadata
+checks solve different problems; none substitutes for required authentication.
+Account for remote-dashboard clients, development proxies, requests without
+browser headers, and explicit network exposure. Do not copy a dev proxy's header
+rewrites into the production trust boundary.
+
 Give errors stable machine-readable meaning and appropriate HTTP status.
 RFC 9457 problem details (`application/problem+json`) is a useful new-API default;
 preserve compatible established formats. Distinguish malformed/invalid input,
@@ -113,6 +120,13 @@ appropriate mechanism) and repeatable generation. Document representative inputs
 outputs, errors, auth, pagination, and retry behavior. Verify the actual handler
 against the contract and relevant client/provider expectations.
 
+Generated TypeScript types are compile-time evidence, not runtime validation.
+Parse untrusted responses at the client boundary where malformed/version-skewed
+data matters; contract-generated validators can avoid handwritten shape drift.
+Choose unknown-field/enum handling deliberately: strict response validators can
+reject additive provider changes. Test the deployed provider/artifact through
+the real client, including errors; successful code generation alone is insufficient.
+
 Check source, wire, and semantic compatibility. New enum values depend on client
 unknown-value handling; new required inputs are not ordinarily additive-compatible.
 Coordinate rollout with real consumers. Use versioning/deprecation for actual
@@ -139,6 +153,8 @@ cannot prove domain behavior or permission.
 - [OpenAPI specification](https://spec.openapis.org/oas/latest.html)
 - [OWASP object-level authorization](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/)
 - [Pact contract testing](https://docs.pact.io/)
+- [Tokeninsights generated-validator client boundary](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/web/src/api.ts)
+- [Servediff binary/client conformance](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/test/conformance/server.test.ts)
 
 Resource naming, error defaults, and pagination choices are contextual API policies.
 Google and Stripe document their conventions; only applicable protocol requirements

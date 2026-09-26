@@ -19,8 +19,10 @@ normal root configuration and `src/` when that serves it.
 
 For several projects, `apps/` for executable applications and `packages/` for
 consumed libraries/tooling is a useful default. Use native Go structure within
-its owner; do not add a JS manifest just to make a Go project visible to a JS
-runner. An illustrative mixed tree:
+its owner. A private JS manifest can be a thin task adapter that delegates to
+native Go commands; it does not make Go code a JS runtime package. Avoid dummy
+dependencies or duplicated build logic solely for runner discovery. An illustrative
+mixed tree:
 
 ```text
 apps/api/                     # cmd/, internal/, local run docs
@@ -28,7 +30,7 @@ apps/web/                     # package.json, src/, fixture scenarios
 apps/importer/                # CLI entry point, config, fixtures
 packages/api-client/          # bounded consumer contract
 packages/ui/                  # UI with actual consumers
-pnpm-workspace.yaml           # JS membership only
+pnpm-workspace.yaml           # JS packages; optional thin native-task adapters
 mise.toml                     # shared tool policy / dispatch
 ```
 
@@ -148,6 +150,50 @@ discovery. Do not spawn agents or create user tasks just because this rule appli
 work. Check integrated behavior and regenerated artifacts; do not claim a folder
 move eliminates semantic conflicts. CODEOWNERS routes review, not import policing.
 
+## `boundary-runtime-distribution`
+
+**Apply:** a product combines languages, embedded assets, or multiple build targets.
+
+**Problematic:** a Go executable unexpectedly shells out to pnpm on startup;
+testing the Vite server is treated as proof that the shipped embedded UI works.
+
+**Prefer:** map build, development, and deployment dependencies separately. A
+Go binary serving a React bundle can be one deployment even though its build
+workspace contains several packages. Keep build-only tools out of runtime
+composition. Define how assets/contracts reach the release artifact and what
+direct native builds or installs promise. Retain genuine runtime dependencies,
+such as Git for a live Git source, in documentation.
+
+**Exception:** runtime plugins or external processes can be product requirements.
+Committing built assets suits direct source installs; release-time generation
+also works when the supported install path provides them. Neither is mandatory.
+
+**Verify:** exercise the built artifact with its declared runtime prerequisites,
+without relying on a dev server or build-tool installation. Check embedded assets,
+API behavior, and supported native build/install paths. See
+[generation checks](tooling-and-commands.md#tool-generated-artifacts).
+
+## `boundary-transport-composition`
+
+**Apply:** REST, CLI, TUI, MCP, or another driver shares application behavior.
+
+**Problematic:** MCP calls the local REST server to resolve a comment; CLI and
+HTTP implement different normalization or permission rules for the same operation.
+
+**Prefer:** compose a shared protocol-independent operation through each driver.
+Keep request parsing, protocol errors, and presentation with the transport;
+keep domain decisions, state ownership, and transaction semantics with the
+application owner. Extract the proven shared operation when another consumer
+needs it; it need not cover every endpoint.
+
+**Exception:** a client of an independently deployed remote service legitimately
+uses its network API. A single compact CRUD handler needs no speculative service
+layer solely to prepare for a hypothetical second transport.
+
+**Verify:** exercise equivalent operations through affected drivers, including
+disabled capabilities, cancellation, not-found/conflict results, and persistence
+failure. Confirm transports do not import one another to reuse local behavior.
+
 ## Sources
 
 - [Go module layouts](https://go.dev/doc/modules/layout)
@@ -159,6 +205,9 @@ move eliminates semantic conflicts. CODEOWNERS routes review, not import policin
 - [Redux feature organization](https://redux.js.org/style-guide/#structure-files-as-feature-folders-with-single-file-logic)
 - [Vite environment handling](https://vite.dev/guide/env-and-mode)
 - [GitHub code ownership](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)
+- [Servediff shared review service](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/internal/reviewservice/service.go)
+- [Tokeninsights native task adapter](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/package.json)
+- [Tokeninsights development and distribution](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/docs/development.md)
 
 Feature locality, workspace names, and collaboration policies are skill choices;
 the sources do not prescribe one universal tree.

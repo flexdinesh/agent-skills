@@ -7,6 +7,8 @@ supporting standards, documentation, or authors' own descriptions.
 Implemented companion: [repo-patterns](../skills/repo-patterns/SKILL.md). The skill
 adopts the recommended defaults below; this brief preserves the research context.
 
+Local case studies: [Servediff and Tokeninsights lessons](repo-patterns-repo-lessons.md).
+
 ## Direction supported by the research
 
 Build `repo-patterns` around **explicit, verifiable boundaries**: dependencies,

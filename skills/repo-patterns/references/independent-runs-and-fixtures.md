@@ -92,6 +92,14 @@ unauthorized, conflict, timeout, recovery. Add cases relevant to real behavior.
 Keep immutable fixtures separate from per-run mutable state; control time/IDs only
 where reproducibility requires it. Keep security randomness secure.
 
+When testing ingestion, keep small source-format fixtures and prepare disposable
+state through the actual importer/sync/normalization path. A prefilled output DB
+alone skips that boundary. Separate preparation from viewing/serving prepared
+state so startup cannot accidentally discover or sync real user data. For sources
+that contain conversations or credentials, retain only synthetic fields needed
+for the scenario; use focused fixture-safety checks where accidental capture is
+a demonstrated concern.
+
 Useful profiles, only where needed:
 
 | Profile | Dependencies | Proves |
@@ -145,6 +153,13 @@ or configure ports and report bound addresses. Own setup/readiness/cleanup; rese
 only the explicitly selected disposable resources. Isolation within a shared
 schema also needs correct privileges/search paths where applicable.
 
+A development runner can own a fixture server child, proxy to its reported
+address, and stop it on shutdown. Prefer binding port zero and reporting the
+actual listener over discovering a free port and releasing it before child
+startup. Bound startup waits; detect early exit. Stop and await owned children
+before deleting their state. A fixed per-worktree directory still needs separate
+run namespaces or serialization for simultaneous runs in the same worktree.
+
 **Exception:** intentional read-only resources can be shared. If an integration
 environment must be shared and serialized, document it and avoid claiming parallel
 independence. Worktree isolation alone does not isolate runtime resources.
@@ -152,6 +167,29 @@ independence. Worktree isolation alone does not isolate runtime resources.
 **Verify:** run two instances concurrently, mutate/reset one, and check the other's
 data/output remains intact. Test independent order, interruption cleanup, and
 protection against resetting a connected/shared database.
+
+## `runtime-capabilities`
+
+**Apply:** source adapters, read-only modes, or profiles support different operations.
+
+**Problematic:** every UI component infers refresh/edit support from `fixture` or
+provider names; hidden controls are the only protection against disabled writes.
+
+**Prefer:** resolve effective capabilities from adapter support and explicit
+application policy at composition/session boundaries. Expose the relevant contract
+to clients; distinguish unsupported from intentionally disabled where useful.
+Keep source kind as provenance/presentation, rather than duplicating feature
+decisions throughout consumers. Enforce the resolved capability in the operation
+owner as well as the UI. A fixture source can support real comments while lacking
+live refresh; a live source can be deliberately read-only.
+
+**Exception:** one uniform source needs no capability framework. Authentication
+and object/field authorization remain separate requirements; capability discovery
+does not grant a caller permission or remain immutable for every product.
+
+**Verify:** supported/enabled, supported/disabled, and unsupported operations across
+profiles. Call disabled operations directly, bypassing the UI. Verify consumers
+use the effective contract and capability changes cannot bypass authorization.
 
 ## Sources
 
@@ -163,6 +201,9 @@ protection against resetting a connected/shared database.
 - [Pact contracts](https://docs.pact.io/)
 - [Playwright parallel isolation](https://playwright.dev/docs/test-parallel)
 - [Compose project names](https://docs.docker.com/compose/how-tos/project-name/)
+- [Servediff capability resolution](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/internal/session/session.go)
+- [Servediff owned fixture server](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/apps/web/test/fixture-server.ts)
+- [Tokeninsights fixture preparation through sync](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/setup-dev-data.ts)
 
 Fixture obligations, profile names, and example config precedence are skill
 policies. The implementation should suit the actual dependency and runtime.

@@ -41,6 +41,13 @@ Choose conditional writes, version checks, locking, or isolation for the actual
 invariant. Keep transactions short and avoid waiting for remote work while holding
 locks unless that coupling is deliberately required.
 
+For dashboards assembled from several queries, use one read snapshot when the
+response promises internal consistency. A narrow query interface can accept a
+pool or transaction without duplicating SQL. Apply connection-scoped settings to
+the actual connections used; a pool-level call does not configure every SQLite
+connection. Coordinate multiple writer processes where the application invariant
+needs it; an in-process mutex cannot serialize other processes.
+
 An illustrative optimistic write, after validating the transition and principal:
 
 ```sql
@@ -111,6 +118,35 @@ an event platform to satisfy an architectural label.
 and recovery from backlog. Check observability of stuck/failed work and ensure
 fixtures can exercise the worker without live third-party credentials.
 
+## `db-ingestion-continuity`
+
+**Apply:** incremental import, sync, replay, or durable processing checkpoints.
+
+**Problematic:** a byte offset advances before facts commit; file size alone
+proves a source is unchanged; retry skips data interpreted by an older parser.
+
+**Prefer:** treat a checkpoint as evidence tied to source identity, relevant
+configuration, parser/collector version, and validated content continuity.
+Handle truncation, replacement, partial records, changed dependencies, and
+source mutation during parsing. Use content/logical fingerprints or another
+source-appropriate consistency mechanism; an offset is safe only for a verified
+append-compatible source. Fall back to full processing when reuse evidence fails.
+
+Persist imported facts, deduplication identity, queued derived work, and successful
+progress consistently within the chosen transaction boundary. Failed processing
+must not advance success markers. Failure diagnostics may persist separately
+without partial facts; make that distinction explicit. Repeated processing must
+preserve intended results, rather than rely on skip optimization for correctness.
+
+**Exception:** a bounded one-shot import needs no cursor/cache. External offset
+stores may require reconciliation or an idempotent protocol instead of one DB
+transaction. A content hash is not a universal snapshot guarantee for mutable data.
+
+**Verify:** append, same-size replacement, truncation, incomplete final record,
+parser/config change, source mutation, crash between data/progress writes,
+duplicate replay, and commit failure. Verify partial success across source scopes
+is reported honestly and retry preserves previously committed progress.
+
 ## Sources
 
 - [Go SQL injection avoidance](https://go.dev/doc/database/sql-injection)
@@ -123,3 +159,6 @@ fixtures can exercise the worker without live third-party credentials.
 - [Postgres EXPLAIN](https://www.postgresql.org/docs/current/sql-explain.html)
 - [OWASP object-level authorization](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/)
 - [AWS transactional outbox](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
+- [Tokeninsights validated source reuse](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/source_reuse.go)
+- [Tokeninsights byte cursor validation](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/source_cursor.go)
+- [Tokeninsights atomic source ingest](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/sync.go)

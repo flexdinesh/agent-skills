@@ -126,6 +126,13 @@ evidence accuracy and restraint as well as detected problems.
 | Retry-safe POST with durable idempotency | Accept method; verify actual duplicate semantics | Blanket POST/idempotency violation |
 | Supported nonpreferred stack | Label preference only; retain stack | Unrequested pnpm/framework migration |
 | Client/mock/provider disagree | Trace actual contract drift and verify provider | Shared static types treated as sufficient |
+| Go product embeds a React UI | Distinguish build graph from runtime; test shipped binary | Counting workspace packages as deployments |
+| Thin JS manifest delegates Go tasks | Accept native ownership and useful dispatch | Reporting every Go package.json as a defect |
+| REST and MCP share an operation | Reuse application owner and translate protocol results | One local transport calling another for reuse |
+| Fixture source lacks refresh but permits comments | Resolve support/policy; enforce operations server-side | Source-name checks or UI-only denial |
+| Generated check follows a staging write | Compare before overwrite or check resulting Git drift | Claiming a comparison with replaced output detects staleness |
+| Derived DB rebuild loses absent-source history | Establish authority/loss scope and recovery contract | Calling destructive reset a row-preserving migration |
+| Import cursor advances independently of facts | Validate continuity and atomic progress | Treating file size/offset as sufficient evidence |
 | Healthy boundaries and checks | Report no supported findings | Invented folder-count/sequential-scan defects |
 | Partial audit of large repo | Report exact inspected scope, continue full requested audit | Claim of repo-wide conformance from a sample |
 

@@ -8,7 +8,8 @@ Examples are conventions to implement, not commands guaranteed in an arbitrary r
 **Apply:** a new project needs a stack or an existing project has tooling drift.
 
 **Problematic:** a healthy supported npm/Next.js application is reported as broken
-because the preferred stack is pnpm/Vite; Go projects acquire fake Node manifests.
+because the preferred stack is pnpm/Vite; Go dependency ownership is moved into
+a Node manifest merely to satisfy a task runner.
 
 **Prefer:** for new work, Go or Node/TypeScript servers, Vite/React frontend, pnpm
 for JS dependencies/scripts, mise for tool/runtime versions and cross-language
@@ -133,6 +134,34 @@ cached when inputs and reproducibility are explicit; not all tests are stateful.
 Change an important build input and confirm invalidation. Confirm fixture reset
 and integration checks actually execute rather than replaying irrelevant results.
 
+## `tool-generated-artifacts`
+
+**Apply:** checked-in clients, validators, embedded schema copies, or built assets.
+
+**Problematic:** a check overwrites a stale generated file and then compares it
+with its own replacement; obsolete hashed assets or mock workers ship in a binary.
+
+**Prefer:** give each derivative one authoritative input, pinned/reproducible
+generation path, and documented owner. Separate mutation (`generate`/stage) from
+verification. Regenerate into temporary output and compare with committed outputs,
+or regenerate and explicitly check Git changes, including additions/deletions.
+Run drift verification before another task can overwrite its comparison target.
+An asset check should compare the complete intended file set and contents.
+
+Guard replacement/reset tools with a controlled destination contract. Remove
+obsolete output only there, exclude development-only assets deliberately, and
+keep inputs intact. Typecheck directly executed TypeScript tooling separately;
+runtime type stripping is not a compiler check.
+
+**Exception:** uncommitted artifacts need no committed-output comparison, but the
+build must still produce the correct release inputs. Tools that cannot redirect
+output can use an isolated checkout or an explicit Git-diff verification path.
+
+**Verify:** change an input without regenerating and confirm failure; add a stale
+extra output and confirm detection. Check failure cleanup, destination rejection,
+and production inclusion/exclusion. Report whether a check writes scratch/build
+output, tracked files, or runtime state; a `check` label proves none of these.
+
 ## Sources
 
 - [pnpm workspaces](https://pnpm.io/workspaces)
@@ -144,5 +173,8 @@ and integration checks actually execute rather than replaying irrelevant results
 - [Go workspace guidance](https://go.dev/ref/mod#workspaces)
 - [Vite production vs preview](https://vite.dev/guide/static-deploy.html)
 - [Turborepo installed-version documentation routing](https://github.com/vercel/turborepo/blob/main/skills/turborepo/SKILL.md)
+- [Tokeninsights temporary API generation check](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/check-api.ts)
+- [Tokeninsights asset comparison](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/check-web.ts)
+- [Servediff distribution drift check](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/.github/workflows/ci.yml)
 
 Preferred stack and task names are skill defaults, not ecosystem requirements.

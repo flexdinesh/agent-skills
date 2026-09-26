@@ -33,7 +33,8 @@ and consuming-repository policies take precedence.
 3. Distinguish entry points, language packages/modules, deployment units, domain
    owners, and independently released consumers. Do not classify by folder count.
 4. Map public APIs, imports, runtime dependencies, configuration, data owners,
-   fixture paths, lifecycle, and shared edit points.
+   fixture paths, lifecycle, and shared edit points. Separate development/build
+   dependencies from the shipped runtime graph.
 5. Read relevant references below. Check version-sensitive commands/APIs against
    installed tools and primary documentation. Do not assume latest recipes apply.
 
@@ -53,7 +54,8 @@ when those affect contracts or builds.
   aliases, re-exports, and data access as well as manifest dependencies. Introduce
   minimal enforcement when requested conformance calls for it.
 - Keep browser code free of server dependencies and secrets. Share appropriate
-  wire contracts/clients, not private storage implementations.
+  wire contracts/clients, not private storage implementations. Multiple local
+  transports reuse application operations rather than calling one another.
 - Extract shared code for a cohesive capability and real consumers. Avoid giant
   `shared`, `utils`, or global model packages. Do not require a speculative
   interface, service layer, or mapper for every type.
@@ -62,7 +64,8 @@ when those affect contracts or builds.
   may include a disposable database; it need not mean dependency-free execution.
 - Select live/fixture dependencies at composition boundaries. Parse configuration
   once; preserve validation, authorization, domain behavior, and serialization.
-  Never silently switch to fixtures after a live dependency fails.
+  Resolve differing source support and policy into enforced capabilities where
+  needed. Never silently switch to fixtures after a live dependency fails.
 - Keep fixture inputs deterministic and mutable state isolated. Use real-engine
   integration evidence for database semantics and contract checks for mock drift.
 - Reduce shared edit hotspots; coordinate contracts, migration order, lockfiles,
@@ -74,6 +77,8 @@ when those affect contracts or builds.
   migrate tooling/frameworks only when requested.
 - Give commands consistent meanings and truthful applicability. Delegate to native
   language/package commands; avoid duplicated task logic and dummy capabilities.
+- Give generated artifacts one source and reproducible generation. Detect drift
+  before overwriting comparison targets; verify the actual release artifact.
 - Model invariants and compatibility explicitly. Keep API, domain, and storage
   representations separate where their contracts differ; reuse them where they
   match. Do not expose internal rows or accept server-owned fields by accident.
@@ -83,6 +88,8 @@ when those affect contracts or builds.
 - Evolve schemas/contracts with the actual deployment and consumer lifecycle.
   Consider expand/migrate/switch/contract when old and new versions coexist.
   Account for concurrent writes, locks, retries, recovery, and backfill completion.
+  Distinguish preserved data from rebuildable projections and destructive resets.
+  Commit ingestion checkpoints consistently with data; validate reuse evidence.
 - Respect HTTP semantics and object/field authorization. Bound work and lists;
   define machine-readable errors, duplicate behavior, and compatibility. POST may
   legitimately be retry-safe; URI spelling alone does not establish REST quality.
@@ -99,12 +106,12 @@ problematic/preferred examples, exceptions, verification, and sources.
 
 | Concern | Rules | Reference |
 | --- | --- | --- |
-| Repo shape, module APIs, reuse, browser/server, change ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership` | [Boundaries and layout](references/boundaries-and-layout.md) |
-| Dependency composition, config, fixture fidelity, concurrent runs | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
-| Stack preferences, manifests, task semantics, ordering/cache | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-task-graph` | [Tooling and commands](references/tooling-and-commands.md) |
+| Repo shape, module APIs, reuse, runtime distribution, transports, ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership`, `boundary-runtime-distribution`, `boundary-transport-composition` | [Boundaries and layout](references/boundaries-and-layout.md) |
+| Dependency composition, config, fixtures, concurrency, capabilities | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation`, `runtime-capabilities` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
+| Stack preferences, manifests, tasks, ordering/cache, artifact drift | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-task-graph`, `tool-generated-artifacts` | [Tooling and commands](references/tooling-and-commands.md) |
 | Go errors/lifecycle, Node async work, input parsing, web behavior | `go-consumer-contracts`, `go-error-resource-ownership`, `go-concurrency-lifecycle`, `js-input-contracts`, `node-async-lifecycle`, `web-state-boundaries` | [Go and Node correctness](references/go-and-node-correctness.md) |
-| Models, representations, schema history, rollout/backfills | `model-invariants`, `model-representations`, `migration-history`, `migration-compatible-rollout`, `migration-operational-safety` | [Data models and migrations](references/data-models-and-migrations.md) |
-| SQL, constraints, transactions, query/pool behavior, events | `db-values-and-constraints`, `db-transaction-concurrency`, `db-query-pool-budget`, `db-durable-effects` | [Database access](references/database-access.md) |
+| Models, representations, schema history, rollout, derived-state recovery | `model-invariants`, `model-representations`, `migration-history`, `migration-compatible-rollout`, `migration-operational-safety`, `model-derived-state` | [Data models and migrations](references/data-models-and-migrations.md) |
+| SQL, constraints, transactions, query/pool behavior, events, ingestion | `db-values-and-constraints`, `db-transaction-concurrency`, `db-query-pool-budget`, `db-durable-effects`, `db-ingestion-continuity` | [Database access](references/database-access.md) |
 | HTTP semantics, auth, errors, pagination, retries, contracts | `http-resource-semantics`, `http-authorization-errors`, `http-bounded-lists`, `http-mutation-recovery`, `http-contract-evolution` | [HTTP contracts](references/http-contracts.md) |
 | Coverage, finding discipline, incremental fixes, evaluations | `audit-evidence`, `conform-small-slices`, `verify-boundary-behavior` | [Audit and conformance](references/audit-and-conformance.md) |
 

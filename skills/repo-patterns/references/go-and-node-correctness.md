@@ -135,6 +135,11 @@ for their responsibilities. Derive redundant values, use effects for external
 synchronization, and guard stale responses. Keep fixture behavior at HTTP/composition
 boundaries. Place recovery where the user can act without losing unrelated work.
 
+Include endpoint/source identity, meaningful filters/scope, and data revision in
+cache identity where they change the result. Forward cancellation to real I/O;
+only retain previous results when their scope remains valid. Switching a local
+dashboard to another server must not display the previous server's cached data.
+
 **Exception:** legitimate effects and ordinary local state are not defects.
 SSR, hydration, file routing, and client/server APIs depend on the installed
 framework. Preserve those conventions when changing ownership.
@@ -156,6 +161,7 @@ belong to `react-patterns` when invoked, not a second conflicting rulebook.
 - [Node event-loop guidance](https://nodejs.org/en/learn/asynchronous-work/dont-block-the-event-loop)
 - [Node cancellation APIs](https://nodejs.org/api/globals.html#class-abortcontroller)
 - [React effects and async races](https://react.dev/learn/you-might-not-need-an-effect)
+- [Tokeninsights endpoint/scope-aware queries](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/web/src/api.ts)
 
 The assertion ban is skill policy. Organizational style guides inform choices;
 they are not Go language requirements.
