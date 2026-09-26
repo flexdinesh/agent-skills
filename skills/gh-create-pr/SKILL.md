@@ -7,240 +7,89 @@ description: "Push the current branch and create a GitHub pull request with gh C
 
 Manual invocation only: use this skill only when the user explicitly invokes `gh-create-pr` or `$gh-create-pr`; do not auto-invoke from task context.
 
-## Core Rules
+## Gather Context
 
-- Use non-interactive Git and `gh` commands only.
-- Ask for confirmation before any remote side effects.
-- Never guess the base branch when multiple plausible targets exist.
-- Never assume the push remote is `origin` without checking.
-- Never rely on editor prompts from `git` or `gh`.
-- Prefer the actual branch diff over chat history when summarizing the PR.
-- If the current session summary and branch diff disagree, tell the user and summarize the branch diff.
+1. Verify Git, `gh`, authentication, and a Git worktree are available.
+2. Review the conversation for the purpose of the changes and completed validation.
+3. Inspect the current branch, working tree, upstream, and remotes:
 
-## Tool Checks
-
-Run these checks first:
-
-```bash
-command -v git
-command -v gh
-gh auth status
-git rev-parse --is-inside-work-tree
-git branch --show-current
-git remote -v
-```
-
-Stop and tell the user if any of these are true:
-
-- `git` is unavailable
-- `gh` is unavailable
-- `gh auth status` shows the user is not authenticated
-- the current directory is not inside a Git worktree
-- the current checkout is on detached `HEAD`
-- no GitHub remote can be identified confidently
-
-## Inspect Repo State
-
-Inspect the repo before drafting the PR:
-
-```bash
+```sh
 git status --short
 git branch --show-current
-git rev-parse --abbrev-ref --symbolic-full-name @{upstream}
+git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}'
 git remote -v
 ```
 
-Rules:
+4. Establish the GitHub repository, push destination, PR base, and parent from explicit task context and repository metadata. The parent is the branch this work builds on; it may differ from the PR base. A missing upstream is allowed. Ask for confirmation whenever ambiguity cannot be resolved automatically.
+5. Check for an existing open PR in the target repository before updating or pushing:
 
-- If the upstream exists, inspect commits ahead of upstream with:
-
-```bash
-git log --oneline @{upstream}..HEAD
+```sh
+gh pr list --repo <repo> --head <branch> --state open --json number,title,baseRefName,headRefName,headRepository,headRepositoryOwner,url
 ```
 
-- If the upstream does not exist, do not fail. Continue with base-branch resolution.
-- Dirty local changes do not block the skill, but the PR summary must be based on the committed branch diff rather than unstaged edits.
+If one exists, show its URL and stop unless the user explicitly requested another PR. For forks, verify the head repository also matches.
 
-## Resolve Base Branch
+6. Fetch the relevant remote refs, then inspect the committed changes against the PR base:
 
-Resolve the base branch in this order:
-
-1. If another active project skill defines the base branch, use that.
-2. Otherwise use the GitHub repo default branch:
-
-```bash
-gh repo view --json defaultBranchRef
+```sh
+git fetch <remote>
+git log --oneline <base-ref>..HEAD
+git diff --stat <base-ref>...HEAD
+git diff <base-ref>...HEAD
 ```
 
-3. If that cannot be resolved confidently, use `origin/HEAD` only if it resolves cleanly.
-4. Otherwise stop and ask the user which branch to target.
+- Read affected files when needed to understand architecture and behavior.
+- Summarize the full committed PR diff. Uncommitted changes are excluded.
+- Prefer the diff over conversation history or commit subjects when they disagree; tell the user about material differences or additional scope.
+- Stop if there are no changes to propose or prerequisites are unavailable. Ask for confirmation if the checkout or repository state needs clarification.
 
-After resolving the base branch, fetch and inspect it:
+## Update Before Creating
 
-```bash
-git fetch <base-remote> <base-branch>
-git merge-base <base-remote>/<base-branch> HEAD
-git log --oneline <base-remote>/<base-branch>..HEAD
-git diff --stat <base-remote>/<base-branch>...HEAD
-```
+- Check whether the current branch lacks commits from its remote counterpart, parent, or PR base using the fetched refs. For each relevant ref, `git merge-base --is-ancestor <ref> HEAD` checks whether its commits are already included.
+- If stale, automatically try to update with `git rebase <ref>`. Incorporate the remote counterpart first, then the parent and PR base as needed. Recheck ancestry after each update.
+- Never use merge commits to update the branch.
+- Record the starting HEAD and fetched remote head before updating. If a rebase is already in progress, ask before proceeding. If local changes prevent rebasing, ask how to handle them; do not discard, commit, or stash them automatically.
+- If conflicts occur, run `git rebase --abort`, report the conflicting files, and ask for confirmation before resolving them. Do not resolve conflicts automatically.
+- After updates, inspect the final diff again and run checks relevant to the updated code. Draft the description from this final state.
 
-Rules:
+## Write PR Content
 
-- Stop if the base branch cannot be determined confidently.
-- Stop if `HEAD` has no commits ahead of the resolved base branch.
-- Show the resolved base branch to the user before PR creation.
+Keep the title brief and specific. Default to `<type>: <description>`, with `feat`, `fix`, `docs`, `ci`, `chore`, `test`, `perf`, `refactor`, or `style` as the type. Follow an active project skill's title or body format when provided.
 
-## Resolve Push Remote
-
-Resolve the push remote in this order:
-
-1. If the current branch already tracks a remote branch, use that remote.
-2. Otherwise, if exactly one GitHub remote matches the current checkout, use it.
-3. Otherwise, if multiple plausible GitHub remotes exist, stop and ask the user which remote to push to.
-4. Never assume `origin` unless it is the only confident match.
-
-Push rules:
-
-- If the current branch already has an upstream, use:
-
-```bash
-git push
-```
-
-- If the current branch does not have an upstream, use:
-
-```bash
-git push -u <push-remote> <branch>
-```
-
-## Draft PR Content
-
-PR workflow:
-
-1. Review the current conversation or session to identify what was completed.
-2. Inspect the commits and branch diff from the resolved base branch.
-3. Draft a brief PR title and concise PR description using both the session and Git history.
-4. Prefer the actual branch diff over commit subjects when they disagree.
-5. If the branch contains work outside the current conversation, summarize the full branch and tell the user before confirmation.
-6. Keep the title and description as brief as possible.
-
-Default PR title format:
-
-```text
-<type>: <description>
-```
-
-- `<type>` must be one of `feat`, `fix`, `docs`, `ci`, `chore`, `test`, `perf`, `refactor`, or `style`.
-- `<description>` must be brief and accurately describe the PR.
-
-Default PR description format:
+The description should be a short list of technical changes for someone who already knows the codebase:
 
 ```md
-Summary: <brief summary>
-
-Changes:
-
-- <change and why>
-
-Notes:
-
-- <optional validation note>
-
-TODO:
-
-- [ ] <optional required follow-up>
+- <code or architecture change>: <why needed and what it solves>.
+- <related change>: <reason and resulting behavior>.
 ```
 
-Description rules:
+- Describe concrete changes to modules, files, APIs, data flow, or architecture, choosing the level that best explains the implementation.
+- Each bullet should connect what changed with why it was needed and the problem it solves.
+- Group related edits; avoid a file-by-file inventory, generic summaries, and conversation history.
+- Include validation or required follow-up only when useful to the reviewer. State actual results; do not invent checks.
+- Keep it brief and direct. No mandatory summary paragraph or extra sections.
 
-- `Summary` is required and should be one brief sentence.
-- `Changes` is required and should use short bullets that say what changed and why.
-- Add docs or reference links only when directly relevant to a change.
-- Omit `Notes` when there is nothing to validate before merge.
-- Omit `TODO` when there is nothing that should be done before merge.
+## Confirm And Create
 
-PR formatting is overridable:
+1. Default to draft. Use ready mode only when the user requests it; do not ask them to choose a mode by default.
+2. Show the proposed title and full description, plus repository, head, base, push destination, and mode. Disclose any required history rewrite.
+3. Ask for confirmation to push and create the PR. Do not push or create until confirmed. Fetches and conflict-free local rebases happen before this confirmation.
+4. Push explicitly to the established destination:
 
-- If another active skill defines the PR title format, use that instead of the default title format.
-- If another active skill defines the PR description format, use that instead of the default description format.
-- Do not ask the user to re-decide the format when an active project skill already defined it.
-
-## Check For Existing PR
-
-Before creating a new PR, check whether one already exists for the current branch:
-
-```bash
-gh pr list --head <branch> --state open --json number,title,baseRefName,headRefName,url
+```sh
+git push -u <push-remote> HEAD:refs/heads/<remote-branch>
 ```
 
-Rules:
+If rebasing rewrote published commits, use `--force-with-lease=refs/heads/<remote-branch>:<fetched-remote-head>` only after verifying all fetched remote work is preserved and the user confirmed the disclosed rewrite. Never use plain `--force`. If the lease fails or the remote changed, fetch and reassess; refresh the description and confirmation if the proposed changes differ.
 
-- If an open PR already exists for the current branch, stop and show it to the user.
-- Do not create a second PR for the same head branch unless the user explicitly asks for a different target or repo.
+5. Recheck for an existing PR. Write the exact approved description to a temporary file, preserving newlines. Create non-interactively with explicit arguments:
 
-## Confirmation
-
-Show the user all of the following before any push or PR creation:
-
-- push remote
-- head branch
-- base branch
-- draft or ready mode
-- proposed title
-- proposed description
-
-Ask whether to create the PR in draft mode or ready mode. Default to draft mode.
-
-Ask for final confirmation before any remote side effects.
-
-## Push Branch
-
-Push with Git CLI after the user confirms:
-
-- If the branch already has an upstream, use `git push`.
-- If the branch does not have an upstream, use `git push -u <push-remote> <branch>`.
-
-## Create PR
-
-Create the PR with a fully specified non-interactive command:
-
-```bash
-gh pr create --base <base-branch> --head <branch> --title "<title>" --body-file <temp-file> [--draft]
+```sh
+gh pr create --repo <repo> --base <base-branch> --head <head> --title "<title>" --body-file <temp-file> --draft
 ```
 
-Rules:
+Use `<owner>:<branch>` for a fork head when required. Omit `--draft` only for requested ready mode. Never rely on editor prompts or interactive Git/`gh` defaults.
 
-- Always pass `--base`.
-- Always pass `--head`.
-- Always pass `--title`.
-- Always pass `--body-file` or `--body`.
-- Add `--draft` only when the user chose draft mode.
-- Do not rely on `gh` defaults or interactive prompts.
+6. Report the PR URL. If the task supports PR attachments, attach the created PR.
 
-## Output Requirements
-
-Before confirmation, show the user:
-
-- resolved push remote
-- head branch
-- resolved base branch
-- draft or ready mode
-- proposed title
-- proposed description
-
-After creation, report the PR URL.
-
-## Constraints
-
-- Keep the title concise.
-- Keep the description concise and limited to the current branch and session.
-- Avoid unrelated changes when summarizing the PR.
-- Stop and tell the user if the base branch cannot be determined confidently.
-- Stop and tell the user if the push remote cannot be determined confidently.
-- Stop and tell the user if no GitHub remote is configured.
-- Stop and tell the user if `gh` is unavailable or not authenticated.
-- Stop and tell the user if the current checkout is detached `HEAD`.
-- Stop and tell the user if there are no commits ahead of the resolved base branch.
-- Stop and tell the user if an open PR already exists for the current branch.
-- Default to draft mode unless the user asks for ready mode.
-- Do not replace `git push` or `gh pr create` with a prose-only answer.
+Whenever an ambiguity cannot be resolved automatically, ask the user for confirmation before the dependent action.
