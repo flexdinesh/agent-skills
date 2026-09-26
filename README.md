@@ -4,29 +4,24 @@ Personal collection of agent skills, installable via the [`skills`](https://gith
 
 ## Invocation policy
 
-These skills are manual-invocation only. Agents should not auto-load them from task context; use a skill from this repo only when the user explicitly invokes it by name, for example `$plan-mode` or `$git-commit`.
+Most skills are manual-invocation only. Use them when the user explicitly invokes them by name, for example `$plan-mode` or `$git-commit`. `tanstack-form` also applies from task context for substantial TanStack Form work. Follow each skill's `SKILL.md` for its invocation rules.
 
 ## Available skills
 
-- `adr` — persist architectural decisions, rationale, and consequences from a session
+- `adr` — save a brief Architecture Decision Record from the current session
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
 - `git-worktree` — create, inspect, and clean Git worktrees
-- `mp-grill` — Matt Pocock's `grill` skill, vendored. Sharpen plans and designs through a decision-focused interview
-- `mp-implement` — Matt Pocock's `implement` skill, vendored. Implement work from an approved spec or set of tickets
-- `mp-to-spec` — Matt Pocock's `to-spec` skill, vendored. Synthesize the current conversation into a local specification
-- `mp-to-tickets` — Matt Pocock's `to-tickets` skill, vendored. Break plans and specifications into blocked tracer-bullet tickets
-- `opencode-plugin` — build plugins for OpenCode
+- `opencode-plugin` — build OpenCode server and terminal UI plugins
 - `plan-mode` — produce a decision-complete plan, read-only
-- `pi-extension` — build extensions for Pi
-- `react-patterns` — write, audit, and refactor React with deliberate state, composition, recovery, and performance
+- `pi-extension` — build Pi extensions with lifecycle hooks, tools, commands, providers, and custom UI
+- `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance
 - `review-changes` — review local diffs for bugs and risks
-- `review-pr` — review a GitHub PR from a URL
-- `tanstack-form` — build with tanstack form
+- `tanstack-form` — build, review, debug, and test typed, accessible React and React Native forms
 - `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration
 - `tanstack-router` — build type-safe React and TypeScript applications with TanStack Router
-- `ts-guidance` — example-driven TypeScript code guidance
+- `ts-guidance` — example-driven TypeScript guidance for type safety, input parsing, and explicit domain contracts
 
 ## Install from remote
 
