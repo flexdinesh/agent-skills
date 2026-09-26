@@ -1,6 +1,6 @@
 ---
 name: repo-patterns
-description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent tooling, safe schema evolution, and reliable Go, Node, React, database, and REST boundaries. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
+description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, and reliable Go, Node, React, database, and REST boundaries. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
 ---
 
 # Repo Patterns
@@ -35,7 +35,10 @@ and consuming-repository policies take precedence.
 4. Map public APIs, imports, runtime dependencies, configuration, data owners,
    fixture paths, lifecycle, and shared edit points. Separate development/build
    dependencies from the shipped runtime graph.
-5. Read relevant references below. Check version-sensitive commands/APIs against
+5. Inspect domain vocabulary, naming policy, existing lint rules, and representative
+   peer modules. Distinguish language idioms from framework/protocol requirements
+   and public or persisted names that consumers depend on.
+6. Read relevant references below. Check version-sensitive commands/APIs against
    installed tools and primary documentation. Do not assume latest recipes apply.
 
 Exclude dependencies, build output, vendored code, and generated implementation
@@ -59,6 +62,10 @@ when those affect contracts or builds.
 - Extract shared code for a cohesive capability and real consumers. Avoid giant
   `shared`, `utils`, or global model packages. Do not require a speculative
   interface, service layer, or mapper for every type.
+- Use consistent domain terms and idiomatic names within each language. Follow
+  explicit repo conventions, name observable behavior and units clearly, and
+  preserve public/persisted naming contracts. Treat cosmetic differences as
+  policy/readability findings unless demonstrated behavior or contracts break.
 - Give each relevant server, CLI, worker, or app a documented independent run
   using controlled dependencies and fixture/scenario data. Independent execution
   may include a disposable database; it need not mean dependency-free execution.
@@ -107,6 +114,7 @@ problematic/preferred examples, exceptions, verification, and sources.
 | Concern | Rules | Reference |
 | --- | --- | --- |
 | Repo shape, module APIs, reuse, runtime distribution, transports, ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership`, `boundary-runtime-distribution`, `boundary-transport-composition` | [Boundaries and layout](references/boundaries-and-layout.md) |
+| Vocabulary, identifiers, file/package names, units, compatible renames | `naming-local-conventions`, `naming-domain-vocabulary`, `naming-behavior`, `naming-shape-and-units`, `naming-discoverability`, `naming-compatible-change` | [Consistent naming](references/consistent-naming.md) |
 | Dependency composition, config, fixtures, concurrency, capabilities | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation`, `runtime-capabilities` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
 | Stack preferences, manifests, tasks, ordering/cache, artifact drift | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-task-graph`, `tool-generated-artifacts` | [Tooling and commands](references/tooling-and-commands.md) |
 | Go errors/lifecycle, Node async work, input parsing, web behavior | `go-consumer-contracts`, `go-error-resource-ownership`, `go-concurrency-lifecycle`, `js-input-contracts`, `node-async-lifecycle`, `web-state-boundaries` | [Go and Node correctness](references/go-and-node-correctness.md) |
@@ -154,7 +162,7 @@ problematic/preferred examples, exceptions, verification, and sources.
 ## Finding discipline and output
 
 Separate correctness defects, boundary problems, repo-policy differences, and
-unverified hypotheses. Folder names, line counts, ordinary React effects, a
+unverified hypotheses. Folder names, casing, line counts, ordinary React effects, a
 supported alternative package manager, and a sequential SQL scan alone prove
 nothing. Soft defaults are not bugs.
 

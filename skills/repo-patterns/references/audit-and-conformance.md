@@ -16,7 +16,7 @@ inspect relevant generation inputs. Map the actual graph before judging layout:
 
 | Part | Capture |
 | --- | --- |
-| Code | Entry points, modules/packages, public APIs, allowed imports |
+| Code | Entry points, modules/packages, public APIs, allowed imports, vocabulary and naming conventions |
 | Runtime | Config, dependencies, composition, readiness, shutdown |
 | Data | Owners, atomic operations, access scopes, migration streams |
 | Development | Fixtures, prerequisites, target commands, mutable state isolation |
@@ -27,7 +27,7 @@ Trace candidates to concrete evidence and separate:
 - **Defect:** demonstrated broken/unsafe behavior or contract violation.
 - **Boundary issue:** supported hidden dependency, leaked implementation, shared
   mutable state, or missing independent execution capability.
-- **Policy difference:** a preferred stack, layout, or task convention differs.
+- **Policy difference:** a preferred stack, layout, naming, or task convention differs.
 - **Hypothesis:** performance/conflict concern needing measurement or confirmation.
 
 For each finding include rule ID, verified file/line or missing capability,
@@ -133,6 +133,12 @@ evidence accuracy and restraint as well as detected problems.
 | Generated check follows a staging write | Compare before overwrite or check resulting Git drift | Claiming a comparison with replaced output detects staleness |
 | Derived DB rebuild loses absent-source history | Establish authority/loss scope and recovery contract | Calling destructive reset a row-preserving migration |
 | Import cursor advances independently of facts | Validate continuity and atomic progress | Treating file size/offset as sufficient evidence |
+| JS `customerId`, Go `customerID`, protobuf `customer_id` | Accept equivalent vocabulary with native spellings | Imposing one casing scheme across languages |
+| Customer/client synonyms or distinct account concepts | Trace meaning; preserve domain translations | Unifying distinct concepts or ignoring synonym drift |
+| Producer timeout seconds, consumer milliseconds | Verify conversion and contract; clarify scalar units | Cosmetic suffix advice without checking behavior |
+| React component/Hook or required framework filename | Preserve required naming semantics and discovery | Treating framework requirements as cosmetic preferences |
+| Public field/config rename with older consumers | Trace consumers and preserve compatible transition | Breaking callers for naming consistency |
+| Coherent nonpreferred filename convention | Follow existing pattern; label preference only | Unrequested repository-wide rename |
 | Healthy boundaries and checks | Report no supported findings | Invented folder-count/sequential-scan defects |
 | Partial audit of large repo | Report exact inspected scope, continue full requested audit | Claim of repo-wide conformance from a sample |
 
