@@ -45,6 +45,18 @@ evidence accuracy and restraint as well as detected problems.
 | Concurrent container runs use fixed host ports | Discover mapped endpoints; verify independent runs | Port collision despite separate container identities |
 | CI enables persistent container reuse across runs | Use fresh CI resources; distinguish within-run sharing | Stale state or cleanup disabled by local reuse settings |
 | Existing Compose/service-container tests satisfy contracts | Preserve supported setup; judge fidelity/isolation/lifecycle | Unrequested migration merely to install Testcontainers |
+| Docker context includes credentials and host dependencies | Inspect effective ignore rules; retain required workspace/locked inputs | Git ignore assumed to filter builds or broad exclusions break generation |
+| Build token uses ARG or is deleted in a later layer | Use secret mounts; inspect logs/layers/cache/metadata with synthetic values | Clean final filesystem treated as proof of no leakage |
+| Production copies native dependencies between libc variants | Verify runtime compatibility and actual native/TLS operation | Alpine/scratch chosen solely by image size |
+| Final runtime image omits assets or probe tools | Test final target without checkout mounts; use available bounded probes | Source tests or Dockerfile lint treated as runtime evidence |
+| Entrypoint shell swallows stop signals | Exec/forward arguments; verify pending-work drain within grace period | Container build success mistaken for correct shutdown |
+| Supported image initializes as root then drops privileges | Verify effective user and volume access; preserve documented initialization | Blanket USER override breaks storage setup |
+| Compose service uses localhost and short depends_on | Use service DNS/container ports, readiness conditions, and runtime reconnection | Startup order treated as readiness or permanent recovery |
+| Unique Compose projects share fixed ports/names/bind paths | Isolate all mutable resources; reset one without affecting another | Project name assumed to isolate external or explicitly named resources |
+| Production Compose selection loads dev override/mounts | Inspect effective merged configuration/targets/profiles/env | Production label trusted without checking resolved command and mounts |
+| Compose restart should preserve data; cleanup prunes globally | Separate stop from owned disposable reset; preserve shared/external data | Named volumes assumed ephemeral or global prune used for project cleanup |
+| Verified image is rebuilt for publication or deploys moving tags | Promote verified digest; check source, platform manifest, rollback identity | Same tag assumed to mean same tested bytes |
+| Single-stage prebuilt image with platform probes and writable cache | Preserve supported artifact pipeline/probes/writable paths and promised platforms | Mandatory stages, readonly flags, extra architectures, or CLI release policy imposed |
 | Two worktrees share fixture DB/port | Propose namespaced mutable state and endpoints | Assuming Git isolation implies runtime isolation |
 | Column replacement during rolling deploy | Handle old writes, resumable backfill, completion | Copying data without concurrent-write protection |
 | Retry-safe POST with durable idempotency | Accept method; verify actual duplicate semantics | Blanket POST/idempotency violation |

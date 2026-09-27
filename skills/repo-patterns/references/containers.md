@@ -4,6 +4,10 @@
 
 **Policy status:** Testcontainers is a conditional fallback. Preserve suitable Compose or CI services; this reference does not prescribe production images.
 
+Application Dockerfiles, image verification/publication, and changed Compose
+configuration use [Docker guidance](docker.md). Provisioning alone retains the
+lifecycle guidance here.
+
 ## `fixture-container-infrastructure`
 
 **Own disposable services.**

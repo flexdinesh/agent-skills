@@ -1,6 +1,6 @@
 ---
 name: repo-patterns
-description: "Audit, write, and conform repository architecture, language/runtime boundaries, application contracts, development tooling, test setup, and CLI releases. Use only when the user explicitly invokes repo-patterns or $repo-patterns; do not auto-invoke from context."
+description: "Audit, write, and conform repository architecture, language/runtime boundaries, application contracts, development tooling, test setup, Docker images/Compose, and CLI releases. Use only when the user explicitly invokes repo-patterns or $repo-patterns; do not auto-invoke from context."
 ---
 
 # Repo Patterns
@@ -70,6 +70,7 @@ its relevant owners and consumers.
 | Language | Go code, modules, interfaces, errors, concurrency | [Go](references/go.md) |
 | Language | TypeScript contracts or JS/TS untrusted input | [TypeScript/input contracts](references/typescript.md) |
 | Runtime | Node async work, shutdown, native TS CLI execution | [Node](references/node.md) |
+| Runtime/distribution | Dockerfiles, build contexts/cache, image contents, container lifecycle, Compose, image verification/publication | [Docker](references/docker.md) |
 | Application | CLI setup, args, streams, exits, product ownership | [CLI](references/cli.md) |
 | Application | HTTP endpoints/clients, REST layout, auth, errors, pagination, retries | [HTTP/REST](references/http-rest.md) |
 | Application | MCP registration, schemas, tools/resources/prompts, transports | [MCP](references/mcp.md) |

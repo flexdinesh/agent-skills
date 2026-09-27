@@ -17,7 +17,7 @@ Most skills are manual-invocation only. Use them when the user explicitly invoke
 - `plan-mode` — produce a decision-complete plan, read-only
 - `pi-extension` — build Pi extensions with lifecycle hooks, tools, commands, providers, and custom UI
 - `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance
-- `repo-patterns` — audit, write, and conform repo boundaries, independent fixture runs, tooling, data models, databases, REST contracts, CLI setup, manual stable CI releases, and automatic Go dev builds
+- `repo-patterns` — audit, write, and conform repo boundaries, independent fixture runs, tooling, Docker images/Compose, data models, databases, REST contracts, CLI setup, manual stable CI releases, and automatic Go dev builds
 - `review-changes` — review local diffs for bugs and risks
 - `tanstack-form` — build, review, debug, and test typed, accessible React and React Native forms
 - `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration

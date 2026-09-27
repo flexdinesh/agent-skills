@@ -78,6 +78,48 @@
         "Reports no supported defect where the supplied design provides none; does not invent file/line evidence.",
         "Distinguishes design-snapshot coverage from full repository or runtime conformance."
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "Use repo-patterns. Read-only Docker audit from this snapshot: a Node workspace uses npm with a committed lockfile and shared packages. Its Dockerfile copies the entire checkout, including host node_modules and .env, before npm install. A private registry token is passed through ARG and written to .npmrc, then deleted in a later RUN. Build uses a Debian Node image; production copies its native dependencies into an Alpine Node image. Production healthcheck invokes curl, which is absent. CMD uses shell form to start Node. Source tests pass; nobody ran the final image. Diagnose supported issues and propose minimal repairs and verification. Do not build, install, publish, or change files.",
+      "expected_output": "A scoped Docker proposal addressing context/locked workspace inputs, credential leakage across layers/cache, native-library compatibility, probe availability, signal delivery, and final-image verification while preserving npm.",
+      "files": [],
+      "assertions": [
+        "Routes to Docker guidance and preserves npm/workspace ownership instead of applying pnpm or runtime-version migrations.",
+        "Excludes host dependencies/secrets while retaining required lockfile, workspace manifests, source, and generation inputs; proposes the established locked install.",
+        "Replaces credential ARG/copied files with supported build secret mounts; explains why later deletion or a clean final filesystem does not establish no leakage.",
+        "Checks actual native dependency/libc compatibility instead of choosing Alpine merely for size.",
+        "Repairs the absent probe dependency and signal path; proposes final-image application, permission, and stop checks without claiming they executed.",
+        "Does not claim source tests, digest pinning, or static build checks prove final-image correctness or complete reproducibility."
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Use repo-patterns. Read-only Compose proposal: API and Postgres already use supported Docker Compose. API connects to localhost:5432 inside its container and has short-form depends_on. Every checkout publishes 5432, uses container_name: shared-db, and declares a volume named shared-data explicitly. Normal dev startup reseeds existing DB data; cleanup runs docker system prune --volumes. Production accidentally loads a source bind mount and dev command from its override selection. Recommend scoped repairs and meaningful verification for two concurrent runs and dependency restart. Preserve supported infrastructure; no runtime or file mutations.",
+      "expected_output": "Retains Compose and fixes container addressing, readiness/reconnection, effective configuration, mutable resource isolation, seed/reset behavior, and cleanup scope with honest verification limits.",
+      "files": [],
+      "assertions": [
+        "Uses service DNS/container ports internally and distinguishes host published endpoints; avoids unnecessary DB host publication.",
+        "Distinguishes start ordering from readiness and ongoing recovery; proposes supported health conditions plus application reconnection behavior.",
+        "Explains why unique project names alone cannot isolate fixed host ports, container_name, or explicitly shared volume names.",
+        "Inspects exact merged files/targets/profiles/env and removes dev-only settings from the production selection without prescribing Kubernetes or Testcontainers.",
+        "Separates normal startup/reload from seed/reset; replaces global prune with cleanup of explicitly owned disposable resources and preserves shared/external data.",
+        "Proposes concurrent reset-isolation, persistence, dependency recovery, and interruption checks; reports them unexecuted."
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Use repo-patterns. Read-only Docker design review: a small service ships an already-built verified artifact into a single-stage maintained Debian slim image. Release CI records source and digest, tests then promotes that exact image. Only linux/amd64 is supported. Deployment runs non-root with platform-owned probes and a required writable cache. A supported upstream database entry point initializes its volume as root then drops privileges. Repository image policy allows automatic publication; CLI publication is outside scope. No failing behavior is supplied. Assess supported findings and remaining verification from the snapshot; no implementation, builds, or publication.",
+      "expected_output": "Accepts supported image/runtime/publication choices, identifies evidence limits, and avoids mandatory stages, Alpine, Dockerfile probes/users, read-only filesystems, new architectures, or CLI release restrictions.",
+      "files": [],
+      "assertions": [
+        "Reports no supported defect from the supplied design and distinguishes snapshot evidence from executed runtime checks.",
+        "Accepts declared prebuilt inputs and a single stage; does not force in-container compilation or another base variant.",
+        "Checks effective non-root behavior and preserves upstream root initialization followed by privilege dropping; does not require every Dockerfile to declare USER.",
+        "Accepts platform-owned probes and required writable state; proposes verification instead of blindly adding HEALTHCHECK/read_only flags.",
+        "Preserves the promised platform and image publication policy; does not impose multi-platform output, manual stable CLI triggers, or the automatic Go dev channel.",
+        "Recognizes promotion of verified image identity and reports metadata/scanner behavior as unverified unless actually evidenced."
+      ]
     }
   ]
 }
