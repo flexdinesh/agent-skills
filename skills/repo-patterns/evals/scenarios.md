@@ -99,6 +99,33 @@ evidence accuracy and restraint as well as detected problems.
 | Healthy boundaries and checks | Report no supported findings | Invented folder-count/sequential-scan defects |
 | Partial audit of large repo | Report exact inspected scope, continue full requested audit | Claim of repo-wide conformance from a sample |
 
+## React additions
+
+| Scenario | Expected decision | Failure to catch |
+| --- | --- | --- |
+| React interaction change without companion installed | Route to self-contained React guidance; load Web/types only for affected seams | Requiring companion invocation/install or loading all frontend references |
+| Long cohesive page with ordinary props/booleans | Keep meaningful ownership; accept length, prop depth, and valid flags | Forced extraction/provider or blanket boolean ban |
+| Conflicting mode props and shared UI importing page state | Explicit supported modes; compose features above shared primitives | Cosmetic file split preserving hidden ownership |
+| Callback requests work but name claims completion | Trace timing/payload; preserve public compatibility | Renaming all callbacks or ignoring actual event meaning |
+| Cache data copied locally versus deliberate dirty draft | One cache owner; draft initialization/refetch/reset contract | Banning valid drafts or erasing edits on refetch |
+| Previous-state updates or contradictory status flags | Functional updates and coherent transitions where needed | Grouping unrelated fields or stale snapshot increments |
+| Two Hook callers expect one draft; two providers should be independent | Share through one intended provider; instantiate independent owners | Assuming Hook reuse shares state or module-level mutable drafts |
+| Required nullable context has assertion/dummy actions | Named consumer narrows and fails clearly; valid optional defaults remain | Unsafe assertions or silent missing-provider behavior |
+| Compound UI rearranged into sibling preview/portal | Separate behavior from visual containment; preserve context and accessible relations | Requiring DOM containment or claiming separate roots retain context |
+| Legitimate timer/fetch/autosave effect under Strict Mode | Dependencies, mirrored cleanup, race/draft contracts | Banning effect setters or disabling replay instead of fixing lifecycle |
+| Conditional Hook or impure render | Stable ordinary Hook order and pure evaluation | Applying conditional use exceptions to ordinary Hooks |
+| Nested component type or random keys erase edits | Stable component identity and domain keys; scoped deliberate reset | Treating inline callbacks as component types or resetting the whole app |
+| Reordered editable rows use index keys | Draft/focus remain attached to domain record | Checking static markup only or banning static-list indices |
+| Undefined controlled input, form button, pointer-only action | Stable input ownership, button intent, labels/keyboard/focus | UI library replacement or role attributes without interaction |
+| Request A settles after B; A clears pending on failure | Guard all settlements for current scope; retain existing loader/cache owner | Success-only race guard or displaying another entity as current |
+| Save completes after newer edits; alternate controls submit twice | Submitted version, safe concurrency, real cache reconciliation, recoverable draft | Button disable as sole guard or client abort treated as server cancellation |
+| Boundary retry leaves failed query/lazy loader cached | Retry failed owner; preserve surrounding usable UI | Assuming Suspense catches errors or boundary reset refetches automatically |
+| SSR reads browser storage and mutable request state globally | Deterministic hydration and request isolation; preserve framework contracts | Blanket warning suppression or public-cache ban |
+| Independent reads waterfall; auth dependency is sequential | Parallel independent reads only; measure readiness and bundle/subscription costs | Parallel unauthorized work or invented speedup percentages |
+| Wrapper returns one root-context field; Compiler configured | Whole-context subscription remains; inspect actual Compiler coverage/cost | Claiming selector semantics or stripping memoization automatically |
+| React 18 uses forwardRef/context; justified reducer and render props | Preserve supported APIs and valid patterns; reducer conversion needs accepted proposal | Forced upgrade or preference classified as a defect |
+| UI tests mock provider Hook and use sleeps/shared cache | Real consumers, fresh owners, controlled races, public assertions | Render-count/snapshot proof or DOM tests claimed to prove browser hydration |
+
 Avoid grading by folder count, layer count, abstraction count, or raw coverage.
 Measure supported findings, false positives, useful independent runs, behavior
 preservation, and honest coverage. Changed decisions need actual runs to establish

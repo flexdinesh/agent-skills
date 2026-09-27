@@ -2,7 +2,7 @@
 
 **Read when:** changing browser/server imports, app organisation, configuration, or state spanning API and UI owners.
 
-**Policy status:** Framework requirements and repo integration policies. Detailed React composition stays in the manual-only react-patterns skill.
+**Policy status:** Framework requirements and repo integration policies. Component behavior and composition use the scoped [React reference](react.md); no companion invocation is required.
 
 ## Framework naming and layout
 
@@ -12,8 +12,8 @@ Pure helpers remain ordinary functions. Split rendering (`.tsx`) from
 non-rendering logic (`.ts`) when useful. A single Vite app can retain its
 normal root configuration and `src/`; no workspace is implied.
 
-For detailed React internals, retain the established approach and use
-`react-patterns` only when invoked; no companion installation is required.
+For React component/state/lifecycle decisions, read [React](react.md).
+Use the deeper `react-patterns` companion only when invoked.
 
 ## `organisation-react-vite`
 
@@ -49,8 +49,8 @@ proxy is not a production API deployment. Check production URL/asset configurati
 
 **Exception:** a small view can keep its state and API call together. Framework
 routing/SSR rules take precedence where used. Feature folders do not require Redux,
-a router, or a prescribed fetching library. Detailed React guidance stays in the
-manual-only `react-patterns` skill; do not invoke it automatically.
+a router, or a prescribed fetching library. Follow the installed framework's
+entry points rather than introducing Vite files into another stack.
 
 **Verify:** user-visible feature behavior, loading/error/retry paths, stale-response
 or cancellation behavior where relevant, and actual production build/API wiring.
@@ -99,11 +99,11 @@ dashboard to another server must not display the previous server's cached data.
 
 **Exception:** legitimate effects and ordinary local state are not defects.
 SSR, hydration, file routing, and client/server APIs depend on the installed
-framework. Preserve those conventions when changing ownership.
+framework. Preserve those conventions when changing ownership. Component-level
+state, lifecycle, and recovery use [React](react.md) when affected.
 
 **Verify:** route changes, stale responses, failed loads/mutations, retry, edit
-preservation, and relevant SSR/build behavior. Detailed component/state policies
-belong to `react-patterns` when invoked, not a second conflicting rulebook.
+preservation, and relevant SSR/build behavior.
 
 ## Sources
 

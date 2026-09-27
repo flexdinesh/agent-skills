@@ -1,6 +1,6 @@
 ---
 name: repo-patterns
-description: "Audit, write, and conform repository architecture, language/runtime boundaries, application contracts, development tooling, test setup, Docker images/Compose, and CLI releases. Use only when the user explicitly invokes repo-patterns or $repo-patterns; do not auto-invoke from context."
+description: "Audit, write, and conform repository architecture, language/runtime boundaries, application contracts, React ownership/composition/recovery, development tooling, test setup, Docker images/Compose, and CLI releases. Use only when the user explicitly invokes repo-patterns or $repo-patterns; do not auto-invoke from context."
 ---
 
 # Repo Patterns
@@ -74,7 +74,8 @@ its relevant owners and consumers.
 | Application | CLI setup, args, streams, exits, product ownership | [CLI](references/cli.md) |
 | Application | HTTP endpoints/clients, REST layout, auth, errors, pagination, retries | [HTTP/REST](references/http-rest.md) |
 | Application | MCP registration, schemas, tools/resources/prompts, transports | [MCP](references/mcp.md) |
-| Application | Browser/server separation, React/Vite layout, API/state integration | [Web](references/web-react-vite.md) |
+| Application | Browser/server imports, Vite layout/config, API integration, cache/source identity | [Web](references/web-react-vite.md) |
+| Application | React components/Hooks, state/providers, effects, identity, forms, async recovery, SSR, performance, UI tests | [React](references/react.md) |
 | Data | Invariants, wire/storage representations, schema history, rollout | [Models/migrations](references/data-models-and-migrations.md) |
 | Data | SQL, transactions, query/pool budgets, durable effects | [Database access](references/database-access.md) |
 | Data | Imports, checkpoints, source reuse, normalization, rebuilds | [Ingestion](references/ingestion.md) |
@@ -94,7 +95,9 @@ its relevant owners and consumers.
 Example: Go MCP work uses Go and MCP guidance. Add architecture for shared
 operations, database guidance for persistent work, and fixture guidance for changed
 setup. A docs-only command correction uses documentation and the affected command
-reference. Other languages retain their native conventions; use applicable shared
+reference. React interaction work uses React; add Web for API/cache integration
+or browser/server imports, and TypeScript for changed types/input parsing.
+Other languages retain their native conventions; use applicable shared
 references and primary documentation without imposing Go/Node recipes.
 
 ## Verify and report
@@ -114,5 +117,6 @@ scope; say when no findings survive. Write/conform output: concise changes,
 rationale, checks/results, and material limits. End plans with unresolved questions,
 if any.
 
-Detailed React composition and framework behavior stay in companion skills when
-invoked. Do not automatically invoke manual-only companions or require installation.
+React fundamentals are covered by the routed reference without a companion
+installation. Deeper React examples and framework-specific behavior remain in
+companion skills when invoked. Do not automatically invoke manual-only companions.

@@ -120,6 +120,62 @@
         "Preserves the promised platform and image publication policy; does not impose multi-platform output, manual stable CLI triggers, or the automatic Go dev channel.",
         "Recognizes promotion of verified image identity and reports metadata/scanner behavior as unverified unless actually evidenced."
       ]
+    },
+    {
+      "id": 10,
+      "prompt": "Use repo-patterns only. Read-only React design audit from this snapshot; the react-patterns companion is unavailable. An existing React 18 Vite app uses npm, a query cache, and DOM interaction tests. OrdersPage copies query records into local state and effect-maintains a filtered array. Refetch overwrites an editable draft. It defines a stateful Row component inside render and keys sortable rows by array index. A useState call follows an early return for empty data. A required context uses a type assertion on its nullable value. A cancel button inside the form has no type; save is a pointer-only div handler. Identify supported issues, minimal repairs, and meaningful checks. No files, installs, upgrades, or executed runtime checks.",
+      "expected_output": "Self-contained React guidance traces competing owners, draft loss, Hook order, component/list identity, unsafe context narrowing, and form/accessibility defects; proposes scoped repairs and public behavioral verification while preserving stack/version.",
+      "files": [],
+      "assertions": [
+        "Reads the repo-patterns React reference and proceeds without invoking or installing react-patterns; loads Web/TypeScript only for affected cache/type seams.",
+        "Keeps the query cache as remote owner and derives filtered data while preserving intentional dirty drafts with explicit refetch/reset behavior.",
+        "Addresses the conditional ordinary Hook, nested component type, and editable-row index keys with stable Hook order/component identity/domain keys.",
+        "Narrows required nullable context explicitly; proposed TypeScript uses no any, type assertions, or non-null assertions.",
+        "Uses explicit cancel button intent and semantic keyboard-accessible save interaction; proposes labels, edits/focus, reorder, refetch, and keyboard checks.",
+        "Preserves React 18/npm/cache/testing conventions and distinguishes snapshot findings from unexecuted runtime verification."
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Use repo-patterns. Read-only React composition proposal from this snapshot: DraftEditor owns a cohesive local useDraftState Hook. A sibling preview now needs the same draft, but calling useDraftState in the preview creates a separate draft. Callers need different visual frames and two independent editor/preview workspaces on one page. Account state is already shared by an app provider; server records stay in an existing query cache. Propose the smallest typed ownership and composition contracts plus verification; no implementation or new libraries. Preserve controlled APIs where useful.",
+      "expected_output": "One feature provider per workspace shares cohesive behavior with named consumers/actions, separate visual boundaries, explicit missing-provider behavior, and independent instances; account/cache ownership remains intact.",
+      "files": [],
+      "assertions": [
+        "Explains that reusing a stateful Hook shares behavior, not one state instance; mounts draft behavior once per intended shared owner.",
+        "Scopes providers per workspace, keeps visual frames separate, and permits sibling composition or controlled props rather than demanding a global store or compound API everywhere.",
+        "Uses a typed nullable required context and explicit narrowing/error if proposing code; no unsafe assertions or dummy actions.",
+        "Preserves existing account/query owners and keeps provider identity stable; introduces no mutable module-level draft or mandatory memoization.",
+        "Proposes real-consumer tests for shared updates, A/B independence, missing provider, layout changes, and edit/focus lifetime; claims no executed checks."
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Use repo-patterns. Read-only React async/SSR/performance review from this snapshot: installed framework loaders and a query cache exist, but a page effect manually loads project A then B; it guards only success, while A's catch/finally can set B's error/pending. A submitted flag triggers saving in an effect; completion clears a draft edited during the save. Suspense is expected to catch rejected event-handler promises. Retry only resets an error boundary without invalidating its failed query or cached rejected React.lazy loader. Two authorized independent page reads are awaited sequentially; a third read requires their result and authorization. SSR initially reads window.localStorage and keeps user draft state in a mutable module variable. A context wrapper returns one field and is claimed to provide selective subscriptions. React Compiler is configured, but no profile/bundle/network checks ran. Propose scoped repairs and validation; no code or runtime actions.",
+      "expected_output": "Uses established async owners, guards all settlements, preserves submission versions/edits, distinguishes loading/error mechanisms and actual retry, isolates SSR state, parallelizes only independent reads, and grounds performance claims in evidence.",
+      "files": [],
+      "assertions": [
+        "Uses existing loaders/query ownership and protects success, failure, and pending for current request scope; client cancellation does not prove server work canceled.",
+        "Moves interaction-specific saving into an action/handler, captures submitted version, preserves newer edits, and considers unsafe duplicate activation across submit paths.",
+        "Explains that Suspense does not catch ordinary event rejection; error-boundary reset alone need not retry failed queries or cached lazy rejection; proposes supported recovery of the failed owner.",
+        "Repairs browser-only SSR access and shared mutable request state using framework-compatible deterministic initial rendering and request isolation without forcing framework migration.",
+        "Parallelizes only independent authorized reads, retains real dependent/auth sequencing, and handles rejection deliberately.",
+        "Recognizes whole-value context subscriptions and checks actual Compiler coverage; proposes representative timing/profile/bundle evidence without invented speedups or blanket memoization.",
+        "Proposes A/B success/failure ordering, unmount, save failure/new edits/retry, direct hydration/navigation, and concurrent request isolation; reports checks unexecuted."
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Use repo-patterns. Read-only React review of this design snapshot, not executable code: a small React 18 component library uses forwardRef, Context.Provider, npm, PascalCase component files, and established render props. Components are cohesive despite long markup. Inputs are intentionally controlled or uncontrolled, with labels, semantic buttons, keyboard handling, and normal disabled/open flags. A tested reducer clarifies complex transitions. A timer effect has complete dependencies and mirrored cleanup; Strict Mode performs development replay. Stateful component types/record keys are stable; two providers have independent state. A dirty draft deliberately diverges from cached records under an explicit reset contract. Context is small/low-frequency; handlers are inline. Existing targeted memoization protects an identity-sensitive library API. No React Compiler or SSR is configured, and no broken behavior or measured performance cost is supplied. Assess supported findings and verification limits. No implementation, dependency changes, companion invocation, or reducer conversion was requested.",
+      "expected_output": "Accepts supported React 18 APIs, justified reducer, legitimate effects/drafts/composition, and normal rendering choices; reports no supported defect and honest snapshot limits without mandatory migration or abstractions.",
+      "files": [],
+      "assertions": [
+        "Reports no supported correctness defect from the supplied design and distinguishes snapshot evidence from executed component/browser checks.",
+        "Preserves React 18, npm, established filenames/render props, ordinary booleans, and long cohesive markup; requires no upgrade, provider/folder template, or prop-drilling ban.",
+        "Accepts the justified reducer, does not convert it or demand user action merely for its presence; optional conversion would need a concrete accepted proposal.",
+        "Accepts the timer effect and development replay, deliberate dirty draft, stable identity, and independently scoped providers.",
+        "Does not demand Compiler/SSR adoption, blanket memoization, or removal of identity-sensitive memoization; inline handlers and low-frequency context alone are not defects.",
+        "Selects React concerns without unrelated Node/CLI/release work or automatic companion invocation; proposes only proportionate unexecuted behavioral verification."
+      ]
     }
   ]
 }

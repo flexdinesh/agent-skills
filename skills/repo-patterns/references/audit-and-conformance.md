@@ -101,6 +101,7 @@ exposes a bug; report the failure rather than weakening the expected behavior.
 | Database | Real-engine constraints, transaction failure/concurrency, migration create/upgrade |
 | HTTP contract | Handler/provider/client behavior, denied paths, retries, pagination |
 | Browser ownership | User interactions, stale results, retry, edits/navigation; build/SSR as relevant |
+| React contracts/lifecycle | Real consumers/providers, independent instances, edits/focus after updates/reorder, cleanup, failure/retry; hydration/profile evidence when affected |
 | Shared tooling/generation | Affected targets, deterministic generation, version/CI agreement |
 | Docker images/Compose | Final target from declared inputs, runtime permissions/assets/probes, graceful stop, isolated state, source/digest identity |
 | CLI distribution/releases | Native run/typecheck, installed artifact, version/tag/metadata, controlled partial-publication recovery |
