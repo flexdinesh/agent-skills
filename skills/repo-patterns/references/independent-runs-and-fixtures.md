@@ -126,9 +126,11 @@ mock API responses compile but disagree with provider serialization/errors.
 
 **Prefer:** test domain behavior quickly through controlled seams; test constraints,
 queries, locks, and transactions against the actual database family and migrations.
-Testcontainers or another disposable instance is suitable. Schema-validate fixture
-responses and verify representative cases against the provider. Consumer/provider
-contract tests may suffice; a Pact broker is not mandatory.
+Testcontainers or another disposable instance is suitable; see
+[container infrastructure](test-data-and-setup.md#fixture-container-infrastructure)
+for selection and runner ownership. Schema-validate fixture responses and verify
+representative cases against the provider. Consumer/provider contract tests may
+suffice; a Pact broker is not mandatory.
 
 For browser fixtures, MSW can intercept real HTTP client calls across development,
 component tests, and demos. Keep mock activation explicit and production-safe.

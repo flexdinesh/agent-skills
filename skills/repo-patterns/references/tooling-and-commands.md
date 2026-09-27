@@ -96,6 +96,13 @@ invoke native commands. Provide bounded target selection and document cwd, args,
 dependencies, readiness, shutdown, and exit behavior. `mise run`/`pnpm run` is
 dispatch syntax, not a requirement for every package to define a `run` script.
 
+For `test:integration`, document runtime/service access, image availability where
+applicable, startup/test timeouts, and worker limits. Required integration runs
+fail clearly on missing prerequisites; do not silently skip or substitute fakes.
+Explicit fast-only selection may omit them; relevant CI jobs must execute the
+required suite. Keep provisioning in the owning harness; see
+[container infrastructure](test-data-and-setup.md#fixture-container-infrastructure).
+
 Where command conventions are undecided, define root `dev` for a documented
 primary development workflow. Select a bounded useful set; several related parts
 can form one workflow. Each runnable app also needs an independently selectable

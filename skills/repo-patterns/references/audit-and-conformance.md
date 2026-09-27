@@ -125,6 +125,11 @@ evidence accuracy and restraint as well as detected problems.
 | Builder shares nested objects or unseeded dates | Fresh values, explicit relevant fields, controlled generator/clock | Seed alone treated as complete reproducibility |
 | HTTP server writes outside test rollback | Isolate actual backend state; verify commits where relevant | Test-connection transaction treated as server isolation |
 | Dev reload reseeds; reset trusts a test env flag | Explicit preparation/reset and verified disposable ownership | Lost edits or arbitrary target destruction |
+| Required container integration run has no runtime | Report prerequisite failure; preserve explicit fast-only checks | Silent skip or fake fallback reported as integration success |
+| Container starts but migration/setup fails | Register cleanup on acquisition; remove owned resources and retain diagnostics | Leaked containers or clients after partial setup |
+| Concurrent container runs use fixed host ports | Discover mapped endpoints; verify independent runs | Port collision despite separate container identities |
+| CI enables persistent container reuse across runs | Use fresh CI resources; distinguish within-run sharing | Stale state or cleanup disabled by local reuse settings |
+| Existing Compose/service-container tests satisfy contracts | Preserve supported setup; judge fidelity/isolation/lifecycle | Unrequested migration merely to install Testcontainers |
 | Two worktrees share fixture DB/port | Propose namespaced mutable state and endpoints | Assuming Git isolation implies runtime isolation |
 | Column replacement during rolling deploy | Handle old writes, resumable backfill, completion | Copying data without concurrent-write protection |
 | Retry-safe POST with durable idempotency | Accept method; verify actual duplicate semantics | Blanket POST/idempotency violation |
