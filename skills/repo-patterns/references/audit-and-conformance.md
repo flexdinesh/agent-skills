@@ -125,9 +125,30 @@ evidence accuracy and restraint as well as detected problems.
 | Column replacement during rolling deploy | Handle old writes, resumable backfill, completion | Copying data without concurrent-write protection |
 | Retry-safe POST with durable idempotency | Accept method; verify actual duplicate semantics | Blanket POST/idempotency violation |
 | Supported nonpreferred stack | Label preference only; retain stack | Unrequested pnpm/framework migration |
+| New JS/TS-only app with undecided tooling | Use pnpm and root `dev` scripts | Automatic mise requirement |
+| New Go + JS/TS app with undecided tooling | Use mise root tasks, pnpm JS dependencies, native Go modules | Treating mise as a JS package manager |
+| Existing npm/Task workflow without written policy | Preserve evidenced tooling and command conventions | Treating missing prose as permission to migrate |
+| Manifests, CI, and docs disagree on tooling | Establish intended policy; report concrete drift | Treating conflicting evidence as an undecided choice |
+| Established package manager, undecided doc location | Retain manager; use brief `docs/development.md` | Applying or withholding every fallback as one bundle |
+| Existing canonical development guide elsewhere | Update it and preserve established command names | Duplicate guide or cosmetic task renames |
+| Root `dev` combines related API/web; worker is optional | Document primary set plus independent/selected runs | Rejecting useful combinations or starting unrelated services |
+| Parallel dev processes need setup/readiness and cleanup | Order finite setup, handle readiness, verify interruption | Waiting for foreground server completion or claiming unrun checks pass |
+| Development guide loses prerequisites to become shorter | Retain necessary setup/lifecycle; link detailed explanations | Brevity that prevents successful runs |
 | Client/mock/provider disagree | Trace actual contract drift and verify provider | Shared static types treated as sufficient |
 | Go product embeds a React UI | Distinguish build graph from runtime; test shipped binary | Counting workspace packages as deployments |
 | Thin JS manifest delegates Go tasks | Accept native ownership and useful dispatch | Reporting every Go package.json as a defect |
+| CLI, REST, and MCP expose one operation | Share operation/invariants; adapt each transport | Calling local REST for reuse or leaking SDK types into domain logic |
+| New feature spans web, API, and persistence | Build one runnable tracer slice with observable evidence | Complete technical layers with no working user action |
+| Required database replacement preserves method signatures only | Verify atomicity, precision, ordering, and errors on real adapters | Claiming interface compatibility proves storage semantics |
+| Storage rename feeds generated REST/CLI/MCP output | Review migrations and each public contract separately | Accidental wire/behavior changes from internal schema edits |
+| Separate agents share checkout and global registry | Scope file ownership; coordinate shared edits/index and integration | Assuming distinct features prevent lost edits or semantic conflicts |
+| One-file CLI gains speculative service/repository layers | Keep a small testable function and native entry point | Grading architecture by layers/files rather than responsibility |
+| CLI help initializes DB; JSON includes progress logs | Defer live setup; separate output/diagnostic streams | Domain helpers exiting process or untestable terminal dependencies |
+| REST tests mock a store while writes commit separately | Check request contracts and real atomic behavior | Passing mocks treated as proof of transaction correctness |
+| MCP function tests pass but stdout includes logs | Verify discovery/invocation through actual protocol transport | Missing wiring/schema errors or corrupted stdio |
+| Stateful MCP HTTP server shares user data between clients | Own authenticated session state and verify isolation | Treating annotations or global mutable state as authorization |
+| React feature requires edits to every global Hooks/types module | Colocate feature responsibilities; share only cohesive capabilities | Mandatory global store/provider or one Hook per component |
+| Vite dev proxy works; built app has wrong API URL | Verify production browser/API wiring and public config | Treating dev success as deployment evidence |
 | REST and MCP share an operation | Reuse application owner and translate protocol results | One local transport calling another for reuse |
 | Fixture source lacks refresh but permits comments | Resolve support/policy; enforce operations server-side | Source-name checks or UI-only denial |
 | Generated check follows a staging write | Compare before overwrite or check resulting Git drift | Claiming a comparison with replaced output detects staleness |

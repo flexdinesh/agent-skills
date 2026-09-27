@@ -1,29 +1,44 @@
 # Tooling and commands
 
-Read when selecting tools, organizing manifests, or defining local/CI commands.
+Read when selecting tools, organizing manifests, defining local/CI commands,
+or documenting development runs.
 Examples are conventions to implement, not commands guaranteed in an arbitrary repo.
 
 ## `tool-stack-defaults`
 
-**Apply:** a new project needs a stack or an existing project has tooling drift.
+**Apply:** a requested tooling/stack choice is unresolved, or existing tooling
+has demonstrated drift. Drift alone does not authorize a tool migration.
 
 **Problematic:** a healthy supported npm/Next.js application is reported as broken
 because the preferred stack is pnpm/Vite; Go dependency ownership is moved into
 a Node manifest merely to satisfy a task runner.
 
-**Prefer:** for new work, Go or Node/TypeScript servers, Vite/React frontend, pnpm
-for JS dependencies/scripts, mise for tool/runtime versions and cross-language
-dispatch. Follow explicit repo requirements. Keep supported existing tools unless
-their migration is requested. mise can pin Node/pnpm binaries too; pnpm owns JS
-libraries. Pin a supported version policy in one authoritative configuration and
+**Prefer:** resolve each choice from user instructions/repo policy, then established
+manifests, lockfiles, scripts, CI, and docs. Apply fallbacks only to gaps within
+scope; missing prose or conflicting evidence does not establish an undecided choice.
+Keep supported existing tools unless their migration is requested.
+
+| Unresolved choice | Fallback |
+| --- | --- |
+| JS/TS-only dependencies and development commands | pnpm; root `package.json` scripts |
+| Go + JS/TS tool/runtime versions and development commands | mise; root `mise.toml` tasks |
+| JS dependency management within a mixed repo | pnpm |
+| Go dependency management | Native Go modules |
+
+mise manages tools/tasks, not JS libraries; it can pin Node/pnpm binaries too.
+JS/TS-only projects gain no automatic mise requirement. This tooling matrix does
+not prescribe a runner for Go-only or other language combinations. For new projects
+with an undecided stack, prefer Go or Node/TypeScript servers and Vite/React frontend.
+Pin a supported version policy in authoritative configuration for each tool and
 keep local/CI resolution consistent.
 
 **Exception:** product/platform needs can justify another stack. Retain an existing
 build orchestrator when it serves the repo. Verify APIs for installed versions;
 newer monorepo inference features may be unavailable or experimental.
 
-**Verify:** resolve versions from manifests/config and compare actual local/CI
-commands. Report preference differences separately from failures.
+**Verify:** identify the policy/convention or unresolved choice behind each decision.
+Resolve versions from manifests/config and compare actual local/CI commands.
+Report preference differences separately from failures.
 
 ## `tool-dependency-ownership`
 
@@ -56,7 +71,8 @@ modules, verify with workspace mode disabled. Check generated client/config inpu
 **Apply:** defining or auditing tasks for apps, CLIs, libraries, and repo roots.
 
 **Problematic:** `test` watches forever in CI; `start` runs a reload server;
-root `dev` starts every service; Vite preview is deployed as a production server.
+root `dev` indiscriminately starts unrelated services; Vite preview is deployed
+as a production server.
 
 **Prefer:** consistent meanings with only applicable commands:
 
@@ -78,6 +94,12 @@ Keep actual JS commands in package scripts; mise/root tasks delegate. Go tasks
 invoke native commands. Provide bounded target selection and document cwd, args,
 dependencies, readiness, shutdown, and exit behavior. `mise run`/`pnpm run` is
 dispatch syntax, not a requirement for every package to define a `run` script.
+
+Where command conventions are undecided, define root `dev` for a documented
+primary development workflow. Select a bounded useful set; several related parts
+can form one workflow. Each runnable app also needs an independently selectable
+command. Use `dev:<part>` for new root command names when naming is undecided;
+retain established names. Do not add a dev server to a library or one-shot CLI.
 
 Illustrative package scripts and dispatcher, after defining the app's fixture
 config and installed commands:
@@ -102,13 +124,75 @@ run = "go test ./..."
 dir = "apps/api"
 ```
 
+Illustrative root dispatch for two JS apps whose owning packages define `dev`:
+
+```json
+{
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @repo/web --filter @repo/api run dev",
+    "dev:web": "pnpm --filter @repo/web run dev",
+    "dev:api": "pnpm --filter @repo/api run dev"
+  }
+}
+```
+
+For a mixed repo with a Go module in `apps/api` and a JS web package:
+
+```toml
+[tasks.dev]
+depends = ["dev:web", "dev:api"]
+
+[tasks."dev:web"]
+run = "pnpm --filter @repo/web run dev"
+
+[tasks."dev:api"]
+run = "go run ./cmd/api"
+dir = "apps/api"
+```
+
+Select one part with `pnpm run dev:web` or `mise run dev:web`. Select multiple
+parts with repeated pnpm filters as above or `mise run dev:web ::: dev:api`.
+pnpm `--parallel` skips dependency ordering: complete required build/setup first.
+mise prerequisites wait for completion, not server readiness; do not make the web
+task depend on a foreground API task that never completes. Explicitly handle
+readiness where required and allow enough parallel jobs for the selected processes.
+
 **Exception:** a static frontend has no mandatory production `start`; a library
 needs no dev server. Preserve established compatible task aliases rather than
 breaking callers purely for naming. Use `preview` for Vite built-site inspection.
 
 **Verify:** list available tasks, inspect delegated commands, and run affected
 finite checks. Check forwarded args, failure exits, signals, and production build
-behavior when changed. Do not add dummy scripts to make aggregate checks green.
+behavior when changed. Within authorized isolated validation, check documented
+single/combined starts, readiness, interruption, and cleanup. Audits report runs
+not executed. Do not add dummy scripts to make aggregate checks green.
+
+## `tool-development-docs`
+
+**Apply:** documenting or auditing development runs within the requested scope.
+
+**Problematic:** root `dev` has undocumented dependencies; individual app commands
+are missing; competing guides drift; setup instructions bury commands in architecture.
+
+**Prefer:** where doc location is undecided, use `docs/development.md` and link it
+from README. Keep one canonical guide, updated with changed commands. Briefly cover:
+
+- Prerequisites and setup; state the working directory.
+- What root `dev` starts and commands for one part or selected combinations.
+- Required dependencies or fixture modes; relevant config and URLs/ports.
+- Shutdown and cleanup, including mutable development state where applicable.
+
+Use a small purpose/command table and short action-focused steps. Include only
+details needed to run the relevant parts; link architecture and full configuration
+reference elsewhere. Brevity must preserve prerequisites and lifecycle instructions.
+
+**Exception:** update an existing canonical development guide in its established
+location instead of duplicating it. Libraries and one-shot CLIs document applicable
+checks/sample runs rather than inventing a long-lived `dev` capability.
+
+**Verify:** match documented commands to scripts/tasks and their actual dependencies.
+Within authorized isolated validation, follow setup and relevant single/combined runs;
+verify expected endpoints, shutdown, and cleanup. Report unexecuted runs honestly.
 
 ## `tool-task-graph`
 
@@ -167,8 +251,11 @@ output, tracked files, or runtime state; a `check` label proves none of these.
 - [pnpm workspaces](https://pnpm.io/workspaces)
 - [pnpm catalogs](https://pnpm.io/catalogs)
 - [pnpm filtering](https://pnpm.io/filtering)
+- [pnpm script execution and parallel runs](https://pnpm.io/cli/run)
 - [mise configuration](https://mise.jdx.dev/configuration.html)
 - [mise task semantics](https://mise.jdx.dev/tasks/)
+- [mise multiple-task execution](https://mise.jdx.dev/tasks/running-tasks.html)
+- [mise task dependencies](https://mise.jdx.dev/tasks/task-configuration.html)
 - [mise monorepo features](https://mise.jdx.dev/tasks/monorepo.html)
 - [Go workspace guidance](https://go.dev/ref/mod#workspaces)
 - [Vite production vs preview](https://vite.dev/guide/static-deploy.html)
@@ -176,5 +263,10 @@ output, tracked files, or runtime state; a `check` label proves none of these.
 - [Tokeninsights temporary API generation check](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/check-api.ts)
 - [Tokeninsights asset comparison](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/check-web.ts)
 - [Servediff distribution drift check](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/.github/workflows/ci.yml)
+- [Servediff development commands and managed fixture server](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/docs/development.md)
+- [Tokeninsights individual and combined development runs](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/docs/development.md)
+- [Diátaxis goal-oriented how-to guides](https://diataxis.fr/how-to-guides/)
+- [Google concise procedures](https://developers.google.com/style/procedures)
 
-Preferred stack and task names are skill defaults, not ecosystem requirements.
+Tool choices, task names, and doc location are conditional skill fallbacks,
+not ecosystem requirements.

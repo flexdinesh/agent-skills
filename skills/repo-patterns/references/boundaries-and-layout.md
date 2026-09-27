@@ -142,6 +142,13 @@ reproducible generation command; regenerate affected outputs after integration.
 Unique migration IDs help filenames, not incompatible concurrent schema changes.
 See [runtime isolation](independent-runs-and-fixtures.md#runtime-isolation).
 
+On a shared branch/checkout, agree feature/file ownership and shared edits before
+parallel work. Re-read shared files before editing; keep patches scoped and avoid
+unrelated whole-file formatting. Coordinate staging/commits and schema/contract
+integration; never discard another contributor's changes. Disjoint features can
+still share registries, types, migrations, or generated artifacts. A shared checkout
+has shared files/index; it can lose edits without a Git merge conflict.
+
 **Exception:** route composition, lockfiles, and shared schema inherently need
 coordination. Retain small explicit registries when they are clearer than dynamic
 discovery. Do not spawn agents or create user tasks just because this rule applies.
@@ -205,6 +212,7 @@ failure. Confirm transports do not import one another to reuse local behavior.
 - [Redux feature organization](https://redux.js.org/style-guide/#structure-files-as-feature-folders-with-single-file-logic)
 - [Vite environment handling](https://vite.dev/guide/env-and-mode)
 - [GitHub code ownership](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners)
+- [Git worktree files/index ownership](https://git-scm.com/docs/git-worktree)
 - [Servediff shared review service](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/internal/reviewservice/service.go)
 - [Tokeninsights native task adapter](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/package.json)
 - [Tokeninsights development and distribution](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/docs/development.md)

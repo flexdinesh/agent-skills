@@ -38,6 +38,11 @@ partial update, distinguish omission (retain) from explicit null (clear, if allo
 and defaulting. Map at the relevant I/O boundary; share wire contracts/clients
 across Go/JS rather than sharing private persistence models.
 
+Treat storage schema and public contract changes as separate decisions. A column
+rename must not silently alter REST fields, CLI JSON, or MCP schemas through row
+serialization/code generation. Review source, wire, and behavioral compatibility;
+even additive responses can break strict parsers or consumers of closed enums.
+
 **Exception:** a single representation can be fine when contracts actually match.
 Do not generate three near-identical types/mappers for every table. A read model
 may be a purpose-built SQL projection rather than an aggregate.

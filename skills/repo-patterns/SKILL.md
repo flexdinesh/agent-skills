@@ -1,6 +1,6 @@
 ---
 name: repo-patterns
-description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, and reliable Go, Node, React, database, and REST boundaries. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
+description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, and focused CLI, REST, MCP, and React/Vite organisation. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
 ---
 
 # Repo Patterns
@@ -24,6 +24,12 @@ These are independent uses, not mandatory phases. A bare invocation defaults to
 an audit. A writing/refactoring request authorizes that work; do not require a
 separate audit or confirmation for routine scoped changes. User instructions
 and consuming-repository policies take precedence.
+
+Resolve tooling, command, and documentation choices separately: user instructions
+and repo policy first, then established conventions evidenced by manifests,
+lockfiles, scripts, CI, and docs. Apply skill fallbacks only to unresolved choices
+within the requested scope. Missing written policy does not mean missing convention;
+conflicting evidence does not establish absence.
 
 ## Before acting
 
@@ -78,12 +84,17 @@ when those affect contracts or builds.
 - Reduce shared edit hotspots; coordinate contracts, migration order, lockfiles,
   and generated outputs. Isolate ports, databases, queues, and files between
   worktrees/runs. Do not promise conflict-free development.
-- For new projects, prefer Go or Node/TypeScript servers, Vite/React frontends,
-  pnpm for JS dependencies/scripts, and mise for tools/runtime versions and
-  cross-language dispatch. These are defaults. Retain supported existing stacks;
+- For new projects with an undecided stack, prefer Go or Node/TypeScript servers
+  and Vite/React frontends. For unresolved tooling choices, use pnpm dependencies
+  and root package scripts in JS/TS-only projects; use mise tools/runtime versions
+  and root tasks in Go + JS/TS projects. Mixed repos still use pnpm for undecided
+  JS dependency management and native Go modules. Retain supported existing stacks;
   migrate tooling/frameworks only when requested.
 - Give commands consistent meanings and truthful applicability. Delegate to native
   language/package commands; avoid duplicated task logic and dummy capabilities.
+  Where command conventions are undecided, provide root `dev` for a documented
+  primary workflow and independently selectable parts. Where doc location is
+  undecided, use brief `docs/development.md` instructions for one or more parts.
 - Give generated artifacts one source and reproducible generation. Detect drift
   before overwriting comparison targets; verify the actual release artifact.
 - Model invariants and compatibility explicitly. Keep API, domain, and storage
@@ -106,6 +117,27 @@ when those affect contracts or builds.
   tests that merely restate layout or implementation; do not suppress a correct
   failing regression test to claim conformance.
 
+## Code organisation by application type
+
+Use ports and adapters (hexagonal architecture) where transport or external
+technology needs isolation. Keep feature slices cohesive and build a thin working
+path end to end (tracer bullets) before widening it. These techniques do not require
+a layer, interface, or file for every function. Split only for a clear responsibility,
+independent verification, reuse, or change owner; keep small cohesive code together.
+
+| Application | Organise and trace | Guidance |
+| --- | --- | --- |
+| CLI | Command parsing/presentation → operation → dependency adapter → output/exit | [CLI](references/code-organisation.md#organisation-cli) |
+| REST endpoints | Route/request mapping → authorized operation → storage → response contract | [REST](references/code-organisation.md#organisation-rest) |
+| MCP server | Tool/resource registration and schemas → shared operation → protocol result | [MCP](references/code-organisation.md#organisation-mcp) |
+| React/Vite web app | App shell → feature UI/state → browser API adapter → public wire contract | [React/Vite](references/code-organisation.md#organisation-react-vite) |
+
+Use narrow storage seams when substitution is required; keep schema changes
+explicit and public contracts deliberate. Coordinate shared edit points when agents
+work on one branch/checkout; feature boundaries reduce overlap but do not prevent
+lost edits, incompatible schemas, or semantic conflicts. Read the shared rules in
+[code organisation](references/code-organisation.md) alongside the relevant app type.
+
 ## Reference routing and rule index
 
 Read only references relevant to the task. Rules include applicability,
@@ -114,9 +146,10 @@ problematic/preferred examples, exceptions, verification, and sources.
 | Concern | Rules | Reference |
 | --- | --- | --- |
 | Repo shape, module APIs, reuse, runtime distribution, transports, ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership`, `boundary-runtime-distribution`, `boundary-transport-composition` | [Boundaries and layout](references/boundaries-and-layout.md) |
+| Ports/adapters, tracer slices, storage seams, file splits, CLI/REST/MCP/React organisation | `organisation-ports-and-adapters`, `organisation-tracer-slices`, `organisation-storage-seams`, `organisation-file-boundaries`, `organisation-cli`, `organisation-rest`, `organisation-mcp`, `organisation-react-vite` | [Code organisation by application type](references/code-organisation.md) |
 | Vocabulary, identifiers, file/package names, units, compatible renames | `naming-local-conventions`, `naming-domain-vocabulary`, `naming-behavior`, `naming-shape-and-units`, `naming-discoverability`, `naming-compatible-change` | [Consistent naming](references/consistent-naming.md) |
 | Dependency composition, config, fixtures, concurrency, capabilities | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation`, `runtime-capabilities` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
-| Stack preferences, manifests, tasks, ordering/cache, artifact drift | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-task-graph`, `tool-generated-artifacts` | [Tooling and commands](references/tooling-and-commands.md) |
+| Tooling fallbacks, manifests, tasks, development docs, ordering/cache, artifact drift | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-development-docs`, `tool-task-graph`, `tool-generated-artifacts` | [Tooling and commands](references/tooling-and-commands.md) |
 | Go errors/lifecycle, Node async work, input parsing, web behavior | `go-consumer-contracts`, `go-error-resource-ownership`, `go-concurrency-lifecycle`, `js-input-contracts`, `node-async-lifecycle`, `web-state-boundaries` | [Go and Node correctness](references/go-and-node-correctness.md) |
 | Models, representations, schema history, rollout, derived-state recovery | `model-invariants`, `model-representations`, `migration-history`, `migration-compatible-rollout`, `migration-operational-safety`, `model-derived-state` | [Data models and migrations](references/data-models-and-migrations.md) |
 | SQL, constraints, transactions, query/pool behavior, events, ingestion | `db-values-and-constraints`, `db-transaction-concurrency`, `db-query-pool-budget`, `db-durable-effects`, `db-ingestion-continuity` | [Database access](references/database-access.md) |
@@ -164,7 +197,7 @@ problematic/preferred examples, exceptions, verification, and sources.
 Separate correctness defects, boundary problems, repo-policy differences, and
 unverified hypotheses. Folder names, casing, line counts, ordinary React effects, a
 supported alternative package manager, and a sequential SQL scan alone prove
-nothing. Soft defaults are not bugs.
+nothing. Fallback preferences are not bugs.
 
 For each finding give a rule ID, verified file/line or missing capability,
 concrete evidence, impact, confidence, smallest fix, and validation scenario.
@@ -179,8 +212,9 @@ material limits. End any plan with concise unresolved questions, if any.
 
 These are opinionated repo policies informed by official Go/Node/pnpm/mise docs,
 ports and adapters, Postgres, HTTP/OpenAPI standards, and established testing and
-migration practices. Preferred stack, task vocabulary, and fixture obligations
-are skill defaults, not claims of universal consensus. Sources live in references.
+migration practices. Preferred stack and task vocabulary are conditional fallbacks;
+fixture obligations are skill policies. These are not claims of universal consensus.
+Sources live in references.
 
 Keep detailed React composition/state guidance in `react-patterns` and specialized
 router/framework behavior in the applicable skills when invoked. Do not require
