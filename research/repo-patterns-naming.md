@@ -2,7 +2,7 @@
 
 Researched 2026-09-26. Implemented in
 [repo-patterns](../skills/repo-patterns/SKILL.md) and its
-[naming reference](../skills/repo-patterns/references/consistent-naming.md).
+[naming reference](../skills/repo-patterns/references/naming.md).
 This brief preserves the proposal; examples and policies are original synthesis.
 
 ## Research conclusion
@@ -185,7 +185,7 @@ Keep the main skill small:
 3. Add one core policy: “Use consistent domain terms and idiomatic names within
    each language. Follow explicit repo conventions, name observable behavior and
    units clearly, and preserve public/persisted naming contracts.”
-4. Route the six rules to a new `references/consistent-naming.md`, using the
+4. Route the six rules to a new `references/naming.md`, using the
    skill's existing Apply/Problematic/Prefer/Exception/Verify format.
 5. Add evaluation cases: mixed-language initialisms; synonyms versus distinct
    domain concepts; ambiguous scalar units; framework naming; a rename that

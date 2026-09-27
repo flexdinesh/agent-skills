@@ -1,9 +1,12 @@
 # Database access
 
-Read when writing queries, choosing transaction scope, tuning access, or coupling
-database changes to remote effects. Adapt engine-specific guidance to the repo.
+**Read when:** changing SQL, transaction scope, concurrency, query/pool behavior, or durable effects.
+
+**Policy status:** Check the actual engine/version. Measurement determines tuning; examples prescribe no universal ORM or database.
 
 ## `db-values-and-constraints`
+
+**Enforce persistent invariants.**
 
 **Apply:** application-controlled queries and persistent invariants.
 
@@ -29,6 +32,8 @@ denied cross-owner operations, and documented constraint error translation. Use
 the actual engine; fake stores cannot prove these semantics.
 
 ## `db-transaction-concurrency`
+
+**Own atomic work and concurrency.**
 
 **Apply:** multi-query atomic work, concurrent updates, or retryable failures.
 
@@ -74,6 +79,8 @@ real connections and relevant isolation rather than only mocked client calls.
 
 ## `db-query-pool-budget`
 
+**Measure query and connection budgets.**
+
 **Apply:** query growth, list endpoints, repeated access, or connection pressure.
 
 **Problematic:** one query per list item; unbounded reads; one pool per request;
@@ -99,6 +106,8 @@ a fixed speedup.
 
 ## `db-durable-effects`
 
+**Persist intent for durable effects.**
+
 **Apply:** a successful DB change must reliably cause a remote event or operation.
 
 **Problematic:** commit then publish loses events on crash; publish then commit
@@ -118,35 +127,6 @@ an event platform to satisfy an architectural label.
 and recovery from backlog. Check observability of stuck/failed work and ensure
 fixtures can exercise the worker without live third-party credentials.
 
-## `db-ingestion-continuity`
-
-**Apply:** incremental import, sync, replay, or durable processing checkpoints.
-
-**Problematic:** a byte offset advances before facts commit; file size alone
-proves a source is unchanged; retry skips data interpreted by an older parser.
-
-**Prefer:** treat a checkpoint as evidence tied to source identity, relevant
-configuration, parser/collector version, and validated content continuity.
-Handle truncation, replacement, partial records, changed dependencies, and
-source mutation during parsing. Use content/logical fingerprints or another
-source-appropriate consistency mechanism; an offset is safe only for a verified
-append-compatible source. Fall back to full processing when reuse evidence fails.
-
-Persist imported facts, deduplication identity, queued derived work, and successful
-progress consistently within the chosen transaction boundary. Failed processing
-must not advance success markers. Failure diagnostics may persist separately
-without partial facts; make that distinction explicit. Repeated processing must
-preserve intended results, rather than rely on skip optimization for correctness.
-
-**Exception:** a bounded one-shot import needs no cursor/cache. External offset
-stores may require reconciliation or an idempotent protocol instead of one DB
-transaction. A content hash is not a universal snapshot guarantee for mutable data.
-
-**Verify:** append, same-size replacement, truncation, incomplete final record,
-parser/config change, source mutation, crash between data/progress writes,
-duplicate replay, and commit failure. Verify partial success across source scopes
-is reported honestly and retry preserves previously committed progress.
-
 ## Sources
 
 - [Go SQL injection avoidance](https://go.dev/doc/database/sql-injection)
@@ -159,6 +139,3 @@ is reported honestly and retry preserves previously committed progress.
 - [Postgres EXPLAIN](https://www.postgresql.org/docs/current/sql-explain.html)
 - [OWASP object-level authorization](https://owasp.org/API-Security/editions/2023/en/0xa1-broken-object-level-authorization/)
 - [AWS transactional outbox](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
-- [Tokeninsights validated source reuse](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/source_reuse.go)
-- [Tokeninsights byte cursor validation](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/source_cursor.go)
-- [Tokeninsights atomic source ingest](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/sync.go)

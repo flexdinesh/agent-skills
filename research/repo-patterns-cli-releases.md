@@ -6,8 +6,11 @@ survey. Recommendations are policy synthesis; tool capabilities are sourced.
 
 ## Recommendation
 
-Added one focused
-[CLI reference](../skills/repo-patterns/references/cli-development-and-releases.md).
+Current guidance: [CLI ownership](../skills/repo-patterns/references/cli.md),
+[Go distribution](../skills/repo-patterns/references/go-cli-distribution.md),
+[Node distribution](../skills/repo-patterns/references/node-cli-distribution.md),
+[CI releases](../skills/repo-patterns/references/ci-releases.md), and
+[Go channels](../skills/repo-patterns/references/go-ci-releases.md).
 Keep the existing
 organisation, lifecycle, fixture, tooling, and runtime-distribution rules.
 Teach release ownership, consumer installation, version planning, artifact

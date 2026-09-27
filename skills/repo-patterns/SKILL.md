@@ -1,237 +1,117 @@
 ---
 name: repo-patterns
-description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, focused CLI, REST, MCP, and React/Vite organisation, and CI releases with automatic Go dev builds. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
+description: "Audit, write, and conform repository architecture, language/runtime boundaries, application contracts, development tooling, test setup, and CLI releases. Use only when the user explicitly invokes repo-patterns or $repo-patterns; do not auto-invoke from context."
 ---
 
 # Repo Patterns
 
-Manual invocation only: use this skill only when the user explicitly invokes
-`repo-patterns` or `$repo-patterns`; do not auto-invoke from task context.
+Apply to applications, libraries, multiple executables, and monorepos. Judge
+structure by explicit ownership, contracts, and independently verifiable behavior.
 
-Apply to single applications, libraries, multiple executables, and monorepos.
-Judge structure by whether parts can be understood, built, tested, run, and
-changed through explicit contracts. Folder names alone do not establish boundaries.
+## Select the work
 
-## Uses
+Manual invocation only. A bare invocation means a read-only audit. A request to
+write or refactor authorizes that scoped work without a separate audit or approval.
 
-| Use | Action |
+| Mode | Method |
 | --- | --- |
-| Audit | Inspect requested scope; report supported findings and proposed changes. Default to read-only. |
-| Write | Design and implement requested code using the patterns from the start. |
-| Conform | Make requested boundary, runtime, tooling, or data changes incrementally; verify affected behavior. |
+| Audit | Trace evidence across owners and consumers; report findings and coverage. |
+| Write | Establish owners and contracts; implement one working path, then widen it. |
+| Conform | Fix the smallest coherent slice; preserve supported behavior and consumers. |
 
-These are independent uses, not mandatory phases. A bare invocation defaults to
-an audit. A writing/refactoring request authorizes that work; do not require a
-separate audit or confirmation for routine scoped changes. User instructions
-and consuming-repository policies take precedence.
+Follow user instructions and consuming-repository policy first, then established
+conventions evidenced by manifests, lockfiles, scripts, CI, docs, and peer code.
+Apply a fallback only to an unresolved choice within scope. Missing prose or
+conflicting evidence does not establish an undecided choice.
 
-Resolve tooling, command, and documentation choices separately: user instructions
-and repo policy first, then established conventions evidenced by manifests,
-lockfiles, scripts, CI, and docs. Apply skill fallbacks only to unresolved choices
-within the requested scope. Missing written policy does not mean missing convention;
-conflicting evidence does not establish absence.
+References distinguish standards/runtime requirements, scoped skill policies,
+conditional defaults, and illustrative examples. A preferred tool or layout alone
+is not grounds for a defect finding or migration.
 
-## Before acting
+## Keep these principles
 
-1. Read applicable instructions, inspect Git state, and preserve unrelated work.
-2. Identify scope and installed language/runtime/framework/tool versions. Inspect
-   manifests, workspace/module membership, scripts, CI, tests, and migrations.
-3. Distinguish entry points, language packages/modules, deployment units, domain
-   owners, and independently released consumers. Do not classify by folder count.
-4. Map public APIs, imports, runtime dependencies, configuration, data owners,
-   fixture paths, lifecycle, and shared edit points. Separate development/build
-   dependencies from the shipped runtime graph.
-5. Inspect domain vocabulary, naming policy, existing lint rules, and representative
-   peer modules. Distinguish language idioms from framework/protocol requirements
-   and public or persisted names that consumers depend on.
-6. Read relevant references below. Check version-sensitive commands/APIs against
-   installed tools and primary documentation. Do not assume latest recipes apply.
+- Give each capability, state store, contract, and resource lifecycle a clear owner.
+- Keep public surfaces and dependency direction explicit; share cohesive capabilities
+  for real consumers. Split only for an actual responsibility or verification need.
+- Preserve public/persisted contracts and authorization across transports and fixtures.
+- Give relevant executables controlled independent runs; isolate mutable state.
+  Never silently substitute fixtures after a live dependency fails.
+- Coordinate shared contracts, migrations, lockfiles, and generated outputs.
+  Preserve unrelated work; separate checkouts alone do not isolate runtime state.
+- Verify observable behavior at the affected boundary. Report unverified behavior
+  and correct failing regression tests honestly.
 
-Exclude dependencies, build output, vendored code, and generated implementation
-from source audits unless requested. Inspect generation inputs and output drift
-when those affect contracts or builds.
+## Inspect and route
 
-## Core policies
+1. Read applicable instructions and Git state. Identify the requested scope,
+   affected consumers, installed versions, and established conventions.
+2. Inspect relevant entry points, manifests, imports, config, tests, and data owners.
+   Distinguish packages/modules, deployments, releases, and build/runtime dependencies.
+   Exclude generated/vendor/dependency implementation unless requested; inspect
+   generation inputs when they affect the work.
+3. Select references below from the task and affected language/runtime. Read them
+   before making decisions. Add a reference when tracing reveals another affected
+   contract; repository-wide technology presence alone does not require loading it.
+4. Use a reference's applicability, exceptions, and verification together. Related
+   links are conditional, not a recursive reading list. Check version-sensitive APIs
+   against installed tools/bundled documentation, then primary documentation.
 
-- Keep one clear owner for each capability, state store, contract, and resource
-  lifecycle. Colocate independently changing features; keep entry points focused
-  on composition. Use the smallest structure that establishes real boundaries.
-- Distinguish multiple binaries from multiple modules. Favor one Go module for
-  cohesive Go code; separate modules for justified dependency/release ownership.
-  `apps/` and `packages/` is a useful workspace convention, not a universal tree.
-- Define public surfaces and allowed dependency direction. Check relative imports,
-  aliases, re-exports, and data access as well as manifest dependencies. Introduce
-  minimal enforcement when requested conformance calls for it.
-- Keep browser code free of server dependencies and secrets. Share appropriate
-  wire contracts/clients, not private storage implementations. Multiple local
-  transports reuse application operations rather than calling one another.
-- Extract shared code for a cohesive capability and real consumers. Avoid giant
-  `shared`, `utils`, or global model packages. Do not require a speculative
-  interface, service layer, or mapper for every type.
-- Use consistent domain terms and idiomatic names within each language. Follow
-  explicit repo conventions, name observable behavior and units clearly, and
-  preserve public/persisted naming contracts. Treat cosmetic differences as
-  policy/readability findings unless demonstrated behavior or contracts break.
-- Give each relevant server, CLI, worker, or app a documented independent run
-  using controlled dependencies and fixture/scenario data. Independent execution
-  may include a disposable database; it need not mean dependency-free execution.
-- Select live/fixture dependencies at composition boundaries. Parse configuration
-  once; preserve validation, authorization, domain behavior, and serialization.
-  Resolve differing source support and policy into enforced capabilities where
-  needed. Never silently switch to fixtures after a live dependency fails.
-- Keep fixture inputs deterministic and mutable state isolated. Use real-engine
-  integration evidence for database semantics and contract checks for mock drift.
-- Own small synthetic datasets by feature/contract. Separate pure builders and
-  named scenarios from persistence loaders, mock handlers, and runner setup.
-  Tests arrange only needed state; explicit dev seeds/reset target owned disposable
-  resources. Reuse data definitions where contracts match, never mutable instances.
-- Reduce shared edit hotspots; coordinate contracts, migration order, lockfiles,
-  and generated outputs. Isolate ports, databases, queues, and files between
-  worktrees/runs. Do not promise conflict-free development.
-- For new projects with an undecided stack, prefer Go or Node/TypeScript servers
-  and Vite/React frontends. For unresolved tooling choices, use pnpm dependencies
-  and root package scripts in JS/TS-only projects; use mise tools/runtime versions
-  and root tasks in Go + JS/TS projects. Mixed repos still use pnpm for undecided
-  JS dependency management and native Go modules. Retain supported existing stacks;
-  migrate tooling/frameworks only when requested.
-- Give commands consistent meanings and truthful applicability. Delegate to native
-  language/package commands; avoid duplicated task logic and dummy capabilities.
-  Where command conventions are undecided, provide root `dev` for a documented
-  primary workflow and independently selectable parts. Where doc location is
-  undecided, use brief `docs/development.md` instructions for one or more parts.
-- Give generated artifacts one source and reproducible generation. Detect drift
-  before overwriting comparison targets; verify the actual release artifact.
-- Own CLI install contracts and product/module/package versions explicitly. For an
-  undecided JS CLI stack, prefer native TypeScript on Node 26 with separate type
-  checks; npm distribution needs emitted JS. Select install channels per product.
-- Publish stable CLI versions and advance `latest` only through manually triggered
-  CI. For Go CLIs, automatically publish successful `main` builds to `dev`; keep
-  development artifacts separate from immutable stable versions. Resolve source,
-  version, tag, and artifact inputs once; verify installs and recover unfinished
-  publishers against the original release. Retain established packaging tools;
-  automatic stable publication and automatic npm dev publication are out of scope.
-- Model invariants and compatibility explicitly. Keep API, domain, and storage
-  representations separate where their contracts differ; reuse them where they
-  match. Do not expose internal rows or accept server-owned fields by accident.
-- Parameterize SQL, enforce persistent invariants, own transaction scope, and
-  handle concurrency deliberately. Keep schema history reproducible and applied
-  migrations immutable in shared environments.
-- Evolve schemas/contracts with the actual deployment and consumer lifecycle.
-  Consider expand/migrate/switch/contract when old and new versions coexist.
-  Account for concurrent writes, locks, retries, recovery, and backfill completion.
-  Distinguish preserved data from rebuildable projections and destructive resets.
-  Commit ingestion checkpoints consistently with data; validate reuse evidence.
-- Respect HTTP semantics and object/field authorization. Bound work and lists;
-  define machine-readable errors, duplicate behavior, and compatibility. POST may
-  legitimately be retry-safe; URI spelling alone does not establish REST quality.
-- Preserve type evidence. In TypeScript, use no `any`, type assertions, or non-null
-  assertions. Parse untrusted data at I/O boundaries and narrow nullable values.
-- Verify observable behavior at the boundary that could expose the bug. Avoid
-  tests that merely restate layout or implementation; do not suppress a correct
-  failing regression test to claim conformance.
+For a full audit, maintain a coverage checklist and inspect every applicable category
+in connected batches. Mark completed, inapplicable, and unverified scope; a sample
+does not establish whole-repository conformance. For a focused change, inspect only
+its relevant owners and consumers.
 
-## Code organisation by application type
+## Reference catalog
 
-Use ports and adapters (hexagonal architecture) where transport or external
-technology needs isolation. Keep feature slices cohesive and build a thin working
-path end to end (tracer bullets) before widening it. These techniques do not require
-a layer, interface, or file for every function. Split only for a clear responsibility,
-independent verification, reuse, or change owner; keep small cohesive code together.
-
-| Application | Organise and trace | Guidance |
+| Group | Read when the task involves | Reference |
 | --- | --- | --- |
-| CLI | Command parsing/presentation → operation → dependency adapter → output/exit | [CLI](references/code-organisation.md#organisation-cli) |
-| REST endpoints | Route/request mapping → authorized operation → storage → response contract | [REST](references/code-organisation.md#organisation-rest) |
-| MCP server | Tool/resource registration and schemas → shared operation → protocol result | [MCP](references/code-organisation.md#organisation-mcp) |
-| React/Vite web app | App shell → feature UI/state → browser API adapter → public wire contract | [React/Vite](references/code-organisation.md#organisation-react-vite) |
+| Architecture | Topology, ownership, imports, shared operations, storage seams, build/runtime separation | [Architecture](references/architecture.md) |
+| Naming | Identifiers, domain vocabulary, units, compatible renames | [Naming](references/naming.md) |
+| Language | Go code, modules, interfaces, errors, concurrency | [Go](references/go.md) |
+| Language | TypeScript contracts or JS/TS untrusted input | [TypeScript/input contracts](references/typescript.md) |
+| Runtime | Node async work, shutdown, native TS CLI execution | [Node](references/node.md) |
+| Application | CLI setup, args, streams, exits, product ownership | [CLI](references/cli.md) |
+| Application | HTTP endpoints/clients, REST layout, auth, errors, pagination, retries | [HTTP/REST](references/http-rest.md) |
+| Application | MCP registration, schemas, tools/resources/prompts, transports | [MCP](references/mcp.md) |
+| Application | Browser/server separation, React/Vite layout, API/state integration | [Web](references/web-react-vite.md) |
+| Data | Invariants, wire/storage representations, schema history, rollout | [Models/migrations](references/data-models-and-migrations.md) |
+| Data | SQL, transactions, query/pool budgets, durable effects | [Database access](references/database-access.md) |
+| Data | Imports, checkpoints, source reuse, normalization, rebuilds | [Ingestion](references/ingestion.md) |
+| Development | Composition, config, independent runs, capabilities, isolation | [Runtime setup](references/development-runtime.md) |
+| Testing | Builders, scenarios, seeds, mocks, fidelity, test setup/teardown | [Test data/setup](references/test-data-and-setup.md) |
+| Testing | Disposable real services through Testcontainers, Compose, or CI containers | [Containers](references/containers.md) |
+| Tooling | Unresolved stack/tool choices, manifests, commands, task graphs, generation | [Tooling/commands](references/tooling-and-commands.md) |
+| Tooling | Established or selected pnpm workspace dependencies and task dispatch | [pnpm](references/pnpm.md) |
+| Tooling | Established or selected mise tool pins and task dispatch | [mise](references/mise.md) |
+| Docs | Development instructions or install/release/recovery guides | [Documentation](references/documentation.md) |
+| Distribution | Go archives, module tags, supported source installs | [Go distribution](references/go-cli-distribution.md) |
+| Distribution | Node CLI packaging, npm manifests, isolated installation | [Node distribution](references/node-cli-distribution.md) |
+| Releases | Manual stable CI, version plans, artifact checks, publication recovery | [CI releases](references/ci-releases.md) |
+| Releases | Go automatic dev builds, stable/dev channels, publication ordering | [Go CI channels](references/go-ci-releases.md) |
+| Workflow | Audits, conformance findings, broader verification selection | [Audit/conformance](references/audit-and-conformance.md) |
 
-Use narrow storage seams when substitution is required; keep schema changes
-explicit and public contracts deliberate. Coordinate shared edit points when agents
-work on one branch/checkout; feature boundaries reduce overlap but do not prevent
-lost edits, incompatible schemas, or semantic conflicts. Read the shared rules in
-[code organisation](references/code-organisation.md) alongside the relevant app type.
+Example: Go MCP work uses Go and MCP guidance. Add architecture for shared
+operations, database guidance for persistent work, and fixture guidance for changed
+setup. A docs-only command correction uses documentation and the affected command
+reference. Other languages retain their native conventions; use applicable shared
+references and primary documentation without imposing Go/Node recipes.
 
-## Reference routing and rule index
+## Verify and report
 
-Read only references relevant to the task. Rules include applicability,
-problematic/preferred examples, exceptions, verification, and sources.
+Run appropriate finite checks and inspect affected consumers. Verify changed
+independent runs and release artifacts when relevant. During read-only audits,
+keep source/config/shared state unchanged; do not install tools, seed a shared DB,
+or start the whole product. Inspect commands for side effects before running them.
 
-| Concern | Rules | Reference |
-| --- | --- | --- |
-| Repo shape, module APIs, reuse, runtime distribution, transports, ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership`, `boundary-runtime-distribution`, `boundary-transport-composition` | [Boundaries and layout](references/boundaries-and-layout.md) |
-| Ports/adapters, tracer slices, storage seams, file splits, CLI/REST/MCP/React organisation | `organisation-ports-and-adapters`, `organisation-tracer-slices`, `organisation-storage-seams`, `organisation-file-boundaries`, `organisation-cli`, `organisation-rest`, `organisation-mcp`, `organisation-react-vite` | [Code organisation by application type](references/code-organisation.md) |
-| CLI setup/install ownership, native TS/Node 26, Go/npm distribution, manual stable CI releases, automatic Go dev builds and recovery | `cli-release-ownership`, `cli-go-distribution`, `cli-js-distribution`, `release-go-channels`, `release-version-plan`, `release-artifact-verification`, `release-publish-recovery`, `release-maintenance-docs` | [CLI development and releases](references/cli-development-and-releases.md) |
-| Vocabulary, identifiers, file/package names, units, compatible renames | `naming-local-conventions`, `naming-domain-vocabulary`, `naming-behavior`, `naming-shape-and-units`, `naming-discoverability`, `naming-compatible-change` | [Consistent naming](references/consistent-naming.md) |
-| Dependency composition, config, fixtures, concurrency, capabilities | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation`, `runtime-capabilities` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
-| Test-data ownership, builders, fixtures, seeds, per-test setup, dev-server lifecycle, container infrastructure | `fixture-data-ownership`, `fixture-builders`, `fixture-setup-lifecycle`, `fixture-container-infrastructure` | [Test data and setup](references/test-data-and-setup.md) |
-| Tooling fallbacks, manifests, tasks, development docs, ordering/cache, artifact drift | `tool-stack-defaults`, `tool-dependency-ownership`, `tool-command-contract`, `tool-development-docs`, `tool-task-graph`, `tool-generated-artifacts` | [Tooling and commands](references/tooling-and-commands.md) |
-| Go errors/lifecycle, Node async work, input parsing, web behavior | `go-consumer-contracts`, `go-error-resource-ownership`, `go-concurrency-lifecycle`, `js-input-contracts`, `node-async-lifecycle`, `web-state-boundaries` | [Go and Node correctness](references/go-and-node-correctness.md) |
-| Models, representations, schema history, rollout, derived-state recovery | `model-invariants`, `model-representations`, `migration-history`, `migration-compatible-rollout`, `migration-operational-safety`, `model-derived-state` | [Data models and migrations](references/data-models-and-migrations.md) |
-| SQL, constraints, transactions, query/pool behavior, events, ingestion | `db-values-and-constraints`, `db-transaction-concurrency`, `db-query-pool-budget`, `db-durable-effects`, `db-ingestion-continuity` | [Database access](references/database-access.md) |
-| HTTP semantics, auth, errors, pagination, retries, contracts | `http-resource-semantics`, `http-authorization-errors`, `http-bounded-lists`, `http-mutation-recovery`, `http-contract-evolution` | [HTTP contracts](references/http-contracts.md) |
-| Coverage, finding discipline, incremental fixes, evaluations | `audit-evidence`, `conform-small-slices`, `verify-boundary-behavior` | [Audit and conformance](references/audit-and-conformance.md) |
-
-## Working method
-
-### Audit
-
-1. Inventory requested parts and inspect connected boundaries in manageable
-   batches. For a full audit, cover all relevant batches; do not stop at a sample.
-2. Trace suspected coupling, hidden dependencies, state sharing, contract drift,
-   and correctness failures through owners and consumers before reporting them.
-3. Keep source/config/shared state unchanged. Do not install tools, seed a shared
-   DB, or start the whole product during a read-only audit. Use existing checks
-   consistent with the request; report independent-run commands not executed.
-4. Rank supported findings by consequences. Include minimal proposals, meaningful
-   verification, inspected coverage, and unknowns. Say when no findings survive.
-
-### Write
-
-1. Identify owners, public contracts, dependency direction, and runtime lifecycle
-   before choosing directories, packages, interfaces, or services.
-2. Compose normal and controlled-development dependencies through the same
-   application boundary. Document prerequisites, config, scenario, and cleanup.
-3. Implement requested behavior with scoped models, data access, and transport
-   contracts. Introduce tools/abstractions only where the requested work needs them.
-4. Run appropriate checks and verify affected consumers and independent execution.
-
-### Conform
-
-1. Choose the smallest coherent slice that fixes the actual boundary or behavior.
-   Do not bundle package splitting, renames, framework upgrades, and schema redesign
-   solely to match a template.
-2. Preserve supported behavior and contracts unless changing them is requested;
-   correct demonstrated bugs deliberately. Preserve CLI exits, configuration,
-   fixture semantics, resource cleanup, and shared migration history.
-3. Add focused import/contract/generation checks where useful. Avoid installing a
-   large build platform solely to enforce one import restriction.
-4. Verify the slice and affected consumers. Report remaining proposals honestly.
-
-## Finding discipline and output
-
-Separate correctness defects, boundary problems, repo-policy differences, and
-unverified hypotheses. Folder names, casing, line counts, ordinary React effects, a
-supported alternative package manager, and a sequential SQL scan alone prove
-nothing. Fallback preferences are not bugs.
-
-For each finding give a rule ID, verified file/line or missing capability,
-concrete evidence, impact, confidence, smallest fix, and validation scenario.
-Mark unmeasured performance/collaboration concerns as hypotheses; do not invent
-speedups or guaranteed reductions in conflicts.
+For findings, give rule ID, verified location or missing capability, evidence,
+impact, confidence, smallest fix, and validation scenario. Separate defects,
+boundary issues, policy differences, and hypotheses; rank by demonstrated consequences.
+Do not invent performance gains or guaranteed conflict reduction.
 
 Audit output: prioritized findings/proposals, coverage, checks run, and remaining
-scope. Write/conform output: concise changes, rationale, checks/results, and
-material limits. End any plan with concise unresolved questions, if any.
+scope; say when no findings survive. Write/conform output: concise changes,
+rationale, checks/results, and material limits. End plans with unresolved questions,
+if any.
 
-## Foundations and related scope
-
-These are opinionated repo policies informed by official Go/Node/pnpm/mise docs,
-ports and adapters, Postgres, HTTP/OpenAPI standards, and established testing and
-migration practices. Preferred stack and task vocabulary are conditional fallbacks;
-fixture obligations are skill policies. These are not claims of universal consensus.
-Sources live in references.
-
-Keep detailed React composition/state guidance in `react-patterns` and specialized
-router/framework behavior in the applicable skills when invoked. Do not require
-another skill's installation or automatically invoke manual-only companions.
-Examples here are original; related open-source skills informed scope and format.
+Detailed React composition and framework behavior stay in companion skills when
+invoked. Do not automatically invoke manual-only companions or require installation.

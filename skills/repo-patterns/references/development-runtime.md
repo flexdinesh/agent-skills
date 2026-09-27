@@ -1,11 +1,12 @@
-# Independent runs and fixtures
+# Development runtime and independent runs
 
-Read when running a part without the full product, substituting external I/O,
-designing config, or making tests/development reproducible.
-For data definitions, builders, seeding, and per-test setup, also read
-[test data and setup](test-data-and-setup.md).
+**Read when:** changing dependency composition, config, independent runs, capabilities, or resource isolation.
+
+**Policy status:** Independent-run and fixture obligations are skill policies. Profiles and config precedence examples are contextual.
 
 ## `runtime-composition`
+
+**Construct dependencies explicitly.**
 
 **Apply:** an executable creates I/O dependencies or a test needs replacements.
 
@@ -57,6 +58,8 @@ composition, expected failure reporting, exit status, and resource cleanup.
 
 ## `runtime-config`
 
+**Resolve configuration once.**
+
 **Apply:** executables read config, env, flags, paths, or credentials.
 
 **Problematic:** packages read env independently; relative paths change with cwd;
@@ -80,6 +83,8 @@ relative paths. Verify production composition cannot accidentally select local
 fixture resets or a fake authentication bypass.
 
 ## `fixture-scenarios`
+
+**Provide independent scenario runs.**
 
 **Apply:** an app, server, worker, or CLI depends on data/external behavior.
 
@@ -117,34 +122,9 @@ A file importer can run on sample files without a database/container profile.
 Check a representative operation plus relevant failure/recovery and reset behavior.
 Record dependencies and limits; do not call a fake-only run database integration.
 
-## `fixture-fidelity`
-
-**Apply:** mocks/fakes stand in for SQL, HTTP, or another external contract.
-
-**Problematic:** a map-backed fake is the only test of SQL uniqueness/transactions;
-mock API responses compile but disagree with provider serialization/errors.
-
-**Prefer:** test domain behavior quickly through controlled seams; test constraints,
-queries, locks, and transactions against the actual database family and migrations.
-Testcontainers or another disposable instance is suitable; see
-[container infrastructure](test-data-and-setup.md#fixture-container-infrastructure)
-for selection and runner ownership. Schema-validate fixture responses and verify
-representative cases against the provider. Consumer/provider contract tests may
-suffice; a Pact broker is not mandatory.
-
-For browser fixtures, MSW can intercept real HTTP client calls across development,
-component tests, and demos. Keep mock activation explicit and production-safe.
-Share handlers where contracts match; avoid branching inside every component.
-
-**Exception:** a fake is useful evidence for the contract it actually implements;
-it need not perfectly emulate the database. Some I/O cannot run locally; document
-the substitution and retain separate real integration checks.
-
-**Verify:** compare fake/provider success, errors, nullability, ordering, and mutation
-behavior. Run relevant real-engine tests. A schema-compatible response does not
-establish authorization, business semantics, or transactional correctness.
-
 ## `runtime-isolation`
+
+**Isolate concurrent mutable state.**
 
 **Apply:** multiple tests, worktrees, contributors, or agents run mutable fixtures.
 
@@ -174,6 +154,8 @@ protection against resetting a connected/shared database.
 
 ## `runtime-capabilities`
 
+**Enforce effective capabilities.**
+
 **Apply:** source adapters, read-only modes, or profiles support different operations.
 
 **Problematic:** every UI component infers refresh/edit support from `fixture` or
@@ -200,14 +182,8 @@ use the effective contract and capability changes cannot bypass authorization.
 - [Ports and adapters](https://alistair.cockburn.us/hexagonal-architecture)
 - [Twelve-Factor configuration](https://12factor.net/config)
 - [Go interface ownership](https://go.dev/wiki/CodeReviewComments#interfaces)
-- [MSW reusable request mocking](https://mswjs.io/docs/)
-- [Testcontainers Go/Postgres](https://testcontainers.com/guides/getting-started-with-testcontainers-for-go/)
-- [Pact contracts](https://docs.pact.io/)
 - [Playwright parallel isolation](https://playwright.dev/docs/test-parallel)
 - [Compose project names](https://docs.docker.com/compose/how-tos/project-name/)
 - [Servediff capability resolution](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/internal/session/session.go)
 - [Servediff owned fixture server](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/apps/web/test/fixture-server.ts)
 - [Tokeninsights fixture preparation through sync](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/tools/build/src/setup-dev-data.ts)
-
-Fixture obligations, profile names, and example config precedence are skill
-policies. The implementation should suit the actual dependency and runtime.

@@ -1,0 +1,83 @@
+{
+  "skill_name": "repo-patterns",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use repo-patterns. Read-only design proposal from this snapshot: a small Go CLI has one root go.mod, cmd/report/main.go, internal/report/report.go, and focused tests. It reads a supplied CSV and writes JSON to stdout. Add a second summary command. Both commands use the same parsing behavior; neither needs a network or database. Recommend the smallest organisation and useful verification. No files or publication actions.",
+      "expected_output": "A minimal Go/CLI proposal preserving the module, shared parsing owner, independent sample-file run, stdout/stderr semantics, and observable checks. Clear limits of snapshot-only review.",
+      "files": [],
+      "assertions": [
+        "Preserves the cohesive Go module; introduces no mandatory workspace, extra module, or speculative service/repository layers.",
+        "Separates command parsing/presentation from reused behavior only where useful.",
+        "Verifies representative file input, invalid input, machine-readable output, and exit behavior without adding a database/container.",
+        "Selects Go/CLI concerns; publication guidance is not treated as required work.",
+        "Reports proposals rather than invented file/line findings or executed checks."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Use repo-patterns. Read-only design proposal: an existing TypeScript Node MCP server uses stdio, installed SDK schemas, npm, and a supported pinned Node runtime. A co-located REST adapter calls createOrder, which already owns authorization and transactions. Add an MCP create-order tool. Explain ownership, input/result validation, output streams, and verification. No implementation or dependency changes.",
+      "expected_output": "MCP and TypeScript guidance with shared operation reuse, schema/error contract handling, clean protocol streams, and actual protocol verification; preserves tooling/runtime.",
+      "files": [],
+      "assertions": [
+        "Reuses createOrder directly without calling the co-located REST transport or duplicating its rules.",
+        "Keeps MCP request/session objects out of the shared operation and validates advertised input/output contracts.",
+        "Directs diagnostic logs away from stdio stdout and includes discovery/invocation/error checks.",
+        "Preserves npm and the supported pinned runtime rather than applying undecided-stack defaults.",
+        "Uses no any, type assertions, or non-null assertions in proposed TypeScript."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Use repo-patterns. Audit this supplied HTTP/database design only: POST /orders accepts an idempotency key scoped to the authenticated principal and operation, rejects a changed payload for the same key, and commits the key, result, and order in one Postgres transaction. A uniqueness constraint serializes duplicates; retries after restart return the saved result. Tests cover simultaneous duplicates and timeout after commit against Postgres. Responses follow an established machine-readable error contract. Assess what is supported, what remains unverified, and any concrete issues. Do not inspect another repo or change anything.",
+      "expected_output": "Accepts application-level idempotent POST and the established error format; evaluates real atomic/durable semantics and reports snapshot limits without inventing violations.",
+      "files": [],
+      "assertions": [
+        "Does not classify retry-safe POST as an HTTP violation.",
+        "Recognizes principal/operation scoping, payload matching, durable result, and transaction ownership.",
+        "Does not demand a new error format merely to match a fallback.",
+        "Distinguishes supplied evidence from checks actually executed and unverified production behavior.",
+        "Uses HTTP/database concerns without unrelated CLI, frontend, or release work."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Use repo-patterns. Read-only proposal: API tests launch a real HTTP server with its own Postgres pool. Each test opens a transaction on a different client and rolls it back for cleanup. All workers seed the same demo rows. Existing Compose provisioning has proper readiness and teardown and is supported in CI. Diagnose the isolation problem and propose minimal setup changes plus meaningful checks. Preserve supported infrastructure.",
+      "expected_output": "Identifies ineffective rollback and shared mutable data; retains Compose, introduces correctly owned test data/isolation, and checks concurrent and failed setup behavior.",
+      "files": [],
+      "assertions": [
+        "Explains why rolling back the test client's transaction cannot undo server commits through another pool.",
+        "Proposes minimal per-test records and actual backend isolation or bounded cleanup, including retries.",
+        "Keeps supported Compose rather than requiring migration to Testcontainers.",
+        "Preserves real-engine verification for commit/concurrency semantics.",
+        "Proposes independent/concurrent runs and failure cleanup; does not claim they ran."
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Use repo-patterns. Documentation-only task: this JS-only repo uses npm and package.json scripts. docs/contributing.md is the canonical development guide. Root dev starts API and web; dev:web starts only web. The guide incorrectly says dev:web starts both. Give the exact proposed sentence correction and any necessary verification. No application/tooling changes; work only from this snapshot.",
+      "expected_output": "A concise correction in the existing guide, preserving npm and command names, with bounded verification and no fabricated runs.",
+      "files": [],
+      "assertions": [
+        "Corrects dev:web to say it starts only web and identifies root dev for both.",
+        "Keeps docs/contributing.md rather than creating docs/development.md.",
+        "Preserves npm and existing scripts; adds no mise, pnpm, containers, or framework changes.",
+        "Limits verification to checking documented command behavior and reports that no runtime checks executed.",
+        "Uses documentation and relevant command guidance without expanding into a whole-repo audit."
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Use repo-patterns. Read-only architecture audit of this design snapshot, not an executable checkout: a cohesive Go module contains API and worker commands with explicit startup/shutdown; a Vite app consumes a browser-safe HTTP client; tests exercise real Postgres constraints plus isolated fixtures; independent runs are documented. Existing Task commands and npm lockfile agree with CI. Domain names use customerID in Go and customerId in JS. Applied migrations remain immutable. No failing behavior is supplied. Assess this scope, distinguish unknowns, and recommend changes only with supported reasons.",
+      "expected_output": "Accepts coherent boundaries and native naming, preserves existing tools, reports no supported defects from the snapshot, and states actual audit/verification limits.",
+      "files": [],
+      "assertions": [
+        "Does not split Go modules merely because API and worker have separate entry points.",
+        "Accepts equivalent vocabulary with idiomatic Go/JS spellings.",
+        "Preserves Task/npm and does not classify fallback preference differences as bugs.",
+        "Reports no supported defect where the supplied design provides none; does not invent file/line evidence.",
+        "Distinguishes design-snapshot coverage from full repository or runtime conformance."
+      ]
+    }
+  ]
+}

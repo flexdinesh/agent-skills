@@ -1,10 +1,12 @@
-# Consistent naming
+# Naming and vocabulary
 
-Read when choosing identifiers, vocabulary, file/package names, or changing names
-that consumers depend on. Consistency follows semantic meaning and applicable
-language conventions; a mixed repository need not use one casing scheme.
+**Read when:** choosing names or changing public, persisted, or cross-domain vocabulary.
+
+**Policy status:** Semantic naming and compatible-change policies; exact spellings follow repo, language, and protocol conventions.
 
 ## `naming-local-conventions`
+
+**Follow established naming.**
 
 **Apply:** introducing identifiers, files, packages, or public contracts.
 
@@ -33,6 +35,8 @@ a new tooling stack solely to enforce spelling.
 
 ## `naming-domain-vocabulary`
 
+**Preserve domain meaning.**
+
 **Apply:** concepts cross modules, storage, APIs, UI, or documentation.
 
 **Problematic:** one entity alternates between `customer`, `client`, and `account`
@@ -51,6 +55,8 @@ See [representations](data-models-and-migrations.md#model-representations).
 translation before reporting synonym drift or proposing a rename.
 
 ## `naming-behavior`
+
+**Name observable behavior.**
 
 **Apply:** functions, operations, types, and named events.
 
@@ -75,6 +81,8 @@ before classifying a misleading name as a behavioral defect.
 
 ## `naming-shape-and-units`
 
+**Make shape and units clear.**
+
 **Apply:** fields, options, collection variables, and numeric quantities.
 
 **Problematic:** `orders` contains a count; a bare numeric `timeout` means seconds
@@ -98,6 +106,8 @@ shape mismatches at the affected boundary. A missing suffix alone proves no bug.
 
 ## `naming-discoverability`
 
+**Make owners discoverable.**
+
 **Apply:** packages, modules, filenames, and exports.
 
 **Problematic:** unrelated capabilities accumulate in `common` or `misc`; equivalent
@@ -107,7 +117,7 @@ test files use arbitrary naming patterns; `billing.BillingInvoice` repeats conte
 Read names at call sites: `billing.Invoice` provides context without repetition.
 Reuse canonical export names in consumers. Keep meaningful distinctions such as
 `InvoiceRow` and `InvoiceResponse` where their contracts differ. A rename alone
-cannot repair mixed ownership; see [cohesion](boundaries-and-layout.md#boundary-cohesion).
+cannot repair mixed ownership; see [cohesion](architecture.md#boundary-cohesion).
 
 **Exception:** a generic name can serve a cohesive small scope. Framework filenames,
 test-discovery conventions, and generation inputs take precedence. Aliases can
@@ -120,6 +130,8 @@ Follow the existing file grammar, including role suffixes where already meaningf
 
 ## `naming-compatible-change`
 
+**Rename compatibly.**
+
 **Apply:** conforming existing names, particularly public or persisted names.
 
 **Problematic:** a cosmetic API field rename breaks clients; an environment key
@@ -131,7 +143,7 @@ exports, import paths, API fields, CLI options, config keys, database names, and
 event types before changing them. Apply the existing compatibility/migration
 policy; retain adapters or deprecated aliases where consumers cannot update
 together. Update source definitions and regenerate affected outputs.
-See [HTTP evolution](http-contracts.md#http-contract-evolution) and
+See [HTTP evolution](http-rest.md#http-contract-evolution) and
 [compatible rollout](data-models-and-migrations.md#migration-compatible-rollout).
 
 **Exception:** coordinated consumers may change atomically when their lifecycle
@@ -143,16 +155,15 @@ Preserve applied migration history. Add behavioral tests for actual regression
 risk; avoid spelling-only tests. Separate policy/readability findings from traced
 contract breakage and demonstrated bugs.
 
-## Language defaults
+## Other naming contexts
 
 Use only where the repository has no applicable convention or requirement.
+When choosing language-specific spellings, see [Go](go.md#naming-defaults),
+[JS/TS](typescript.md#naming-defaults), or
+[React](web-react-vite.md#framework-naming-and-layout).
 
 | Context | Default | Qualification |
 | --- | --- | --- |
-| JS/TS | `camelCase` values/functions; `PascalCase` types | Common conventions, not TypeScript language requirements |
-| JS constants | Follow repo convention for semantic constants; ordinary `const` bindings use `camelCase` | `const` alone does not require constant-case |
-| React | Capitalized component identifiers; Hooks start `use` followed by a capital letter | Framework semantics; filenames remain repo policy |
-| Go | Export-aware `MixedCaps`/`mixedCaps`, consistent initialisms, short lowercase packages | No JS constant casing or getter-prefix requirement |
 | Python, if present | PEP 8 naming with existing-library exceptions | Do not impose its casing on other languages |
 | API/DB/config | Existing schema, protocol, and consumer conventions | No universal singular/plural SQL table policy |
 
@@ -160,19 +171,7 @@ Use only where the repository has no applicable convention or requirement.
 
 - [PEP 8 naming and internal consistency](https://peps.python.org/pep-0008/#naming-conventions)
 - [Google C++ naming consistency](https://google.github.io/styleguide/cppguide.html#Naming)
-- [Google JS identifier names and constants](https://google.github.io/styleguide/jsguide.html#naming)
-- [TypeScript contributor naming guidelines](https://github.com/microsoft/TypeScript/wiki/Coding-guidelines#names)
-- [Effective Go names, getters, and interfaces](https://go.dev/doc/effective_go#names)
-- [Go initialisms](https://go.dev/wiki/CodeReviewComments#initialisms)
-- [Go package names and qualified context](https://go.dev/blog/package-names)
 - [Microsoft method, property, and event naming](https://learn.microsoft.com/en-us/dotnet/standard/design-guidelines/names-of-type-members)
 - [AIP-140 field vocabulary, shape, and boolean naming](https://google.aip.dev/140)
 - [AIP-141 quantities and units](https://google.aip.dev/141)
 - [AIP-180 compatibility and renames](https://google.aip.dev/180)
-- [React component naming](https://react.dev/learn/your-first-component#step-2-define-the-function)
-- [React Hook naming](https://react.dev/learn/reusing-logic-with-custom-hooks#hook-names-always-start-with-use)
-
-Semantic clarity and consistency recur across these guides; exact spellings vary.
-TypeScript's contributor guide explicitly is not a community-wide mandate.
-Domain-event tense, cross-boundary vocabulary, and scoped rename discipline are
-skill policies informed by these sources, not claims of universal consensus.

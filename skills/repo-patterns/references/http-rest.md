@@ -1,9 +1,50 @@
-# HTTP contracts
+# HTTP and REST applications
 
-Read when designing or auditing REST-style endpoints and their consumers.
-Distinguish HTTP standards from API conventions and product requirements.
+**Read when:** changing HTTP endpoints, their consumers, request/response contracts, authorization, or retries.
+
+**Policy status:** HTTP requirements are standards; resource naming, error defaults, and pagination choices are contextual policies.
+
+## `organisation-rest`
+
+**Adapt HTTP at the feature boundary.**
+
+**Apply:** REST endpoints in Go or Node/TS services.
+
+**Problematic:** one route owns parsing, authorization, unrelated SQL, and response
+formatting; another driver must call that route to reuse its business behavior.
+
+**Prefer:** compose routes/middleware and shared clients at startup. Group endpoints
+with their feature owner. HTTP adapters own path/query/body decoding, request limits,
+authentication context, status/headers, and response serialization. Operations own
+business validation, authorization, and atomic changes; storage adapters own queries
+and row mapping. Use the smallest split supporting those responsibilities, with
+shared error mapping only where meanings match. Pass request cancellation to I/O.
+
+Illustrative feature, inside the native Go package or TS feature directory:
+
+```text
+orders/
+  create.go / create.ts              # operation and invariants
+  http.go / http.ts                  # request/result adaptation
+  sqlstore.go / sql-store.ts         # persistence, if needed
+  create_test.go / create.test.ts
+  http_test.go / http.test.ts
+```
+
+Keep wire schemas/public writable fields explicit; do not serialize whole storage
+rows. See [HTTP contracts](http-rest.md) for protocol behavior and compatibility.
+
+**Exception:** a compact read endpoint can remain one handler with a focused query
+and explicit result. Separate read projections from write workflows only when their
+needs differ; CQRS, mediator buses, and rich domain models are not requirements.
+
+**Verify:** request-to-response behavior, denied paths, malformed input, status/body
+contracts, persistence failures, and cancellation. Pair transport tests with real
+storage tests where transactional behavior matters; verify older clients on changes.
 
 ## `http-resource-semantics`
+
+**Respect method and resource contracts.**
 
 **Apply:** endpoint resources, methods, status, and transport/application separation.
 
@@ -30,6 +71,8 @@ Incidental access logging does not make a GET semantically unsafe.
 repeat requests, and application calls. Preserve installed routing conventions.
 
 ## `http-authorization-errors`
+
+**Authorize access and expose useful errors.**
 
 **Apply:** endpoint access, writable/exposed fields, failures, or abuse potential.
 
@@ -64,6 +107,8 @@ Do not classify a valid public CORS wildcard as a defect by itself.
 
 ## `http-bounded-lists`
 
+**Bound and order collections.**
+
 **Apply:** collections, filters, sorting, search, or potentially growing results.
 
 **Problematic:** arbitrary SQL sort text, unbounded page sizes, unstable ordering,
@@ -83,6 +128,8 @@ snapshot consistency. Do not require expensive exact counts where unnecessary.
 changed filters, unauthorized scope, and documented behavior during insertion/deletion.
 
 ## `http-mutation-recovery`
+
+**Recover duplicate and uncertain mutations.**
 
 **Apply:** duplicate/retried commands, concurrent edits, or long-running work.
 
@@ -109,6 +156,8 @@ commit, retry after restart, stale updates, and job failures. Verify real storag
 where durable idempotency is promised, alongside fixture cases for fast development.
 
 ## `http-contract-evolution`
+
+**Verify evolving consumer contracts.**
 
 **Apply:** shared APIs, generated clients, mocks, or changes affecting consumers.
 
@@ -155,7 +204,4 @@ cannot prove domain behavior or permission.
 - [Pact contract testing](https://docs.pact.io/)
 - [Tokeninsights generated-validator client boundary](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/web/src/api.ts)
 - [Servediff binary/client conformance](https://github.com/flexdinesh/servediff/blob/b9a7ef4c8e213d6c65ded790eba66daaf4e25879/test/conformance/server.test.ts)
-
-Resource naming, error defaults, and pagination choices are contextual API policies.
-Google and Stripe document their conventions; only applicable protocol requirements
-should be treated as standards.
+- [Go HTTP boundary tests](https://pkg.go.dev/net/http/httptest)

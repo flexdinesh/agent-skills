@@ -1,9 +1,12 @@
 # Data models and migrations
 
-Read when designing persistent/wire models, changing schema, or planning rollout.
-Database-specific examples below target Postgres; check the actual engine/version.
+**Read when:** changing domain/wire/storage representations, persistent invariants, schema history, or rollout.
+
+**Policy status:** Compatibility and migration policies; engine-specific examples target Postgres and require actual-version checks.
 
 ## `model-invariants`
+
+**Make domain invariants explicit.**
 
 **Apply:** new entities, relationships, or lifecycle states.
 
@@ -26,6 +29,8 @@ or generic entity frameworks are not mandatory.
 and time-boundary cases relevant to the domain. Explain the consistency boundary.
 
 ## `model-representations`
+
+**Separate differing representations.**
 
 **Apply:** transport, domain, and storage representations have different needs.
 
@@ -53,6 +58,8 @@ Check old consumers when response parsing is strict.
 
 ## `migration-history`
 
+**Preserve reproducible schema history.**
+
 **Apply:** schema or durable reference-data changes in shared environments.
 
 **Problematic:** editing a deployed migration leaves environments divergent;
@@ -74,6 +81,8 @@ history/checksum handling, regenerated queries/types, fixture loading, and failu
 recovery. Do not repair a shared history by deleting applied migrations.
 
 ## `migration-compatible-rollout`
+
+**Evolve coexisting versions.**
 
 **Apply:** schema/contracts change while old clients, replicas, or workers remain.
 
@@ -102,6 +111,8 @@ completion evidence; restarting application code alone cannot undo lost data.
 
 ## `migration-operational-safety`
 
+**Bound migration work and recovery.**
+
 **Apply:** DDL or backfills on populated production-like tables.
 
 **Problematic:** a metadata-only column addition is called lock-free; a concurrent
@@ -125,36 +136,6 @@ zero downtime where requirements do not demand them.
 interruption/retry, invalid-index cleanup, and migration-tool transaction settings.
 State measurements and assumptions; avoid guarantees inferred from small fixtures.
 
-## `model-derived-state`
-
-**Apply:** ingestion produces normalized facts, projections, or other rebuildable data.
-
-**Problematic:** normalization destroys the only retained source identity;
-unchanged schema version hides incompatible counting semantics; reset is called
-a migration even though deleted source artifacts cannot be reconstructed.
-
-**Prefer:** identify authoritative inputs and derived outputs, provenance,
-deduplication identity, and rebuild ownership. Retain the minimal source facts
-needed to explain/recompute derived results, without collecting sensitive payloads
-by default. Separate schema structure compatibility from data-semantics and
-normalization-rule compatibility where those can change independently. A rule
-signature/version can trigger recomputation without treating every rule change
-as a full reingestion or product release.
-
-Choose row-preserving migration, derived-only rebuild, or full reingestion
-deliberately. State source availability and loss risks before destructive recovery.
-Persist incomplete rebuild status and required source scope; prevent partially
-rebuilt results from masquerading as complete. Reject unsupported newer formats
-rather than silently resetting them.
-
-**Exception:** ordinary CRUD needs no raw/canonical pipeline or extra version
-markers. A disposable cache may be safely rebuilt when its authoritative source
-and loss tolerance are established. These are not reasons to reset user-owned data.
-
-**Verify:** rule changes without new input, raw provenance preservation, repeat
-rebuilds, missing/deleted sources, incompatible/newer versions, interruption/resume,
-and changed source scope. Verify migration and reset are distinct behaviors.
-
 ## Sources
 
 - [Postgres constraints](https://www.postgresql.org/docs/current/ddl-constraints.html)
@@ -166,8 +147,3 @@ and changed source scope. Verify migration and reset are distinct behaviors.
 - [Postgres ALTER TABLE](https://www.postgresql.org/docs/current/sql-altertable.html)
 - [Postgres CREATE INDEX](https://www.postgresql.org/docs/current/sql-createindex.html)
 - [API source/wire/semantic compatibility](https://google.aip.dev/180)
-- [Tokeninsights schema and recovery contract](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/docs/design.md)
-- [Tokeninsights normalization rule signatures](https://github.com/flexdinesh/tokeninsights/blob/a9af7c20b14d0aa1fd98c68909acc43c3186dc25/packages/cli/internal/pipeline/normalize.go)
-
-Rollout complexity should follow real compatibility requirements. No ORM,
-database, or deployment platform is required by these patterns.
