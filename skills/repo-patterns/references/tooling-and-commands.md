@@ -24,6 +24,7 @@ Keep supported existing tools unless their migration is requested.
 | Go + JS/TS tool/runtime versions and development commands | mise; root `mise.toml` tasks |
 | JS dependency management within a mixed repo | pnpm |
 | Go dependency management | Native Go modules |
+| JS CLI language/runtime and local execution | TypeScript natively on Node 26; separate typecheck |
 
 mise manages tools/tasks, not JS libraries; it can pin Node/pnpm binaries too.
 JS/TS-only projects gain no automatic mise requirement. This tooling matrix does
@@ -35,6 +36,9 @@ keep local/CI resolution consistent.
 **Exception:** product/platform needs can justify another stack. Retain an existing
 build orchestrator when it serves the repo. Verify APIs for installed versions;
 newer monorepo inference features may be unavailable or experimental.
+CLI install channels, manual stable CI releases, and automatic Go dev builds follow
+[CLI development and releases](cli-development-and-releases.md); native TS
+development does not imply that an npm package can ship a raw TS executable.
 
 **Verify:** identify the policy/convention or unresolved choice behind each decision.
 Resolve versions from manifests/config and compare actual local/CI commands.
@@ -81,6 +85,8 @@ as a production server.
 | `dev` | Foreground development target; reload where supported |
 | `dev:fixtures` | Explicit controlled scenario/profile, normal application path |
 | `build` | Build deployable/package artifacts |
+| `package`, `release:check` | Finite artifact/snapshot verification; no publication |
+| `release` | Documented manual CI release dispatch; explicit publication workflow |
 | `start` | Run a built long-lived executable; no development reload |
 | `run` | One-shot CLI; forward options and exit status |
 | `preview` | Inspect a built frontend locally |

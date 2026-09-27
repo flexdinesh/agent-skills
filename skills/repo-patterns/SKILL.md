@@ -1,6 +1,6 @@
 ---
 name: repo-patterns
-description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, and focused CLI, REST, MCP, and React/Vite organisation. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
+description: "Write, audit, and conform repositories with cohesive modules, explicit dependency and data ownership, independent fixture runs, consistent naming and tooling, safe schema evolution, focused CLI, REST, MCP, and React/Vite organisation, and CI releases with automatic Go dev builds. Use only when the user explicitly invokes `repo-patterns` or `$repo-patterns`; do not auto-invoke from context."
 ---
 
 # Repo Patterns
@@ -101,6 +101,15 @@ when those affect contracts or builds.
   undecided, use brief `docs/development.md` instructions for one or more parts.
 - Give generated artifacts one source and reproducible generation. Detect drift
   before overwriting comparison targets; verify the actual release artifact.
+- Own CLI install contracts and product/module/package versions explicitly. For an
+  undecided JS CLI stack, prefer native TypeScript on Node 26 with separate type
+  checks; npm distribution needs emitted JS. Select install channels per product.
+- Publish stable CLI versions and advance `latest` only through manually triggered
+  CI. For Go CLIs, automatically publish successful `main` builds to `dev`; keep
+  development artifacts separate from immutable stable versions. Resolve source,
+  version, tag, and artifact inputs once; verify installs and recover unfinished
+  publishers against the original release. Retain established packaging tools;
+  automatic stable publication and automatic npm dev publication are out of scope.
 - Model invariants and compatibility explicitly. Keep API, domain, and storage
   representations separate where their contracts differ; reuse them where they
   match. Do not expose internal rows or accept server-owned fields by accident.
@@ -151,6 +160,7 @@ problematic/preferred examples, exceptions, verification, and sources.
 | --- | --- | --- |
 | Repo shape, module APIs, reuse, runtime distribution, transports, ownership | `layout-topology`, `boundary-cohesion`, `boundary-public-api`, `boundary-reuse`, `boundary-browser-server`, `boundary-change-ownership`, `boundary-runtime-distribution`, `boundary-transport-composition` | [Boundaries and layout](references/boundaries-and-layout.md) |
 | Ports/adapters, tracer slices, storage seams, file splits, CLI/REST/MCP/React organisation | `organisation-ports-and-adapters`, `organisation-tracer-slices`, `organisation-storage-seams`, `organisation-file-boundaries`, `organisation-cli`, `organisation-rest`, `organisation-mcp`, `organisation-react-vite` | [Code organisation by application type](references/code-organisation.md) |
+| CLI setup/install ownership, native TS/Node 26, Go/npm distribution, manual stable CI releases, automatic Go dev builds and recovery | `cli-release-ownership`, `cli-go-distribution`, `cli-js-distribution`, `release-go-channels`, `release-version-plan`, `release-artifact-verification`, `release-publish-recovery`, `release-maintenance-docs` | [CLI development and releases](references/cli-development-and-releases.md) |
 | Vocabulary, identifiers, file/package names, units, compatible renames | `naming-local-conventions`, `naming-domain-vocabulary`, `naming-behavior`, `naming-shape-and-units`, `naming-discoverability`, `naming-compatible-change` | [Consistent naming](references/consistent-naming.md) |
 | Dependency composition, config, fixtures, concurrency, capabilities | `runtime-composition`, `runtime-config`, `fixture-scenarios`, `fixture-fidelity`, `runtime-isolation`, `runtime-capabilities` | [Independent runs and fixtures](references/independent-runs-and-fixtures.md) |
 | Test-data ownership, builders, fixtures, seeds, per-test setup, dev-server lifecycle, container infrastructure | `fixture-data-ownership`, `fixture-builders`, `fixture-setup-lifecycle`, `fixture-container-infrastructure` | [Test data and setup](references/test-data-and-setup.md) |

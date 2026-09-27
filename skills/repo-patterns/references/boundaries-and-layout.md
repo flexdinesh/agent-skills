@@ -178,7 +178,8 @@ also works when the supported install path provides them. Neither is mandatory.
 **Verify:** exercise the built artifact with its declared runtime prerequisites,
 without relying on a dev server or build-tool installation. Check embedded assets,
 API behavior, and supported native build/install paths. See
-[generation checks](tooling-and-commands.md#tool-generated-artifacts).
+[generation checks](tooling-and-commands.md#tool-generated-artifacts) and
+[CLI installation and releases](cli-development-and-releases.md).
 
 ## `boundary-transport-composition`
 

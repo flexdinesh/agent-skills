@@ -95,6 +95,7 @@ exposes a bug; report the failure rather than weakening the expected behavior.
 | HTTP contract | Handler/provider/client behavior, denied paths, retries, pagination |
 | Browser ownership | User interactions, stale results, retry, edits/navigation; build/SSR as relevant |
 | Shared tooling/generation | Affected targets, deterministic generation, version/CI agreement |
+| CLI distribution/releases | Native run/typecheck, installed artifact, version/tag/metadata, controlled partial-publication recovery |
 
 Temporary/disposable verification resources still need isolated setup and cleanup.
 Inspect commands before running them: formatting, seeding, migrations, installs,
@@ -118,6 +119,31 @@ evidence accuracy and restraint as well as detected problems.
 | --- | --- | --- |
 | Small Go CLI, pure/file behavior | Keep ordinary simple layout and sample-file run | Unused layers/workspace scaffolding |
 | Go API/worker/CLI in one module | Separate composition/lifecycle where needed | Automatic module split from binary count |
+| Root Go module with command under `cmd/tool` | Use module-root version tags and correct command install path | Tag prefix based on executable directory |
+| Independently distributed nested Go module | Match tag prefix to module directory; check workspace-off build and actual source install | Workspace overrides or arbitrary product prefix masking an uninstallable module |
+| Go release embeds assets generated only locally | Verify promised tagged install and packaged assets | Archive success treated as evidence of complete source installation |
+| Private JS manifest dispatches Go tasks | Keep task-adapter version separate from product release | Publishing private adapters or versioning the binary from their manifest |
+| New JS CLI with undecided runtime | Use native erasable TypeScript on Node 26 and separate typecheck | Unnecessary development transpiler or native execution mistaken for type safety |
+| Native TS CLI packaged for npm | Emit JS for installation; retain native TS development | Raw `.ts` executable failing under `node_modules` |
+| Native TS source/archive is the supported install | Verify Node/dependency prerequisites and execution outside checkout | Requiring npm publication or treating local symlinks as installation evidence |
+| npm CLI depends on private workspace source | Bundle private code or use published runtime packages; inspect packed dependency ranges | Workspace links hiding missing consumer dependencies |
+| CLI and private embedded frontend ship together | One deliberate product version; independently verify build inputs | Separate publication/versioning solely from workspace package count |
+| Shared generator/library changes outside CLI directory | Include affected CLI consumers in verification | Path-only selection missing release inputs |
+| Working manual CI uses scripts or GoReleaser | Preserve packaging convention; manual stable releases and requested automatic Go dev channel | Unrequested release-PR tooling or automatic stable/npm dev publishing |
+| Go main push with successful artifact checks | Automatically publish dev with source identity; retain stable/latest | Every merge creates a stable version or updates the stable tap |
+| New Go stable dispatch selects another branch/tag | Reject it; resolve current main tip once for new releases | Arbitrary source input silently violates main-only releases |
+| Literal latest Git tag exists | Separate alias, GitHub latest metadata, and Go version query | Claiming Go `@latest` follows that Git tag |
+| Go CLI has no stable version yet | Document Go latest fallback; keep CI archive channel explicit | Promising `@latest` cannot install unreleased/default-branch code |
+| Old dev run/retry finishes after newer publication | Serialize updates and reject channel regression | A lock or cancellation flag assumed to guarantee source order |
+| Dev artifact checks fail or asset update is interrupted | Keep last successful build; detect/recover incomplete sets | Deleting working dev before verification or claiming atomic asset replacement |
+| Repo enforces immutable GitHub releases | Unique dev releases; release-free dev alias and explicit asset resolver | Replacing locked dev release or assuming its alias supplies GitHub download URLs |
+| GoReleaser OSS used for dev builds | Snapshot packaging plus explicit CI publisher | Snapshot assumed to publish or Pro-only `--nightly` used |
+| Two manual dispatches target the same product | Serialize conflicting publication and resolve source/version once | Version collision or cancelling a partially published release |
+| npm prerelease is manually published | Select prerelease dist-tag; retain stable channel | Accidentally advancing `latest` |
+| Primary publication succeeds; downstream fails after `main` advances | Recover original tag/bytes and unfinished channel | Rebuilding different stable assets or selecting a new patch on retry |
+| Some npm packages published before failure | Verify accepted versions and resume pending dependencies/consumers | Attempting to overwrite immutable npm identities |
+| CI pushes tag using `GITHUB_TOKEN` | Invoke dependent publication explicitly | Assuming tag push starts another push workflow |
+| Prefixed module tags with GoReleaser OSS | Verify edition support; retain explicit valid packaging | Pro-only configuration or fake source-version tags |
 | Web imports sibling server source | Trace leak and propose public API/import rule | Cosmetic move or unsafe browser dependency |
 | CLI opens live DB on import | Move setup to entry point and verify fixture path | Fake flag parsed after live connection |
 | Map fake only tests Postgres constraints | Keep fast tests, add relevant real-engine evidence | Claiming fake success proves SQL semantics |

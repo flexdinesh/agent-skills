@@ -169,6 +169,8 @@ internal/export/sqlstore.go      # storage adapter, if needed
 
 In TS, the same responsibilities can live in `src/main.ts`, `src/commands/export.ts`,
 and a feature module; no workspace or class hierarchy is implied.
+For native TS/Node 26, install contracts, and manual CI publication, read
+[CLI development and releases](cli-development-and-releases.md).
 
 **Exception:** a small file-transforming CLI may need only `main` and one testable
 function. An independently deployed service client legitimately uses its API.
