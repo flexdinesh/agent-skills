@@ -2,6 +2,8 @@
 
 Read when running a part without the full product, substituting external I/O,
 designing config, or making tests/development reproducible.
+For data definitions, builders, seeding, and per-test setup, also read
+[test data and setup](test-data-and-setup.md).
 
 ## `runtime-composition`
 

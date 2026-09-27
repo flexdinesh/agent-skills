@@ -121,6 +121,10 @@ evidence accuracy and restraint as well as detected problems.
 | Web imports sibling server source | Trace leak and propose public API/import rule | Cosmetic move or unsafe browser dependency |
 | CLI opens live DB on import | Move setup to entry point and verify fixture path | Fake flag parsed after live connection |
 | Map fake only tests Postgres constraints | Keep fast tests, add relevant real-engine evidence | Claiming fake success proves SQL semantics |
+| Tests depend on a large mutable demo seed | Arrange minimal test-owned records; keep demos optional | Requiring full demo data for every test |
+| Builder shares nested objects or unseeded dates | Fresh values, explicit relevant fields, controlled generator/clock | Seed alone treated as complete reproducibility |
+| HTTP server writes outside test rollback | Isolate actual backend state; verify commits where relevant | Test-connection transaction treated as server isolation |
+| Dev reload reseeds; reset trusts a test env flag | Explicit preparation/reset and verified disposable ownership | Lost edits or arbitrary target destruction |
 | Two worktrees share fixture DB/port | Propose namespaced mutable state and endpoints | Assuming Git isolation implies runtime isolation |
 | Column replacement during rolling deploy | Handle old writes, resumable backfill, completion | Copying data without concurrent-write protection |
 | Retry-safe POST with durable idempotency | Accept method; verify actual duplicate semantics | Blanket POST/idempotency violation |

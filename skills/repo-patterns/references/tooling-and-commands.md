@@ -89,6 +89,7 @@ as a production server.
 | `lint`, `typecheck`, `format:check` | Applicable finite, non-mutating checks |
 | `check` | Aggregate applicable finite checks |
 | `db:migrate`, `db:seed` | Distinct schema and development-scenario operations |
+| `db:reset` | Explicit restoration/recreation of selected owned disposable state |
 
 Keep actual JS commands in package scripts; mise/root tasks delegate. Go tasks
 invoke native commands. Provide bounded target selection and document cwd, args,
@@ -180,6 +181,8 @@ from README. Keep one canonical guide, updated with changed commands. Briefly co
 - Prerequisites and setup; state the working directory.
 - What root `dev` starts and commands for one part or selected combinations.
 - Required dependencies or fixture modes; relevant config and URLs/ports.
+- Scenario selection, data preparation, seed repeat semantics, and safe reset scope
+  where applicable; see [test data and setup](test-data-and-setup.md).
 - Shutdown and cleanup, including mutable development state where applicable.
 
 Use a small purpose/command table and short action-focused steps. Include only
@@ -201,7 +204,8 @@ verify expected endpoints, shutdown, and cleanup. Report unexecuted runs honestl
 **Problematic:** migration and seed are unordered sibling prerequisites; a shared
 API change tests only its dependencies; a live DB seed is treated as a cached build.
 
-**Prefer:** express migration → seed → start as actual sequential steps/dependencies.
+**Prefer:** when provisioning fixture state, express migration → seed → start as
+actual sequential steps/dependencies; normal reload must not implicitly reset data.
 mise prerequisite arrays may run in parallel; their order is not a sequence.
 Package task logic stays with its owner. Select affected consumers for shared
 changes; pnpm's `...package` selects dependents whereas `package...` selects
