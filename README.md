@@ -9,6 +9,7 @@ Most skills are manual-invocation only. Use them when the user explicitly invoke
 ## Available skills
 
 - `adr` — save a brief Architecture Decision Record from the current session
+- `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
 - `git-commit` — stage and commit scoped to the current task
