@@ -604,7 +604,7 @@ results sometimes describe older contents, especially for Turborepo.
 | [Anthropic skills](https://github.com/anthropics/skills), ~178.4k | [skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) | Iterative prompts, qualitative review, and quantitative evaluations | Authoring aid, not architecture authority. |
 | [mblode/agent-skills](https://github.com/mblode/agent-skills), 129 | [codebase-architecture](https://github.com/mblode/agent-skills/blob/main/skills/codebase-architecture/SKILL.md) | Closest scope: module contracts, deepen/harden modes, enforcement, agent wayfinding | Relevant but not popular enough to call consensus; strongly opinionated TS architecture. |
 
-Existing local complements: `react-patterns`, `ts-guidance`, `adr`, `plan-mode`,
+Existing local complements: `react-patterns`, `ts-guidance`, `plan-mode`,
 and `review-changes`. Respect their invocation rules; reference overlapping scope
 without requiring automatic invocation or importing contradictory policies.
 
