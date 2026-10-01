@@ -4,25 +4,17 @@ Personal collection of agent skills, installable via the [`skills`](https://gith
 
 ## Invocation policy
 
-Most skills are manual-invocation only. Use them when the user explicitly invokes them by name, for example `$plan-mode` or `$git-commit`. `tanstack-form` also applies from task context for substantial TanStack Form work. Follow each skill's `SKILL.md` for its invocation rules.
+Skills are manual-invocation only. Use them when the user explicitly invokes them by name, for example `$plan-mode` or `$review-changes`. Follow each skill's `SKILL.md` for its invocation rules.
 
 ## Available skills
 
-- `adr` — save a brief Architecture Decision Record from the current session
 - `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
-- `git-commit` — stage and commit scoped to the current task
-- `git-worktree` — create, inspect, and clean Git worktrees
-- `opencode-plugin` — build OpenCode server and terminal UI plugins
 - `plan-mode` — produce a decision-complete plan, read-only
-- `pi-extension` — build Pi extensions with lifecycle hooks, tools, commands, providers, and custom UI
 - `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance
 - `repo-patterns` — audit, write, and conform repo boundaries, React ownership/composition/recovery, independent fixture runs, tooling, Docker images/Compose, data models, databases, REST contracts, CLI setup, manual stable CI releases, and automatic Go dev builds
 - `review-changes` — review local diffs for bugs and risks
-- `tanstack-form` — build, review, debug, and test typed, accessible React and React Native forms
-- `tanstack-start` — build full-stack React applications with TanStack Start and its Router integration
-- `tanstack-router` — build type-safe React and TypeScript applications with TanStack Router
 - `ts-guidance` — example-driven TypeScript guidance for type safety, input parsing, and explicit domain contracts
 
 ## Install from remote
@@ -41,7 +33,7 @@ npx skills add flexdinesh/agent-skills --list
 npx skills add flexdinesh/agent-skills --skill plan-mode
 
 # Install multiple skills
-npx skills add flexdinesh/agent-skills --skill plan-mode --skill git-commit
+npx skills add flexdinesh/agent-skills --skill plan-mode --skill review-changes
 
 # Install all skills non-interactively
 npx skills add flexdinesh/agent-skills --all -y
@@ -91,7 +83,7 @@ npx skills update
 npx skills update plan-mode
 
 # Update multiple
-npx skills update plan-mode git-commit
+npx skills update plan-mode review-changes
 
 # Update only global or project scope
 npx skills update -g
