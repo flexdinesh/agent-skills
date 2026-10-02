@@ -9,7 +9,7 @@ Manual invocation only. Treat the accompanying prompt as the task. Invocation au
 
 ## Prepare
 
-Read repository instructions. Inspect Git status, branch, upstream, and remotes; preserve unrelated work. If on `main`, create and switch to a descriptive `codex/<task>` branch; otherwise use the current branch. Resolve detached HEAD or missing context first.
+Read repository instructions. Inspect Git status, branch, upstream, and remotes; preserve unrelated work. Resolve detached HEAD or missing context first. Check that `wt` is available on `PATH` before starting the task. If missing, ask the user to install the Worktrunk CLI (`wt`) and make it available on `PATH`; resume once available. If on `main`, run `wt switch --create codex/<task>` to create a descriptive branch in a new worktree and switch to its directory before starting the task. Otherwise continue in the current branch and worktree. Use Worktrunk (`wt`), never Git commands, to create or switch worktrees. Confirm the resulting directory and branch; run subsequent commands from that worktree directory explicitly. If `wt` fails, report the blocker; do not fall back to Git worktree commands.
 
 ## Plan — condensed plan-mode
 
@@ -37,4 +37,4 @@ Read repository instructions. Inspect Git status, branch, upstream, and remotes;
 
 ## Return to main
 
-After PR creation or update succeeds, run `git switch main`. Preserve local changes; never discard or stash unrelated work to force the switch. Report PR URL, validation, final branch, and any blocker.
+After PR creation or update succeeds, run `wt switch main` to return to the `main` branch directory. Confirm the resulting directory and branch. Preserve local changes; never discard or stash unrelated work to force the switch. Report PR URL, validation, final branch, and any blocker.
