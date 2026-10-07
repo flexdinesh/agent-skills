@@ -1,0 +1,26 @@
+{
+  "title": "Shop architecture",
+  "summary": "Illustrative whole-app report: who uses the shop, its runtime boundaries, and how orders reach payment and storage. Replace this fictional architecture with repository evidence.",
+  "scope": "Entire application",
+  "revision": "Illustrative example",
+  "views": [
+    {
+      "id": "context",
+      "title": "System context",
+      "level": "Context",
+      "description": "The shop and its direct relationships with people and other systems.",
+      "mermaid": "flowchart LR\n  customer[\"Customer<br/>Person<br/>Buys products\"]\n  shop[\"Shop<br/>Software system<br/>Takes and fulfils orders\"]\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  customer -->|Browses and places orders| shop\n  shop -->|Requests payment authorisation| payment\n  classDef person fill:#f5ead8,stroke:#80613e,color:#382a1b;\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  class customer person;\n  class shop internal;\n  class payment external;",
+      "notes": ["Fictional example. No claims about the consuming repository.", "Shows direct relationships; internal technology belongs in the container view."],
+      "evidence": []
+    },
+    {
+      "id": "containers",
+      "title": "Runtime boundaries",
+      "level": "Containers",
+      "description": "Applications and data stores inside the shop, with protocols on their connections.",
+      "mermaid": "flowchart LR\n  customer[\"Customer<br/>Person<br/>Places orders\"]\n  subgraph shop[\"Shop · Software system\"]\n    web[\"Web app<br/>Container · React<br/>Checkout experience\"]\n    api[\"Orders API<br/>Container · Node.js<br/>Validates and records orders\"]\n    store[\"Orders store<br/>Container · PostgreSQL<br/>Persists orders\"]\n  end\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  customer -->|Places order| web\n  web -->|Submits order / HTTPS| api\n  api -->|Writes order / SQL| store\n  api -->|Authorises charge / HTTPS| payment\n  classDef person fill:#f5ead8,stroke:#80613e,color:#382a1b;\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  classDef data fill:#e6edf4,stroke:#58748e,color:#253d53;\n  class customer person;\n  class web,api internal;\n  class payment external;\n  class store data;",
+      "notes": ["Fictional example; technologies and protocols are illustrative.", "Containers represent running applications and stores, independent of Docker."],
+      "evidence": []
+    }
+  ]
+}

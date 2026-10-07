@@ -1,0 +1,311 @@
+{
+  "title": "Checkout architecture",
+  "summary": "Illustrative feature report: checkout boundaries, API owners, and an HTML story of request/reply and background receipt events. Replace fictional contracts with traced source evidence.",
+  "scope": "Feature \u00b7 Checkout",
+  "revision": "Illustrative example",
+  "views": [
+    {
+      "id": "checkout-boundaries",
+      "title": "Feature boundaries",
+      "level": "Containers",
+      "description": "Order placement waits for payment and storage replies; a broker delivers receipt work independently.",
+      "mermaid": "flowchart LR\n  subgraph shop[\"Shop \u00b7 Software system\"]\n    web[\"Web app<br/>Container \u00b7 React<br/>Collects checkout input\"]\n    api[\"Orders API<br/>Container \u00b7 Node.js<br/>Owns order placement\"]\n    store[\"Orders store<br/>Container \u00b7 PostgreSQL<br/>Persists orders\"]\n    broker[\"Order events<br/>Container \u00b7 Broker<br/>Delivers receipt work\"]\n    worker[\"Receipt worker<br/>Container \u00b7 Node.js<br/>Requests receipt delivery\"]\n  end\n  email[\"Email service<br/>External system<br/>Accepts receipt messages\"]\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  web -->|Submits checkout / HTTPS| api\n  api -->|Writes order / SQL| store\n  api -->|Authorises charge / HTTPS| payment\n  api -->|Publishes order placed / Event| broker\n  broker -->|Delivers receipt work / Event| worker\n  worker -->|Requests receipt delivery / HTTPS| email\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  classDef data fill:#e6edf4,stroke:#58748e,color:#253d53;\n  class web,api,worker internal;\n  class payment,email external;\n  class store,broker data;",
+      "notes": [
+        "Fictional example. Other shop capabilities are outside this feature's scope."
+      ],
+      "evidence": []
+    },
+    {
+      "id": "checkout-flow",
+      "title": "Place an order, then deliver a receipt",
+      "level": "Dynamic",
+      "description": "The browser waits for order confirmation while receipt work continues through a broker. Read the calls and replies in causal order; worker delivery can overlap the browser response.",
+      "notes": [
+        "Fictional success scenario. URLs, payloads, status codes, and broker behavior are examples, not verified APIs.",
+        "Event numbers are reading order. Events 7 and 8 share a prerequisite and can overlap; their completion order is not guaranteed.",
+        "Replies appear after downstream work, with each exchange paired to its request. A 202 reply means acceptance, not delivery."
+      ],
+      "evidence": [],
+      "events": [
+        {
+          "id": "submit-order",
+          "title": "Browser submits the selected items",
+          "kind": "request",
+          "mode": "sync",
+          "from": "Web app",
+          "to": "Orders API",
+          "description": "The user confirms checkout. The browser waits for an order result before displaying confirmation.",
+          "after": [],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "place-order",
+          "method": "POST",
+          "url": "{APP_ORIGIN}/api/orders",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "items": [
+              {
+                "sku": "<sku>",
+                "quantity": 1
+              }
+            ],
+            "paymentMethodId": "<opaque-payment-method>"
+          }
+        },
+        {
+          "id": "authorize-payment",
+          "title": "Orders API requests payment authorization",
+          "kind": "request",
+          "mode": "sync",
+          "from": "Orders API",
+          "to": "Payment provider",
+          "description": "After input validation, the handler awaits authorization. No order has been persisted yet.",
+          "after": [
+            "submit-order"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "authorize",
+          "method": "POST",
+          "url": "{PAYMENT_ORIGIN}/v1/authorizations",
+          "headers": {
+            "Authorization": "Bearer <redacted>",
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "amountMinor": 2500,
+            "currency": "USD",
+            "paymentMethodId": "<opaque-payment-method>"
+          }
+        },
+        {
+          "id": "payment-authorized",
+          "title": "Payment provider replies with authorization",
+          "kind": "response",
+          "mode": "sync",
+          "from": "Payment provider",
+          "to": "Orders API",
+          "description": "The API checks the authorized result before allowing persistence. Authorization alone does not prove settlement.",
+          "after": [
+            "authorize-payment"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "authorize",
+          "status": "200 OK",
+          "payload": {
+            "id": "<authorization-id>",
+            "status": "authorized"
+          }
+        },
+        {
+          "id": "save-order",
+          "title": "Orders API writes the authorized order",
+          "kind": "request",
+          "mode": "sync",
+          "from": "Orders API",
+          "to": "Orders store",
+          "description": "The handler awaits the database operation; persistence failure belongs in a separate recovery scenario.",
+          "after": [
+            "payment-authorized"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "save-order",
+          "method": "SQL",
+          "url": "N/A \u2014 SQL adapter",
+          "payload": {
+            "operation": "INSERT order",
+            "authorizationId": "<authorization-id>",
+            "items": [
+              {
+                "sku": "<sku>",
+                "quantity": 1
+              }
+            ]
+          }
+        },
+        {
+          "id": "order-saved",
+          "title": "The database returns the stored order ID",
+          "kind": "response",
+          "mode": "sync",
+          "from": "Orders store",
+          "to": "Orders API",
+          "description": "The API receives the inserted ID and can prepare order confirmation. Transaction semantics must be verified in the real implementation.",
+          "after": [
+            "save-order"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "save-order",
+          "status": "SQL result \u00b7 one inserted row",
+          "payload": {
+            "orderId": "<order-id>"
+          }
+        },
+        {
+          "id": "publish-receipt",
+          "title": "Orders API publishes receipt work",
+          "kind": "publish",
+          "mode": "async",
+          "from": "Orders API",
+          "to": "Order events",
+          "description": "The API starts background receipt delivery. It does not wait for the receipt worker to finish; broker acknowledgement behavior is outside this example.",
+          "after": [
+            "order-saved"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "channel": "orders.placed",
+          "payload": {
+            "orderId": "<order-id>",
+            "email": "<customer-email>"
+          },
+          "parallelGroup": "confirmation-and-receipt"
+        },
+        {
+          "id": "confirm-order",
+          "title": "Orders API returns order confirmation",
+          "kind": "response",
+          "mode": "sync",
+          "from": "Orders API",
+          "to": "Web app",
+          "description": "The browser receives the confirmed order and updates its UI. Receipt delivery may still be pending.",
+          "after": [
+            "publish-receipt"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "place-order",
+          "status": "201 Created",
+          "headers": {
+            "Content-Type": "application/json"
+          },
+          "payload": {
+            "orderId": "<order-id>",
+            "status": "placed"
+          },
+          "parallelGroup": "confirmation-and-receipt"
+        },
+        {
+          "id": "consume-receipt",
+          "title": "The broker delivers the order event",
+          "kind": "consume",
+          "mode": "async",
+          "from": "Order events",
+          "to": "Receipt worker",
+          "description": "The worker starts when the event is delivered. This can happen before or after the browser receives confirmation; no dependency on that reply is implied.",
+          "after": [
+            "publish-receipt"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "channel": "orders.placed",
+          "payload": {
+            "orderId": "<order-id>",
+            "email": "<customer-email>"
+          },
+          "parallelGroup": "confirmation-and-receipt"
+        },
+        {
+          "id": "request-email",
+          "title": "Receipt worker requests an email",
+          "kind": "request",
+          "mode": "sync",
+          "from": "Receipt worker",
+          "to": "Email service",
+          "description": "Inside the independent worker branch, this HTTP request is awaited. A background workflow can contain synchronous request/reply interactions.",
+          "after": [
+            "consume-receipt"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "send-receipt",
+          "method": "POST",
+          "url": "{EMAIL_ORIGIN}/v1/messages",
+          "payload": {
+            "template": "order-receipt",
+            "to": "<customer-email>",
+            "data": {
+              "orderId": "<order-id>"
+            }
+          }
+        },
+        {
+          "id": "email-accepted",
+          "title": "Email service acknowledges the message",
+          "kind": "response",
+          "mode": "sync",
+          "from": "Email service",
+          "to": "Receipt worker",
+          "description": "The service accepts delivery work. This reply is not evidence that the email has reached the customer.",
+          "after": [
+            "request-email"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "exchange": "send-receipt",
+          "status": "202 Accepted",
+          "payload": {
+            "messageId": "<message-id>",
+            "status": "accepted"
+          }
+        },
+        {
+          "id": "record-acceptance",
+          "title": "Worker records acceptance",
+          "kind": "local",
+          "mode": "local",
+          "from": "Receipt worker",
+          "to": "Receipt worker",
+          "description": "The worker continuation records the accepted result. Retry, broker acknowledgement, and eventual delivery policies require separate source evidence.",
+          "after": [
+            "email-accepted"
+          ],
+          "notes": [
+            "Fictional example; replace this contract with traced source."
+          ],
+          "evidence": [],
+          "payload": {
+            "result": "accepted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "checkout-components",
+      "title": "Order placement owners",
+      "level": "Components",
+      "description": "Components within one parent container: the Orders API. Neighbouring containers remain outside its boundary.",
+      "mermaid": "flowchart TB\n  web[\"Web app<br/>Container \u00b7 React<br/>Submits checkout\"]\n  subgraph api[\"Orders API \u00b7 Container \u00b7 Node.js\"]\n    handler[\"Checkout handler<br/>Component \u00b7 HTTP endpoint<br/>Validates request input\"]\n    orders[\"Order service<br/>Component \u00b7 Domain service<br/>Coordinates order placement\"]\n    gateway[\"Payment gateway<br/>Component \u00b7 HTTP adapter<br/>Requests payment authorisation\"]\n    repo[\"Order repository<br/>Component \u00b7 SQL adapter<br/>Persists placed orders\"]\n  end\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  store[\"Orders store<br/>Container \u00b7 PostgreSQL<br/>Stores order records\"]\n  web -->|Posts checkout / HTTPS| handler\n  handler -->|Places validated order| orders\n  orders -->|Authorises payment| gateway\n  orders -->|Saves order| repo\n  gateway -->|Authorises charge / HTTPS| payment\n  repo -->|Inserts order / SQL| store\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  classDef data fill:#e6edf4,stroke:#58748e,color:#253d53;\n  class handler,orders,gateway,repo internal;\n  class web,payment external;\n  class store data;",
+      "notes": [
+        "Fictional example. Components belong to the Orders API; the Web app is shown as a neighbouring container.",
+        "Payment and persistence failure handling would require separate evidence and views."
+      ],
+      "evidence": []
+    }
+  ]
+}

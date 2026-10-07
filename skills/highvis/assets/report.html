@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title><!-- HIGHVIS_TITLE --> · Highvis</title>
+  <style>
+    :root { --paper: #f4f6f4; --surface: #ffffff; --ink: #242b28; --muted: #626b65; --line: #d7dcd5; --accent: #236858; --wash: #e2efeb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 13px/1.42 "Avenir Next", Avenir, "Segoe UI", sans-serif; }
+    ::selection { background: #c1dfd2; color: #163f34; }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { font: inherit; cursor: pointer; }
+    button:disabled { cursor: default; opacity: .45; }
+    button, summary { touch-action: manipulation; }
+    a { color: var(--accent); text-underline-offset: 3px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: 24px; line-height: 1.15; font-weight: 600; letter-spacing: -.03em; text-wrap: balance; }
+    h2 { font-size: 16px; line-height: 1.3; font-weight: 600; letter-spacing: -.02em; }
+    .shell { margin: auto; padding: 12px 20px; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; }
+    .brand { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; letter-spacing: -.03em; }
+    .brand svg { color: var(--accent); width: 18px; height: 18px; }
+    .scope { color: var(--muted); font-size: 11px; text-align: right; overflow-wrap: anywhere; }
+    .scope > div { display: inline; }
+    .scope > div + div::before { content: " · "; }
+    .intro { display: grid; grid-template-columns: minmax(180px, 320px) minmax(0, 1fr); gap: 16px; align-items: start; padding: 0 0 8px; }
+    .intro p { max-width: 100ch; color: var(--muted); }
+    .views { display: flex; flex-wrap: wrap; gap: 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+    .view-button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); padding: 6px 0; min-height: 30px; text-align: left; }
+    .view-button:hover { color: var(--ink); }
+    .view-button[aria-pressed="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+    .view-button span { font-size: 11px; margin-right: 5px; }
+    .view-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .view-heading p { margin-top: 3px; max-width: 100ch; color: var(--muted); }
+    .tools { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
+    .tool { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 4px; padding: 4px 8px; min-height: 30px; line-height: 1.3; font-size: 12px; }
+    .tool:hover:enabled { background: var(--wash); border-color: #7ca598; }
+    .icon-button { display: grid; place-items: center; width: 30px; padding: 4px; }
+    .icon-button svg { width: 16px; height: 16px; }
+    .canvas { height: clamp(280px, 46vh, 560px); overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); position: relative; scrollbar-color: #a6b9ae var(--surface); scrollbar-width: thin; }
+    .drawing { width: max-content; min-width: 100%; min-height: 100%; display: grid; place-items: center; padding: 12px; }
+    .drawing svg { display: block; flex-shrink: 0; max-width: none; }
+    .status { position: absolute; inset: 0; display: grid; place-content: center; gap: 12px; padding: 32px; text-align: center; color: var(--muted); background: var(--surface); }
+    .status[hidden] { display: none; }
+    .status p { max-width: 60ch; }
+    .status button { justify-self: center; }
+    .canvas-meta { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 5px 0 10px; color: var(--muted); font-size: 11px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 12px; }
+    .legend span { display: inline-flex; gap: 7px; align-items: center; }
+    .swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid; }
+    .person { background: #f5ead8; border-color: #80613e; }
+    .internal { background: #e2efeb; border-color: #377568; }
+    .external { background: #ecece9; border-color: #777971; }
+    .data { background: #e6edf4; border-color: #58748e; }
+    #zoom-label { font-variant-numeric: tabular-nums; }
+    .chronology { padding: 10px 0 12px; border-top: 1px solid var(--line); }
+    .chronology > p { margin-top: 3px; max-width: 120ch; color: var(--muted); font-size: 12px; }
+    .events { list-style: none; counter-reset: event; margin: 8px 0 0; padding: 0; }
+    .events > li { counter-increment: event; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+    .events > li::before { content: counter(event); color: var(--accent); font-size: 15px; font-variant-numeric: tabular-nums; }
+    .event { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 16px; }
+    .event h3 { margin: 0; font-size: 14px; line-height: 1.3; font-weight: 600; }
+    .event p { max-width: 80ch; margin-top: 3px; overflow-wrap: anywhere; }
+    .event-meta { color: var(--muted); font-size: 11px; }
+    .event-route { display: block; overflow-wrap: anywhere; font-size: 12px; }
+    .event details { margin-top: 5px; padding: 4px 0 0; border: 0; font-size: 12px; overflow-wrap: anywhere; }
+    .event dl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin: 6px 0 0; }
+    .event dt { font-size: 11px; font-weight: 600; }
+    .event dd { margin: 3px 0 0; }
+    .event pre { white-space: pre-wrap; overflow-wrap: anywhere; padding: 8px; }
+    .event ul { margin: 6px 0 0; padding-left: 16px; }
+    .event .evidence { margin-top: 8px; }
+    .support { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 20px; padding: 10px 0; border-top: 1px solid var(--line); }
+    .support h2 { font-size: 13px; letter-spacing: 0; }
+    .support ul { margin: 5px 0 0; padding-left: 16px; }
+    .support li { margin-bottom: 4px; overflow-wrap: anywhere; }
+    .support p { margin-top: 5px; color: var(--muted); }
+    .evidence { padding-left: 0 !important; list-style: none; }
+    .evidence li { padding-bottom: 4px; }
+    .evidence code { display: block; font-size: 11px; margin-bottom: 2px; color: var(--accent); }
+    .evidence span { color: var(--muted); font-size: 12px; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+    details { border-top: 1px solid var(--line); padding: 8px 0; }
+    summary { cursor: pointer; width: fit-content; min-height: 24px; font-weight: 600; }
+    .source-tools { display: flex; gap: 4px; margin: 6px 0; }
+    pre { margin: 0; padding: 8px; background: #eaece6; border-radius: 4px; overflow: auto; font-size: 11px; line-height: 1.35; tab-size: 2; scrollbar-color: #a6b9ae #eaece6; }
+    footer { padding-top: 8px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; color: var(--muted); font-size: 11px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 900px) { .event { grid-template-columns: minmax(0, 1fr); gap: 5px; } }
+    @media (max-width: 800px) { .shell { padding: 10px 12px; } .intro { grid-template-columns: minmax(0, 1fr); gap: 4px; } .view-heading { flex-direction: column; gap: 6px; } .support { gap: 10px; grid-template-columns: 1fr; } .canvas { height: 320px; } .event dl { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 480px) { .shell { padding: 8px 10px; } .masthead { align-items: start; } .scope { max-width: 65%; } .views { gap: 0 12px; } .canvas { height: 280px; } .canvas-meta { margin-bottom: 8px; } .events > li { grid-template-columns: 18px minmax(0, 1fr); gap: 6px; } }
+    @media (pointer: coarse) { .tool, .view-button { min-height: 40px; } summary { min-height: 32px; } }
+    @media print { .shell { padding: 0; } .tools, .views, details, .status { display: none; } .canvas { height: auto; overflow: visible; border: 0; } .drawing svg { width: 100% !important; height: auto !important; } .support { break-inside: avoid; } .event details { display: block; } .event details > :not(summary) { display: block !important; } }
+  </style>
+  <script type="importmap">
+    {"imports": {"react": "https://esm.sh/react@18.3.1", "react-dom": "https://esm.sh/react-dom@18.3.1?external=react", "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime", "mermaid": "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"}}
+  </script>
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <div class="brand"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="3" width="8" height="8" rx="2"/><rect x="16" y="15" width="8" height="8" rx="2"/><path d="M10 7h10v8M6 11v8h10"/></svg>highvis</div>
+      <div class="scope"><div id="scope"></div><div id="revision"></div></div>
+    </header>
+    <section class="intro" aria-labelledby="report-title"><h1 id="report-title"></h1><p id="report-summary"></p></section>
+    <nav id="views" class="views" aria-label="Architecture views"></nav>
+    <section aria-labelledby="view-title">
+      <div class="view-heading">
+        <div><h2 id="view-title"></h2><p id="view-description"></p></div>
+        <div id="diagram-tools" class="tools" aria-label="Diagram controls">
+          <button class="tool icon-button" id="zoom-out" aria-label="Zoom out" title="Zoom out" disabled><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12"/></svg></button>
+          <button class="tool icon-button" id="zoom-in" aria-label="Zoom in" title="Zoom in" disabled><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12M10 4v12"/></svg></button>
+          <button class="tool" id="actual-size" aria-label="Show diagram at full size" disabled>100%</button>
+          <button class="tool" id="fit" disabled>Fit view</button>
+          <button class="tool" id="download-svg" disabled>Save SVG</button>
+          <button class="tool" id="download-scene" disabled>Save Excalidraw</button>
+        </div>
+      </div>
+      <div id="diagram-frame">
+      <div id="canvas" class="canvas" tabindex="0" aria-label="Architecture diagram; scroll to pan when zoomed">
+        <div id="drawing" class="drawing"></div>
+        <div id="status" class="status" role="status" aria-live="polite"><p id="status-text">Loading Excalidraw renderer…</p><button id="retry" class="tool" hidden>Reload renderer</button></div>
+      </div>
+      <div class="canvas-meta">
+        <div class="legend" aria-label="Diagram legend"><span><i class="swatch person" aria-hidden="true"></i>Person</span><span><i class="swatch internal" aria-hidden="true"></i>In scope</span><span><i class="swatch external" aria-hidden="true"></i>External</span><span><i class="swatch data" aria-hidden="true"></i>Data store</span></div>
+        <span id="zoom-label">Scroll to explore · Fit view for overview</span>
+      </div>
+      </div>
+    </section>
+    <section id="chronology" class="chronology" aria-labelledby="chronology-title" hidden>
+      <h2 id="chronology-title">What happens, in order</h2>
+      <p>Sync waits for a reply; async uses background work or callbacks. Parallel completion order may vary.</p>
+      <ol id="events" class="events"></ol>
+    </section>
+    <section class="support" aria-label="Architecture evidence">
+      <div><h2>Reading this view</h2><ul id="notes"></ul><p id="no-notes" hidden>No additional assumptions recorded.</p></div>
+      <div><h2>Source evidence</h2><ul id="evidence" class="evidence"></ul><p id="no-evidence" hidden>No source evidence supplied; treat this view as unverified.</p></div>
+    </section>
+    <details id="mermaid-source"><summary>Mermaid source</summary><div class="source-tools"><button id="download-mermaid" class="tool">Save Mermaid</button></div><pre><code id="source"></code></pre></details>
+    <footer><span>C4 architecture · Excalidraw rendering</span><span>Pinned libraries load from esm.sh / jsDelivr · Network required</span></footer>
+    <noscript><p>JavaScript is required to render diagrams. Report data and Mermaid source are embedded in this HTML file.</p></noscript>
+  </main>
+  <script id="highvis-data" type="application/json"><!-- HIGHVIS_DATA --></script>
+  <script id="highvis-viewport">
+    function highvisDiagramScale(width, height, availableWidth, availableHeight, mode) {
+      if (mode === "actual") return 1;
+      const overview = Math.min(1, Math.max(1, availableWidth) / width, Math.max(1, availableHeight) / height);
+      // At 20px diagram text, the 75% floor retains a readable 15px default.
+      return mode === "fit" ? overview : Math.max(0.75, overview);
+    }
+  </script>
+  <script type="module">
+    const report = JSON.parse(document.getElementById("highvis-data").textContent);
+    const byId = (id) => document.getElementById(id);
+    const controls = ["zoom-in", "zoom-out", "actual-size", "fit", "download-svg", "download-scene"];
+    const cache = new Map();
+    let active = report.views.find((view) => view.id === location.hash.slice(1)) || report.views[0];
+    let rendered = null;
+    let scale = 1;
+    let zoomMode = "readable";
+    let requestId = 0;
+    let renderQueue = Promise.resolve();
+    let libraries = null;
+
+    byId("report-title").textContent = report.title;
+    byId("report-summary").textContent = report.summary;
+    byId("scope").textContent = report.scope;
+    byId("revision").textContent = `Revision: ${report.revision}`;
+
+    function loadLibraries() {
+      if (!libraries) {
+        libraries = Promise.all([
+          import("https://esm.sh/@excalidraw/mermaid-to-excalidraw@2.2.2?standalone&external=mermaid"),
+          import("https://esm.sh/@excalidraw/excalidraw@0.18.1?standalone&external=react,react-dom,mermaid")
+        ]).catch((error) => { libraries = null; throw error; });
+      }
+      return libraries;
+    }
+
+    function setStatus(message, failed = false) {
+      byId("status").hidden = false;
+      byId("status-text").textContent = message;
+      byId("retry").hidden = !failed;
+      controls.forEach((id) => { byId(id).disabled = true; });
+    }
+
+    function evidenceItem(item) {
+      const li = document.createElement("li");
+      const path = document.createElement("code");
+      path.textContent = item.path + (item.lines ? `:${item.lines}` : "");
+      const detail = document.createElement("span");
+      detail.textContent = item.detail;
+      li.append(path, detail);
+      return li;
+    }
+
+    function renderEvents(view) {
+      const events = view.events || [];
+      byId("chronology").hidden = events.length === 0;
+      const numbered = new Map(events.map((event, index) => [event.id, index + 1]));
+      const exchanges = new Map(events.filter((event) => event.kind === "request").map((event) => [event.exchange, event]));
+      const eventLink = (id) => {
+        const link = document.createElement("a");
+        link.href = `#event-${view.id}-${id}`;
+        link.textContent = `event ${numbered.get(id)}`;
+        // Preserve the active-view hash used to restore the report on reload.
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const target = byId(`event-${view.id}-${id}`);
+          target.scrollIntoView({ block: "center" });
+          target.focus({ preventScroll: true });
+        });
+        return link;
+      };
+      byId("events").replaceChildren(...events.map((event) => {
+        const li = document.createElement("li");
+        li.id = `event-${view.id}-${event.id}`;
+        li.tabIndex = -1;
+        const article = document.createElement("article");
+        article.className = "event";
+        const overview = document.createElement("div");
+        const contractArea = document.createElement("div");
+        const title = document.createElement("h3");
+        title.textContent = event.title;
+        const meta = document.createElement("p");
+        meta.className = "event-meta";
+        const mode = { sync: event.kind === "response" ? "Sync · reply resumes caller" : "Sync · caller waits", async: "Async · later delivery / continuation", local: "Local execution" }[event.mode];
+        meta.textContent = `${event.from} → ${event.to} · ${event.kind} · ${mode}`;
+        if (event.parallelGroup) meta.append(` · Parallel: ${event.parallelGroup}`);
+        const description = document.createElement("p");
+        description.textContent = event.description;
+        overview.append(title, meta, description);
+        const request = event.kind === "response" ? exchanges.get(event.exchange) : null;
+        const url = event.url || request?.url;
+        if (url || event.channel || event.status) {
+          const route = document.createElement("code");
+          route.className = "event-route";
+          route.textContent = [event.method || request?.method, url, event.channel, event.status].filter(Boolean).join(" · ");
+          contractArea.append(route);
+        }
+        const causality = document.createElement("p");
+        causality.className = "event-meta";
+        if (request) causality.append("Reply to ", eventLink(request.id), ". ");
+        if (event.after.length) {
+          causality.append("After ");
+          event.after.forEach((id, index) => { if (index) causality.append(", "); causality.append(eventLink(id)); });
+          causality.append(".");
+        } else causality.append("Scenario starts here.");
+        overview.append(causality);
+        const details = document.createElement("details");
+        const summary = document.createElement("summary");
+        summary.textContent = "Payload, headers, and source";
+        const contract = document.createElement("dl");
+        for (const [field, label] of [["payload", "Payload / return value"], ["headers", "Headers"]]) {
+          const group = document.createElement("div");
+          const term = document.createElement("dt");
+          term.textContent = label;
+          const definition = document.createElement("dd");
+          const pre = document.createElement("pre");
+          pre.textContent = Object.hasOwn(event, field) ? (typeof event[field] === "string" ? event[field] : JSON.stringify(event[field], null, 2)) : "Not recorded; see notes for scope or unknowns.";
+          definition.append(pre);
+          group.append(term, definition);
+          contract.append(group);
+        }
+        details.append(summary, contract);
+        if (event.notes.length) {
+          const notes = document.createElement("ul");
+          notes.append(...event.notes.map((note) => { const item = document.createElement("li"); item.textContent = note; return item; }));
+          details.append(notes);
+        }
+        const evidence = document.createElement("ul");
+        evidence.className = "evidence";
+        evidence.append(...event.evidence.map(evidenceItem));
+        details.append(evidence);
+        contractArea.append(details);
+        article.append(overview, contractArea);
+        li.append(article);
+        return li;
+      }));
+    }
+
+    function updateZoom() {
+      if (!rendered) return;
+      rendered.svg.style.width = `${rendered.width * scale}px`;
+      rendered.svg.style.height = `${rendered.height * scale}px`;
+      byId("zoom-label").textContent = `${Math.round(scale * 100)}% · Scroll to pan`;
+    }
+
+    function resetViewport(mode) {
+      if (!rendered) return;
+      zoomMode = mode;
+      const padding = 24;
+      scale = highvisDiagramScale(rendered.width, rendered.height, byId("canvas").clientWidth - padding, byId("canvas").clientHeight - padding, mode);
+      updateZoom();
+      byId("canvas").scrollTo(0, 0);
+    }
+
+    async function convert(view) {
+      if (cache.has(view.id)) return cache.get(view.id);
+      const [parser, excalidraw] = await loadLibraries();
+      const result = await parser.parseMermaidToExcalidraw(view.mermaid, { themeVariables: { fontSize: "20px" }, flowchart: { curve: "linear" } });
+      // Flowcharts must become native shapes, never a fallback image.
+      if (!result.elements.length || result.elements.some((element) => element.type === "image")) {
+        throw new Error("This diagram did not convert to native Excalidraw shapes. Use the supported flowchart subset.");
+      }
+      // The converter retains HTML break tags in some Mermaid labels. Normalize
+      // them before Excalidraw measures bound text, using its sans-serif font.
+      const plainLabel = (text) => text.replace(/<br\s*\/?>/gi, "\n");
+      const skeletons = result.elements.map((element) => {
+        const normalized = { ...element, roughness: 0.35, fontFamily: 2 };
+        if (element.text) normalized.text = plainLabel(element.text);
+        if (element.label) normalized.label = { ...element.label, text: plainLabel(element.label.text), fontFamily: 2 };
+        return normalized;
+      });
+      const elements = excalidraw.convertToExcalidrawElements(skeletons);
+      const appState = { exportBackground: false, viewBackgroundColor: "#ffffff", exportWithDarkMode: false, exportScale: 1 };
+      const files = result.files || {};
+      const svg = await excalidraw.exportToSvg({ elements, files, appState, exportPadding: 24 });
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", `${view.title}. ${view.description}`);
+      const width = Number(svg.getAttribute("width"));
+      const height = Number(svg.getAttribute("height"));
+      if (!(width > 0 && height > 0)) throw new Error("The renderer returned an empty diagram.");
+      const value = { svg, width, height, elements, files, appState };
+      cache.set(view.id, value);
+      return value;
+    }
+
+    async function selectView(view) {
+      const currentRequest = ++requestId;
+      active = view;
+      history.replaceState(null, "", `#${view.id}`);
+      rendered = null;
+      byId("drawing").replaceChildren();
+      byId("view-title").textContent = view.title;
+      byId("view-description").textContent = view.description;
+      byId("source").textContent = view.mermaid || "";
+      ["diagram-frame", "diagram-tools", "mermaid-source"].forEach((id) => { byId(id).hidden = !view.mermaid; });
+      renderEvents(view);
+      byId("views").querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.view === view.id)));
+      byId("notes").replaceChildren(...view.notes.map((note) => { const li = document.createElement("li"); li.textContent = note; return li; }));
+      byId("no-notes").hidden = view.notes.length > 0;
+      byId("evidence").replaceChildren(...view.evidence.map(evidenceItem));
+      byId("no-evidence").hidden = view.evidence.length > 0;
+      setStatus("Rendering with Excalidraw…");
+      if (!view.mermaid) return;
+      // Mermaid owns shared DOM state: conversions must be serialized.
+      const pending = renderQueue.then(() => currentRequest === requestId ? convert(view) : null);
+      renderQueue = pending.catch(() => {});
+      try {
+        const result = await pending;
+        if (currentRequest !== requestId || !result) return;
+        rendered = result;
+        byId("drawing").replaceChildren(result.svg);
+        byId("status").hidden = true;
+        controls.forEach((id) => { byId(id).disabled = false; });
+        resetViewport("readable");
+      } catch (error) {
+        if (currentRequest !== requestId) return;
+        const message = error instanceof Error ? error.message : String(error);
+        setStatus(`Could not render this view. Check network access to esm.sh / jsDelivr and the Mermaid source, then retry. ${message}`, true);
+      }
+    }
+
+    function download(content, type, extension) {
+      const url = URL.createObjectURL(new Blob([content], { type }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${active.id}.${extension}`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    report.views.forEach((view) => {
+      const button = document.createElement("button");
+      button.className = "view-button";
+      button.dataset.view = view.id;
+      button.setAttribute("aria-pressed", "false");
+      const level = document.createElement("span");
+      level.textContent = view.level;
+      button.append(level, document.createTextNode(view.title));
+      button.addEventListener("click", () => selectView(view));
+      byId("views").append(button);
+    });
+    // Reload clears the browser's failed-module cache and retains the view hash.
+    byId("retry").addEventListener("click", () => location.reload());
+    byId("actual-size").addEventListener("click", () => resetViewport("actual"));
+    byId("fit").addEventListener("click", () => resetViewport("fit"));
+    byId("zoom-in").addEventListener("click", () => { zoomMode = "manual"; scale = Math.min(4, scale * 1.25); updateZoom(); });
+    byId("zoom-out").addEventListener("click", () => { zoomMode = "manual"; scale = Math.max(.05, scale / 1.25); updateZoom(); });
+    byId("download-mermaid").addEventListener("click", () => download(active.mermaid, "text/plain;charset=utf-8", "mmd"));
+    byId("download-svg").addEventListener("click", () => {
+      if (!rendered) return;
+      const svg = rendered.svg.cloneNode(true);
+      svg.style.removeProperty("width"); svg.style.removeProperty("height");
+      download(new XMLSerializer().serializeToString(svg), "image/svg+xml", "svg");
+    });
+    byId("download-scene").addEventListener("click", () => {
+      if (!rendered) return;
+      download(JSON.stringify({ type: "excalidraw", version: 2, source: "highvis", elements: rendered.elements, appState: rendered.appState, files: rendered.files }, null, 2), "application/json", "excalidraw");
+    });
+    new ResizeObserver(() => { if (zoomMode !== "manual") resetViewport(zoomMode); }).observe(byId("canvas"));
+    selectView(active);
+  </script>
+</body>
+</html>

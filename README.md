@@ -11,6 +11,7 @@ Skills are manual-invocation only. Use them when the user explicitly invokes the
 - `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
+- `highvis` — C4 architecture maps and HTML feature stories with sync/async events, URLs, payloads, and responses
 - `plan-mode` — produce a decision-complete plan, read-only
 - `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance
 - `repo-patterns` — audit, write, and conform repo boundaries, React ownership/composition/recovery, independent fixture runs, tooling, Docker images/Compose, data models, databases, REST contracts, CLI setup, manual stable CI releases, and automatic Go dev builds
