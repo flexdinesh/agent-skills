@@ -4,13 +4,13 @@ Personal collection of agent skills, installable via the [`skills`](https://gith
 
 ## Invocation policy
 
-Skills are manual-invocation only. Use them when the user explicitly invokes them by name, for example `$plan-mode` or `$review-changes`. Follow each skill's `SKILL.md` for its invocation rules.
+Skills are manual-invocation only, with one exception: `gh-create-pr` also auto-invokes when the task calls for opening or updating a pull request. Otherwise, use a skill when the user explicitly invokes it by name, for example `$plan-mode` or `$review-changes`. Follow each skill's `SKILL.md` for its invocation rules.
 
 ## Available skills
 
 - `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
-- `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI
+- `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI (explicit or auto-invoked for PR work)
 - `highvis` — C4 architecture maps and HTML feature stories with sync/async events, URLs, payloads, and responses
 - `plan-mode` — produce a decision-complete plan, read-only
 - `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance

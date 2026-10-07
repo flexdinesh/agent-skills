@@ -1,11 +1,15 @@
 ---
 name: gh-create-pr
-description: "Push the current branch and create a GitHub pull request with gh CLI. Use only when the user explicitly invokes `gh-create-pr` or `$gh-create-pr`; do not auto-invoke from context."
+description: "Push the current branch and create a GitHub pull request with gh CLI. Invoke explicitly as `gh-create-pr` or `$gh-create-pr`, or automatically whenever the task calls for opening or updating a pull request, even without naming the skill."
 ---
 
 # GH Create PR
 
-Manual invocation only: use this skill only when the user explicitly invokes `gh-create-pr` or `$gh-create-pr`; do not auto-invoke from task context.
+## Invocation
+
+Use this skill whenever the work involves creating or updating a GitHub pull request — explicit `gh-create-pr`/`$gh-create-pr` invocation, or an ask such as "open a PR", "raise a pull request", "push this and create a PR", or "update the PR description". Prefer this skill over ad-hoc `git push` plus `gh pr create`.
+
+Auto-invocation authorizes the read-only and local steps below (status, fetch, diff review, ancestry checks, conflict-free local rebases). It does not authorize pushing or creating the PR; those still require the confirmation in "Confirm And Create". When the user wants an unattended plan-to-PR run, use `autopilot` instead.
 
 ## Gather Context
 
