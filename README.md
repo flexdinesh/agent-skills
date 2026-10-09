@@ -11,6 +11,7 @@ Skills are manual-invocation only, with one exception: `gh-create-pr` also auto-
 - `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI (explicit or auto-invoked for PR work)
+- `go-architecture` — audit, design, and refactor Go around ownership, composition, semantic contracts, and boundary tests
 - `highvis` — C4 architecture maps and HTML feature stories with sync/async events, URLs, payloads, and responses
 - `plan-mode` — produce a decision-complete plan, read-only
 - `react-patterns` — write, audit, debug, and refactor React with deliberate state, composition, recovery, and performance
