@@ -111,8 +111,9 @@ dispatch syntax, not a requirement for every package to define a `run` script.
 For `test:integration`, document runtime/service access, image availability where
 applicable, startup/test timeouts, and worker limits. Required integration runs
 fail clearly on missing prerequisites; do not silently skip or substitute fakes.
-Explicit fast-only selection may omit them; relevant CI jobs must execute the
-required suite. Keep provisioning in the owning harness; see
+Explicit fast-only selection may omit them. Where repository policy requires
+integration tests in CI, the corresponding jobs must execute the required suite.
+Keep provisioning in the owning harness; see
 [container infrastructure](containers.md#fixture-container-infrastructure).
 
 Where command conventions are undecided, define root `dev` for a documented
@@ -134,6 +135,31 @@ finite checks. Check forwarded args, failure exits, signals, and production buil
 behavior when changed. Within authorized isolated validation, check documented
 single/combined starts, readiness, interruption, and cleanup. Audits report runs
 not executed. Do not add dummy scripts to make aggregate checks green.
+
+## `tool-local-verification`
+
+**Keep full verification local before pushing.**
+
+**Apply:** selecting the scope of local hooks, aggregate checks, or CI verification.
+
+**Problematic:** full suites and architecture guards move to CI while local pushes
+omit them; repeated builds or duplicate suite runs make the hook unnecessarily slow.
+
+**Prefer:** follow user instructions and repository requirements first. When scope
+is undecided, run full applicable suites, contract/dependency guards, and supported
+race checks through the local pre-push hook. Keep CI/release verification lightweight:
+static checks, builds, generated-output drift and a bounded artifact/API smoke test
+where applicable. Share finite commands and build prerequisites; avoid duplicate
+work within an aggregate run. Document setup, coverage and local validation evidence.
+
+**Exception:** preserve required CI suites and merge gates. Hosted-only credentials,
+platforms or services can require CI coverage. Local results do not prove a required
+remote check passed, and a lightweight CI status does not prove full local validation.
+Do not silently skip checks or bypass the hook to publish a failing change.
+
+**Verify:** inspect both task graphs and hook/workflow callers. Confirm local pre-push
+reaches all required suites and guards, failures stop the push, and shared builds
+are reused. Record actual results and unexecuted platform/service coverage.
 
 ## `tool-task-graph`
 

@@ -33,6 +33,24 @@ For reviews, distinguish observed defects, useful simplifications, and optional
 future work. Mark sampled or unverified areas; do not imply exhaustive coverage.
 End plans with unresolved questions, or “Unresolved questions: none.”
 
+## Changing existing systems
+
+Before editing, identify the behavior owner, consuming contracts, invariants, and
+applicable modes from repository decisions and actual callers. Extend the owner's
+contract and encapsulated behavior; keep caller coordination and mode wiring at
+their existing boundaries. Introduce a new boundary for a concrete responsibility,
+not merely to move code. Verify shared changes across affected compositions,
+including their intentional differences in permissions, failures, and lifetime.
+
+For an intentional design change, update the canonical decisions, affected guards,
+and semantic tests together; explain which requirement changed and why. Never
+weaken a check solely to accommodate a violating implementation. A superseded
+rule needs a justified replacement and coverage of the new contract.
+
+Before completion, review the final diff against ownership, dependency direction,
+mode composition, and affected contracts. Report actual checks and remaining
+limits. Passing tests alone cannot establish cohesive packages or sound DRY.
+
 ## 1. Cohesive packages own behavior
 
 Give each capability a clear owner. Keep its state transitions, validation, and
@@ -96,6 +114,14 @@ interfaces merely to wrap every standard-library call.
 Check transitive imports: a small progress or logging helper can accidentally pull
 capture, storage, or server ownership into the wrong layer. Automate important
 dependency prohibitions; tests must fail if their expected root package disappears.
+
+For guarded areas, inventory every production package, including new nested ones;
+unclassified packages require an explicit architectural role. Distinguish production
+imports from test dependencies and reject production use of test helpers. Restrict
+process execution and database-driver access to their approved owners where those
+boundaries apply. Scope these policies to the repository's responsibilities, not
+a prescribed directory tree. Exercise allowed composition and forbidden crossings
+in guard tests; document the build targets/tags inspected and any coverage gaps.
 
 ## 4. DRY applies to decisions and invariants
 
