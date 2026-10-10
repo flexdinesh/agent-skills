@@ -103,9 +103,7 @@ references and primary documentation without imposing Go/Node recipes.
 ## Verify and report
 
 Run appropriate finite checks and inspect affected consumers. Verify changed
-independent runs and release artifacts when relevant. Follow repository policy for
-local pre-push and required CI checks; use the [tooling guidance](references/tooling-and-commands.md#tool-local-verification)
-when choosing their scope. During read-only audits,
+independent runs and release artifacts when relevant. During read-only audits,
 keep source/config/shared state unchanged; do not install tools, seed a shared DB,
 or start the whole product. Inspect commands for side effects before running them.
 
