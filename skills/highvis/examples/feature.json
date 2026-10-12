@@ -1,7 +1,7 @@
 {
   "title": "Checkout architecture",
   "summary": "Illustrative feature report: checkout boundaries, API owners, and an HTML story of request/reply and background receipt events. Replace fictional contracts with traced source evidence.",
-  "scope": "Feature \u00b7 Checkout",
+  "scope": "Feature · Checkout",
   "revision": "Illustrative example",
   "views": [
     {
@@ -9,11 +9,62 @@
       "title": "Feature boundaries",
       "level": "Containers",
       "description": "Order placement waits for payment and storage replies; a broker delivers receipt work independently.",
-      "mermaid": "flowchart LR\n  subgraph shop[\"Shop \u00b7 Software system\"]\n    web[\"Web app<br/>Container \u00b7 React<br/>Collects checkout input\"]\n    api[\"Orders API<br/>Container \u00b7 Node.js<br/>Owns order placement\"]\n    store[\"Orders store<br/>Container \u00b7 PostgreSQL<br/>Persists orders\"]\n    broker[\"Order events<br/>Container \u00b7 Broker<br/>Delivers receipt work\"]\n    worker[\"Receipt worker<br/>Container \u00b7 Node.js<br/>Requests receipt delivery\"]\n  end\n  email[\"Email service<br/>External system<br/>Accepts receipt messages\"]\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  web -->|Submits checkout / HTTPS| api\n  api -->|Writes order / SQL| store\n  api -->|Authorises charge / HTTPS| payment\n  api -->|Publishes order placed / Event| broker\n  broker -->|Delivers receipt work / Event| worker\n  worker -->|Requests receipt delivery / HTTPS| email\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  classDef data fill:#e6edf4,stroke:#58748e,color:#253d53;\n  class web,api,worker internal;\n  class payment,email external;\n  class store,broker data;",
+      "mermaid": "flowchart LR\n  subgraph shop[\"Shop · Software system\"]\n    web[\"Web app<br/>Container · React<br/>Collects checkout input\"]\n    api[\"Orders API<br/>Container · Node.js<br/>Owns order placement\"]\n    store[\"Orders store<br/>Container · PostgreSQL<br/>Persists orders\"]\n    broker[\"Order events<br/>Container · Broker<br/>Delivers receipt work\"]\n    worker[\"Receipt worker<br/>Container · Node.js<br/>Requests receipt delivery\"]\n  end\n  email[\"Email service<br/>External system<br/>Accepts receipt messages\"]\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  web -->|Submits checkout / HTTPS| api\n  api -->|Writes order / SQL| store\n  api -->|Authorises charge / HTTPS| payment\n  api -->|Publishes order placed / Event| broker\n  broker -->|Delivers receipt work / Event| worker\n  worker -->|Requests receipt delivery / HTTPS| email\n  classDef system fill:#efeeff,stroke:#4c46b5,color:#413a96;\n  class shop system;\n  classDef interface fill:#edf3ff,stroke:#2459d7,color:#244b9b;\n  class web interface;\n  classDef service fill:#f3ecff,stroke:#7136ce,color:#5b2b9d;\n  class api,worker service;\n  classDef data fill:#e8f8f2,stroke:#087a64,color:#066251;\n  class store,broker data;\n  classDef external fill:#fff0e6,stroke:#b54b12,color:#934011;\n  class email,payment external;",
       "notes": [
         "Fictional example. Other shop capabilities are outside this feature's scope."
       ],
-      "evidence": []
+      "evidence": [],
+      "entities": [
+        {
+          "id": "shop",
+          "role": "system",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "web",
+          "role": "interface",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "api",
+          "role": "service",
+          "notes": [],
+          "evidence": [],
+          "view": "checkout-components"
+        },
+        {
+          "id": "store",
+          "role": "data",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "broker",
+          "role": "data",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "worker",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "email",
+          "role": "external",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "payment",
+          "role": "external",
+          "notes": [],
+          "evidence": []
+        }
+      ]
     },
     {
       "id": "checkout-flow",
@@ -123,7 +174,7 @@
           "evidence": [],
           "exchange": "save-order",
           "method": "SQL",
-          "url": "N/A \u2014 SQL adapter",
+          "url": "N/A — SQL adapter",
           "payload": {
             "operation": "INSERT order",
             "authorizationId": "<authorization-id>",
@@ -151,7 +202,7 @@
           ],
           "evidence": [],
           "exchange": "save-order",
-          "status": "SQL result \u00b7 one inserted row",
+          "status": "SQL result · one inserted row",
           "payload": {
             "orderId": "<order-id>"
           }
@@ -300,12 +351,62 @@
       "title": "Order placement owners",
       "level": "Components",
       "description": "Components within one parent container: the Orders API. Neighbouring containers remain outside its boundary.",
-      "mermaid": "flowchart TB\n  web[\"Web app<br/>Container \u00b7 React<br/>Submits checkout\"]\n  subgraph api[\"Orders API \u00b7 Container \u00b7 Node.js\"]\n    handler[\"Checkout handler<br/>Component \u00b7 HTTP endpoint<br/>Validates request input\"]\n    orders[\"Order service<br/>Component \u00b7 Domain service<br/>Coordinates order placement\"]\n    gateway[\"Payment gateway<br/>Component \u00b7 HTTP adapter<br/>Requests payment authorisation\"]\n    repo[\"Order repository<br/>Component \u00b7 SQL adapter<br/>Persists placed orders\"]\n  end\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  store[\"Orders store<br/>Container \u00b7 PostgreSQL<br/>Stores order records\"]\n  web -->|Posts checkout / HTTPS| handler\n  handler -->|Places validated order| orders\n  orders -->|Authorises payment| gateway\n  orders -->|Saves order| repo\n  gateway -->|Authorises charge / HTTPS| payment\n  repo -->|Inserts order / SQL| store\n  classDef internal fill:#e2efeb,stroke:#377568,color:#173e35;\n  classDef external fill:#ecece9,stroke:#777971,color:#343630;\n  classDef data fill:#e6edf4,stroke:#58748e,color:#253d53;\n  class handler,orders,gateway,repo internal;\n  class web,payment external;\n  class store data;",
+      "mermaid": "flowchart TB\n  web[\"Web app<br/>Container · React<br/>Submits checkout\"]\n  subgraph api[\"Orders API · Container · Node.js\"]\n    handler[\"Checkout handler<br/>Component · HTTP endpoint<br/>Validates request input\"]\n    orders[\"Order service<br/>Component · Domain service<br/>Coordinates order placement\"]\n    gateway[\"Payment gateway<br/>Component · HTTP adapter<br/>Requests payment authorisation\"]\n    repo[\"Order repository<br/>Component · SQL adapter<br/>Persists placed orders\"]\n  end\n  payment[\"Payment provider<br/>External system<br/>Authorises charges\"]\n  store[\"Orders store<br/>Container · PostgreSQL<br/>Stores order records\"]\n  web -->|Posts checkout / HTTPS| handler\n  handler -->|Places validated order| orders\n  orders -->|Authorises payment| gateway\n  orders -->|Saves order| repo\n  gateway -->|Authorises charge / HTTPS| payment\n  repo -->|Inserts order / SQL| store\n  classDef interface fill:#edf3ff,stroke:#2459d7,color:#244b9b;\n  class web interface;\n  classDef service fill:#f3ecff,stroke:#7136ce,color:#5b2b9d;\n  class api,handler,orders,gateway,repo service;\n  classDef data fill:#e8f8f2,stroke:#087a64,color:#066251;\n  class store data;\n  classDef external fill:#fff0e6,stroke:#b54b12,color:#934011;\n  class payment external;",
       "notes": [
         "Fictional example. Components belong to the Orders API; the Web app is shown as a neighbouring container.",
         "Payment and persistence failure handling would require separate evidence and views."
       ],
-      "evidence": []
+      "evidence": [],
+      "entities": [
+        {
+          "id": "api",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "web",
+          "role": "interface",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "handler",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "orders",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "gateway",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "repo",
+          "role": "service",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "payment",
+          "role": "external",
+          "notes": [],
+          "evidence": []
+        },
+        {
+          "id": "store",
+          "role": "data",
+          "notes": [],
+          "evidence": []
+        }
+      ]
     }
   ]
 }

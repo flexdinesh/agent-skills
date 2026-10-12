@@ -6,10 +6,10 @@
   <meta name="color-scheme" content="light">
   <title><!-- HIGHVIS_TITLE --> · Highvis</title>
   <style>
-    :root { --paper: #f4f6f4; --surface: #ffffff; --ink: #242b28; --muted: #626b65; --line: #d7dcd5; --accent: #236858; --wash: #e2efeb; }
+    :root { color-scheme: light; --paper: #fff; --surface: #fff; --ink: #243047; --muted: #596579; --line: #e5e8f0; --accent: #7136ce; --wash: #f3ecff; }
     * { box-sizing: border-box; }
     body { margin: 0; background: var(--paper); color: var(--ink); font: 13px/1.42 "Avenir Next", Avenir, "Segoe UI", sans-serif; }
-    ::selection { background: #c1dfd2; color: #163f34; }
+    ::selection { background: #e4d4ff; color: #432178; }
     :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
     button, a { -webkit-tap-highlight-color: transparent; }
     button { font: inherit; cursor: pointer; }
@@ -19,28 +19,51 @@
     h1, h2, p { margin: 0; }
     h1 { font-size: 24px; line-height: 1.15; font-weight: 600; letter-spacing: -.03em; text-wrap: balance; }
     h2 { font-size: 16px; line-height: 1.3; font-weight: 600; letter-spacing: -.02em; }
-    .shell { margin: auto; padding: 12px 20px; }
-    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 8px; }
+    .shell { margin: auto; }
+    .masthead { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); }
     .brand { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; letter-spacing: -.03em; }
     .brand svg { color: var(--accent); width: 18px; height: 18px; }
     .scope { color: var(--muted); font-size: 11px; text-align: right; overflow-wrap: anywhere; }
     .scope > div { display: inline; }
     .scope > div + div::before { content: " · "; }
-    .intro { display: grid; grid-template-columns: minmax(180px, 320px) minmax(0, 1fr); gap: 16px; align-items: start; padding: 0 0 8px; }
+    .intro { display: grid; grid-template-columns: minmax(180px, 320px) minmax(0, 1fr); gap: 16px; align-items: start; padding: 14px 20px; border-bottom: 1px solid var(--line); }
     .intro p { max-width: 100ch; color: var(--muted); }
-    .views { display: flex; flex-wrap: wrap; gap: 0 16px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
-    .view-button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); padding: 6px 0; min-height: 30px; text-align: left; }
+    .workspace { display: grid; grid-template-columns: 160px minmax(0, 1fr) 260px; }
+    .workspace:has(.inspector[hidden]) { grid-template-columns: 160px minmax(0, 1fr); }
+    .view-nav { border-right: 1px solid var(--line); padding: 18px 12px; }
+    .view-nav h2 { font-size: 13px; margin: 0 8px 12px; }
+    .views { display: grid; gap: 6px; }
+    .view-button { border: 0; background: transparent; color: var(--muted); padding: 10px 8px; min-height: 38px; text-align: left; border-radius: 4px; overflow-wrap: anywhere; }
     .view-button:hover { color: var(--ink); }
-    .view-button[aria-pressed="true"] { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
-    .view-button span { font-size: 11px; margin-right: 5px; }
-    .view-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .view-button:hover { background: var(--wash); }
+    .view-button[aria-pressed="true"] { color: var(--accent); background: var(--wash); font-weight: 600; }
+    .view-button span { display: block; font-size: 11px; color: var(--accent); margin-bottom: 3px; }
+    .report-content { padding: 18px 20px; min-width: 0; }
+    .inspector { border-left: 1px solid var(--line); padding: 18px; min-width: 0; }
+    .inspector h2 { font-size: 13px; margin-bottom: 12px; }
+    .inspector label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 5px; }
+    .inspector select { width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--line); border-radius: 4px; padding: 7px; }
+    .entity-title { background: var(--role-wash); color: var(--role-ink); padding: 14px; border-radius: 6px; margin: 16px 0 12px; }
+    .entity-title h3 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    .entity-title p { font-size: 12px; margin-top: 5px; }
+    .entity-description { margin-bottom: 14px; }
+    .inspector h4 { color: var(--muted); font-size: 12px; font-weight: 500; margin: 16px 0 6px; }
+    .inspector ul { padding: 0; list-style: none; margin: 0; }
+    .inspector li { padding: 8px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+    .inspector li small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .inspector details { font-size: 12px; }
+    .inspector pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .inspector .evidence-warning { margin-top: 16px; padding: 12px; background: #fff8e8; color: #775115; border-radius: 5px; font-size: 12px; }
+    .inspector .deeper-view { display: inline-block; margin-top: 12px; }
+    .inspector .empty { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    .view-heading { display: flex; flex-direction: column; align-items: start; gap: 10px; margin-bottom: 12px; }
     .view-heading p { margin-top: 3px; max-width: 100ch; color: var(--muted); }
     .tools { display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0; }
     .tool { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 4px; padding: 4px 8px; min-height: 30px; line-height: 1.3; font-size: 12px; }
-    .tool:hover:enabled { background: var(--wash); border-color: #7ca598; }
+    .tool:hover:enabled { background: var(--wash); border-color: #b99bdf; }
     .icon-button { display: grid; place-items: center; width: 30px; padding: 4px; }
     .icon-button svg { width: 16px; height: 16px; }
-    .canvas { height: clamp(280px, 46vh, 560px); overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); position: relative; scrollbar-color: #a6b9ae var(--surface); scrollbar-width: thin; }
+    .canvas { height: clamp(320px, 50vh, 560px); overflow: auto; border: 1px solid #e3deef; border-radius: 6px; background: var(--surface); position: relative; scrollbar-color: #c9b4ed var(--surface); scrollbar-width: thin; }
     .drawing { width: max-content; min-width: 100%; min-height: 100%; display: grid; place-items: center; padding: 12px; }
     .drawing svg { display: block; flex-shrink: 0; max-width: none; }
     .status { position: absolute; inset: 0; display: grid; place-content: center; gap: 12px; padding: 32px; text-align: center; color: var(--muted); background: var(--surface); }
@@ -51,10 +74,22 @@
     .legend { display: flex; flex-wrap: wrap; gap: 12px; }
     .legend span { display: inline-flex; gap: 7px; align-items: center; }
     .swatch { width: 10px; height: 10px; border-radius: 2px; border: 1px solid; }
-    .person { background: #f5ead8; border-color: #80613e; }
-    .internal { background: #e2efeb; border-color: #377568; }
-    .external { background: #ecece9; border-color: #777971; }
-    .data { background: #e6edf4; border-color: #58748e; }
+    [data-role="person"] { --role-color: #b72c73; --role-wash: #fdebf4; --role-ink: #94215b; }
+    [data-role="system"] { --role-color: #4c46b5; --role-wash: #efeeff; --role-ink: #413a96; }
+    [data-role="interface"] { --role-color: #2459d7; --role-wash: #edf3ff; --role-ink: #244b9b; }
+    [data-role="service"] { --role-color: #7136ce; --role-wash: #f3ecff; --role-ink: #5b2b9d; }
+    [data-role="external"] { --role-color: #b54b12; --role-wash: #fff0e6; --role-ink: #934011; }
+    [data-role="data"] { --role-color: #087a64; --role-wash: #e8f8f2; --role-ink: #066251; }
+    .swatch { background: var(--role-color); border-color: var(--role-color); }
+    .connections { margin: 14px 0; }
+    .connections h2 { font-size: 13px; margin-bottom: 8px; }
+    .connection { display: block; padding: 9px 0; border-top: 1px solid var(--line); font-size: 12px; text-decoration: none; color: var(--ink); }
+    .connection span { display: block; color: var(--role-color); margin-top: 3px; font-size: 11px; }
+    .entity-hit { cursor: pointer; }
+    .entity-hit rect { fill: transparent; stroke: transparent; }
+    .entity-hit[aria-pressed="true"] rect { stroke: var(--role-color); stroke-width: 3px; }
+    .entity-hit:focus-visible { outline: none; }
+    .entity-hit:focus-visible rect { stroke: var(--role-color); stroke-width: 4px; stroke-dasharray: 8 4; }
     #zoom-label { font-variant-numeric: tabular-nums; }
     .chronology { padding: 10px 0 12px; border-top: 1px solid var(--line); }
     .chronology > p { margin-top: 3px; max-width: 120ch; color: var(--muted); font-size: 12px; }
@@ -86,14 +121,15 @@
     details { border-top: 1px solid var(--line); padding: 8px 0; }
     summary { cursor: pointer; width: fit-content; min-height: 24px; font-weight: 600; }
     .source-tools { display: flex; gap: 4px; margin: 6px 0; }
-    pre { margin: 0; padding: 8px; background: #eaece6; border-radius: 4px; overflow: auto; font-size: 11px; line-height: 1.35; tab-size: 2; scrollbar-color: #a6b9ae #eaece6; }
-    footer { padding-top: 8px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; color: var(--muted); font-size: 11px; }
+    pre { margin: 0; padding: 8px; background: #f7f8fc; border-radius: 4px; overflow: auto; font-size: 11px; line-height: 1.35; tab-size: 2; scrollbar-color: #c9b4ed #f7f8fc; }
+    footer { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; color: var(--muted); font-size: 11px; }
     [hidden] { display: none !important; }
-    @media (max-width: 900px) { .event { grid-template-columns: minmax(0, 1fr); gap: 5px; } }
-    @media (max-width: 800px) { .shell { padding: 10px 12px; } .intro { grid-template-columns: minmax(0, 1fr); gap: 4px; } .view-heading { flex-direction: column; gap: 6px; } .support { gap: 10px; grid-template-columns: 1fr; } .canvas { height: 320px; } .event dl { grid-template-columns: minmax(0, 1fr); } }
-    @media (max-width: 480px) { .shell { padding: 8px 10px; } .masthead { align-items: start; } .scope { max-width: 65%; } .views { gap: 0 12px; } .canvas { height: 280px; } .canvas-meta { margin-bottom: 8px; } .events > li { grid-template-columns: 18px minmax(0, 1fr); gap: 6px; } }
-    @media (pointer: coarse) { .tool, .view-button { min-height: 40px; } summary { min-height: 32px; } }
-    @media print { .shell { padding: 0; } .tools, .views, details, .status { display: none; } .canvas { height: auto; overflow: visible; border: 0; } .drawing svg { width: 100% !important; height: auto !important; } .support { break-inside: avoid; } .event details { display: block; } .event details > :not(summary) { display: block !important; } }
+    @media (max-width: 1200px) { .event { grid-template-columns: minmax(0, 1fr); gap: 5px; } }
+    @media (max-width: 900px) { .workspace { grid-template-columns: 140px minmax(0, 1fr); } .inspector { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); } }
+    @media (max-width: 700px) { .workspace { display: block; } .view-nav { border-right: 0; border-bottom: 1px solid var(--line); padding: 12px; } .views { display: flex; flex-wrap: wrap; } .view-button { flex: 1 1 140px; } .intro { grid-template-columns: minmax(0, 1fr); gap: 6px; } .report-content, .inspector { padding: 16px 12px; } .support { gap: 10px; grid-template-columns: 1fr; } .canvas { height: 320px; } .event dl { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 480px) { .masthead { padding: 12px; align-items: start; } .intro { padding: 12px; } .scope { max-width: 65%; } .canvas-meta { margin-bottom: 8px; } .events > li { grid-template-columns: 18px minmax(0, 1fr); gap: 6px; } }
+    @media (pointer: coarse) { .tool, .view-button, .inspector select { min-height: 44px; } summary { min-height: 44px; } }
+    @media print { .workspace { display: block; } .view-nav, .inspector, .tools, details, .status, .entity-hit { display: none; } .canvas { height: auto; overflow: visible; border: 0; } .drawing svg { width: 100% !important; height: auto !important; } .support { break-inside: avoid; } .event details { display: block; } .event details > :not(summary) { display: block !important; } }
   </style>
   <script type="importmap">
     {"imports": {"react": "https://esm.sh/react@18.3.1", "react-dom": "https://esm.sh/react-dom@18.3.1?external=react", "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime", "mermaid": "https://cdn.jsdelivr.net/npm/mermaid@11.12.1/dist/mermaid.esm.min.mjs"}}
@@ -106,11 +142,13 @@
       <div class="scope"><div id="scope"></div><div id="revision"></div></div>
     </header>
     <section class="intro" aria-labelledby="report-title"><h1 id="report-title"></h1><p id="report-summary"></p></section>
-    <nav id="views" class="views" aria-label="Architecture views"></nav>
+    <div class="workspace">
+    <nav class="view-nav" aria-label="Architecture views"><h2>Explore</h2><div id="views" class="views"></div></nav>
+    <div class="report-content">
     <section aria-labelledby="view-title">
       <div class="view-heading">
         <div><h2 id="view-title"></h2><p id="view-description"></p></div>
-        <div id="diagram-tools" class="tools" aria-label="Diagram controls">
+        <div id="diagram-tools" class="tools" role="group" aria-label="Diagram controls">
           <button class="tool icon-button" id="zoom-out" aria-label="Zoom out" title="Zoom out" disabled><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12"/></svg></button>
           <button class="tool icon-button" id="zoom-in" aria-label="Zoom in" title="Zoom in" disabled><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 10h12M10 4v12"/></svg></button>
           <button class="tool" id="actual-size" aria-label="Show diagram at full size" disabled>100%</button>
@@ -125,11 +163,12 @@
         <div id="status" class="status" role="status" aria-live="polite"><p id="status-text">Loading Excalidraw renderer…</p><button id="retry" class="tool" hidden>Reload renderer</button></div>
       </div>
       <div class="canvas-meta">
-        <div class="legend" aria-label="Diagram legend"><span><i class="swatch person" aria-hidden="true"></i>Person</span><span><i class="swatch internal" aria-hidden="true"></i>In scope</span><span><i class="swatch external" aria-hidden="true"></i>External</span><span><i class="swatch data" aria-hidden="true"></i>Data store</span></div>
+        <div id="legend" class="legend" role="group" aria-label="Diagram legend"></div>
         <span id="zoom-label">Scroll to explore · Fit view for overview</span>
       </div>
       </div>
     </section>
+    <section id="connections" class="connections" aria-labelledby="connections-title" hidden><h2 id="connections-title">Connections</h2><div id="connection-list"></div></section>
     <section id="chronology" class="chronology" aria-labelledby="chronology-title" hidden>
       <h2 id="chronology-title">What happens, in order</h2>
       <p>Sync waits for a reply; async uses background work or callbacks. Parallel completion order may vary.</p>
@@ -140,6 +179,9 @@
       <div><h2>Source evidence</h2><ul id="evidence" class="evidence"></ul><p id="no-evidence" hidden>No source evidence supplied; treat this view as unverified.</p></div>
     </section>
     <details id="mermaid-source"><summary>Mermaid source</summary><div class="source-tools"><button id="download-mermaid" class="tool">Save Mermaid</button></div><pre><code id="source"></code></pre></details>
+    </div>
+    <aside id="inspector" class="inspector" aria-labelledby="inspector-heading"><h2 id="inspector-heading">Boundary details</h2><label for="entity-select">Select an entity</label><select id="entity-select" disabled><option>Waiting for diagram</option></select><div id="entity-details" aria-live="polite"><p class="empty">Select a diagram entity to inspect its relationships and evidence.</p></div></aside>
+    </div>
     <footer><span>C4 architecture · Excalidraw rendering</span><span>Pinned libraries load from esm.sh / jsDelivr · Network required</span></footer>
     <noscript><p>JavaScript is required to render diagrams. Report data and Mermaid source are embedded in this HTML file.</p></noscript>
   </main>
@@ -157,12 +199,20 @@
     const byId = (id) => document.getElementById(id);
     const controls = ["zoom-in", "zoom-out", "actual-size", "fit", "download-svg", "download-scene"];
     const cache = new Map();
-    let active = report.views.find((view) => view.id === location.hash.slice(1)) || report.views[0];
+    let active = report.views[0];
     let rendered = null;
     let scale = 1;
     let zoomMode = "readable";
     let requestId = 0;
     let renderQueue = Promise.resolve();
+    const roles = {
+      person: { label: "Person", color: "#b72c73", wash: "#fdebf4", ink: "#94215b" },
+      system: { label: "Software system", color: "#4c46b5", wash: "#efeeff", ink: "#413a96" },
+      interface: { label: "Interface", color: "#2459d7", wash: "#edf3ff", ink: "#244b9b" },
+      service: { label: "Service / component", color: "#7136ce", wash: "#f3ecff", ink: "#5b2b9d" },
+      data: { label: "Storage / messaging", color: "#087a64", wash: "#e8f8f2", ink: "#066251" },
+      external: { label: "External system", color: "#b54b12", wash: "#fff0e6", ink: "#934011" }
+    };
     let libraries = null;
 
     byId("report-title").textContent = report.title;
@@ -197,6 +247,143 @@
       return li;
     }
 
+    function route() {
+      const [viewId, kind, identifier] = location.hash.slice(1).split("/");
+      const view = report.views.find((item) => item.id === viewId) || report.views[0];
+      return { view, entity: kind === "entity" ? identifier : null, event: kind === "event" ? identifier : null };
+    }
+
+    function entityLink(view, id) { return `#${view.id}/entity/${id}`; }
+
+    function appendHeading(container, text) {
+      const heading = document.createElement("h4");
+      heading.textContent = text;
+      container.append(heading);
+    }
+
+    function inspectEntity(id) {
+      if (!rendered) return;
+      const entity = rendered.entities.find((item) => item.id === id);
+      if (!entity) return;
+      byId("entity-select").value = entity.id;
+      rendered.svg.querySelectorAll(".entity-hit").forEach((item) => item.setAttribute("aria-pressed", String(item.dataset.entity === id)));
+      const details = byId("entity-details");
+      details.dataset.role = entity.role;
+      details.replaceChildren();
+      const title = document.createElement("div");
+      title.className = "entity-title";
+      const name = document.createElement("h3");
+      name.textContent = entity.name;
+      const type = document.createElement("p");
+      type.textContent = entity.type;
+      title.append(name, type);
+      const description = document.createElement("p");
+      description.className = "entity-description";
+      description.textContent = entity.description;
+      details.append(title, description);
+      for (const [heading, endpoint, neighbour] of [["Incoming", "to", "from"], ["Outgoing", "from", "to"]]) {
+        appendHeading(details, heading);
+        const edges = rendered.relationships.filter((edge) => edge[endpoint] === id);
+        const list = document.createElement("ul");
+        edges.forEach((edge) => {
+          const other = rendered.entities.find((item) => item.id === edge[neighbour]);
+          const item = document.createElement("li");
+          const link = document.createElement("a");
+          link.href = entityLink(active, other.id);
+          link.textContent = other.name;
+          link.style.color = roles[other.role].color;
+          const label = document.createElement("small");
+          label.textContent = edge.label;
+          item.append(link, label);
+          list.append(item);
+        });
+        if (!edges.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = "None shown in this view.";
+          details.append(empty);
+        } else details.append(list);
+      }
+      if (entity.view) {
+        const target = report.views.find((view) => view.id === entity.view);
+        const link = document.createElement("a");
+        link.className = "deeper-view";
+        link.href = `#${target.id}`;
+        link.textContent = `Explore ${target.title}`;
+        details.append(link);
+      }
+      const related = report.views.flatMap((view) => (view.events || []).filter((event) => event.from === entity.name || event.to === entity.name).map((event) => ({ view, event })));
+      if (related.length) {
+        appendHeading(details, "Related events and contracts");
+        related.forEach(({ view, event }) => {
+          const disclosure = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = event.title;
+          const route = document.createElement("p");
+          route.textContent = [event.method, event.url, event.channel, event.status].filter(Boolean).join(" · ");
+          const pre = document.createElement("pre");
+          pre.textContent = Object.hasOwn(event, "payload") ? JSON.stringify(event.payload, null, 2) : "Payload not recorded.";
+          const link = document.createElement("a");
+          link.href = `#${view.id}/event/${event.id}`;
+          link.textContent = "Read event and source in the story";
+          disclosure.append(summary, route, pre, link);
+          details.append(disclosure);
+        });
+      }
+      appendHeading(details, "Entity evidence");
+      if (entity.evidence.length) {
+        const evidence = document.createElement("ul");
+        evidence.className = "evidence";
+        evidence.append(...entity.evidence.map(evidenceItem));
+        details.append(evidence);
+      } else {
+        const warning = document.createElement("p");
+        warning.className = "evidence-warning";
+        warning.textContent = "No entity-specific source evidence supplied. See view evidence and qualifications below.";
+        details.append(warning);
+      }
+      if (entity.notes.length) {
+        appendHeading(details, "Qualifications");
+        const notes = document.createElement("ul");
+        notes.append(...entity.notes.map((note) => { const item = document.createElement("li"); item.textContent = note; return item; }));
+        details.append(notes);
+      }
+    }
+
+    function renderExplorer() {
+      const select = byId("entity-select");
+      select.replaceChildren(...rendered.entities.map((entity) => {
+        const option = document.createElement("option");
+        option.value = entity.id;
+        option.textContent = `${entity.name} · ${entity.type}`;
+        return option;
+      }));
+      select.disabled = rendered.entities.length === 0;
+      byId("connections").hidden = rendered.relationships.length === 0;
+      byId("connection-list").replaceChildren(...rendered.relationships.map((edge) => {
+        const from = rendered.entities.find((entity) => entity.id === edge.from);
+        const to = rendered.entities.find((entity) => entity.id === edge.to);
+        const link = document.createElement("a");
+        link.className = "connection";
+        link.dataset.role = edge.role;
+        link.href = entityLink(active, from.id);
+        link.append(`${from.name} → ${to.name}`);
+        const label = document.createElement("span");
+        label.textContent = edge.label;
+        link.append(label);
+        return link;
+      }));
+      byId("legend").replaceChildren(...[...new Set(rendered.entities.map((entity) => entity.role))].map((role) => {
+        const label = document.createElement("span");
+        label.dataset.role = role;
+        const swatch = document.createElement("i");
+        swatch.className = "swatch";
+        swatch.setAttribute("aria-hidden", "true");
+        label.append(swatch, roles[role].label);
+        return label;
+      }));
+    }
+
     function renderEvents(view) {
       const events = view.events || [];
       byId("chronology").hidden = events.length === 0;
@@ -204,15 +391,8 @@
       const exchanges = new Map(events.filter((event) => event.kind === "request").map((event) => [event.exchange, event]));
       const eventLink = (id) => {
         const link = document.createElement("a");
-        link.href = `#event-${view.id}-${id}`;
+        link.href = `#${view.id}/event/${id}`;
         link.textContent = `event ${numbered.get(id)}`;
-        // Preserve the active-view hash used to restore the report on reload.
-        link.addEventListener("click", (event) => {
-          event.preventDefault();
-          const target = byId(`event-${view.id}-${id}`);
-          target.scrollIntoView({ block: "center" });
-          target.focus({ preventScroll: true });
-        });
         return link;
       };
       byId("events").replaceChildren(...events.map((event) => {
@@ -309,37 +489,92 @@
       // The converter retains HTML break tags in some Mermaid labels. Normalize
       // them before Excalidraw measures bound text, using its sans-serif font.
       const plainLabel = (text) => text.replace(/<br\s*\/?>/gi, "\n");
+      const entities = result.elements.filter((element) => element.type !== "arrow" && element.label).map((element) => {
+        const lines = plainLabel(element.label.text).split("\n");
+        const metadata = (view.entities || []).find((entity) => entity.id === element.id);
+        const type = lines[1] || lines[0].split(" · ").slice(1).join(" · ");
+        const role = metadata?.role || (/\bPerson\b/i.test(type) ? "person" : /External system/i.test(type) ? "external" : /Software system/i.test(type) ? "system" : "service");
+        return { id: element.id, name: lines.length > 1 ? lines[0] : lines[0].split(" · ")[0], type, description: lines.slice(2).join(" "), role, notes: metadata?.notes || [], evidence: metadata?.evidence || [], view: metadata?.view };
+      });
+      const relationships = result.elements.filter((element) => element.type === "arrow" && entities.some((entity) => entity.id === element.start?.id) && entities.some((entity) => entity.id === element.end?.id)).map((element) => {
+        const from = entities.find((entity) => entity.id === element.start.id);
+        const to = entities.find((entity) => entity.id === element.end.id);
+        return { id: element.id, from: from.id, to: to.id, label: plainLabel(element.label?.text || "No relationship label supplied."), role: ["external", "data"].includes(to.role) ? to.role : from.role };
+      });
+      const missing = (view.entities || []).find((metadata) => !entities.some((entity) => entity.id === metadata.id));
+      if (missing) throw new Error(`Entity metadata references unknown Mermaid node: ${missing.id}`);
       const skeletons = result.elements.map((element) => {
         const normalized = { ...element, roughness: 0.35, fontFamily: 2 };
         if (element.text) normalized.text = plainLabel(element.text);
         if (element.label) normalized.label = { ...element.label, text: plainLabel(element.label.text), fontFamily: 2 };
+        const entity = entities.find((item) => item.id === element.id);
+        const relationship = relationships.find((item) => item.id === element.id);
+        const palette = roles[entity?.role || relationship?.role];
+        if (palette) {
+          normalized.strokeColor = palette.color;
+          if (entity) normalized.backgroundColor = palette.wash;
+          if (normalized.label) normalized.label.strokeColor = palette.ink;
+        }
         return normalized;
       });
-      const elements = excalidraw.convertToExcalidrawElements(skeletons);
+      const elements = excalidraw.convertToExcalidrawElements(skeletons, { regenerateIds: false });
       const appState = { exportBackground: false, viewBackgroundColor: "#ffffff", exportWithDarkMode: false, exportScale: 1 };
       const files = result.files || {};
       const svg = await excalidraw.exportToSvg({ elements, files, appState, exportPadding: 24 });
-      svg.setAttribute("role", "img");
+      svg.setAttribute("role", "group");
       svg.setAttribute("aria-label", `${view.title}. ${view.description}`);
       const width = Number(svg.getAttribute("width"));
       const height = Number(svg.getAttribute("height"));
       if (!(width > 0 && height > 0)) throw new Error("The renderer returned an empty diagram.");
-      const value = { svg, width, height, elements, files, appState };
+      const [minX, minY] = excalidraw.getCommonBounds(elements);
+      for (const entity of entities) {
+        const shape = elements.find((element) => element.id === entity.id);
+        if (!shape) continue;
+        const hit = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        hit.classList.add("entity-hit");
+        hit.dataset.entity = entity.id;
+        hit.dataset.role = entity.role;
+        hit.setAttribute("role", "button");
+        hit.setAttribute("tabindex", "0");
+        hit.setAttribute("aria-label", `Inspect ${entity.name}. ${entity.type}. ${entity.description}`);
+        hit.setAttribute("aria-pressed", "false");
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("x", String(shape.x - minX + 24));
+        rect.setAttribute("y", String(shape.y - minY + 24));
+        rect.setAttribute("width", String(shape.width));
+        rect.setAttribute("height", String(shape.height));
+        rect.setAttribute("rx", "4");
+        hit.append(rect);
+        hit.addEventListener("click", () => { location.hash = `${view.id}/entity/${entity.id}`; });
+        hit.addEventListener("keydown", (event) => { if (["Enter", " "].includes(event.key)) { event.preventDefault(); location.hash = `${view.id}/entity/${entity.id}`; } });
+        svg.append(hit);
+      }
+      const value = { svg, width, height, elements, files, appState, entities, relationships };
       cache.set(view.id, value);
       return value;
     }
 
-    async function selectView(view) {
+    async function selectView(view, selection = {}) {
+      if (view === active && rendered) {
+        if (selection.entity) inspectEntity(selection.entity);
+        if (selection.event) focusEvent(view, selection.event);
+        return;
+      }
       const currentRequest = ++requestId;
       active = view;
-      history.replaceState(null, "", `#${view.id}`);
       rendered = null;
+      byId("connections").hidden = true;
+      byId("inspector").hidden = !view.mermaid;
+      byId("entity-select").disabled = true;
+      byId("entity-select").replaceChildren(new Option("Waiting for diagram"));
+      byId("entity-details").replaceChildren();
       byId("drawing").replaceChildren();
       byId("view-title").textContent = view.title;
       byId("view-description").textContent = view.description;
       byId("source").textContent = view.mermaid || "";
       ["diagram-frame", "diagram-tools", "mermaid-source"].forEach((id) => { byId(id).hidden = !view.mermaid; });
       renderEvents(view);
+      if (selection.event) focusEvent(view, selection.event);
       byId("views").querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.view === view.id)));
       byId("notes").replaceChildren(...view.notes.map((note) => { const li = document.createElement("li"); li.textContent = note; return li; }));
       byId("no-notes").hidden = view.notes.length > 0;
@@ -357,12 +592,23 @@
         byId("drawing").replaceChildren(result.svg);
         byId("status").hidden = true;
         controls.forEach((id) => { byId(id).disabled = false; });
-        resetViewport("readable");
+        renderExplorer();
+        const preferred = result.entities.find((entity) => entity.role === (view.level === "Context" ? "system" : "service") && result.relationships.some((edge) => edge.from === entity.id || edge.to === entity.id));
+        inspectEntity(result.entities.find((entity) => entity.id === selection.entity)?.id || preferred?.id || result.entities[0]?.id);
+        resetViewport("fit");
       } catch (error) {
         if (currentRequest !== requestId) return;
         const message = error instanceof Error ? error.message : String(error);
         setStatus(`Could not render this view. Check network access to esm.sh / jsDelivr and the Mermaid source, then retry. ${message}`, true);
+        byId("entity-details").textContent = "Diagram inspection is unavailable. The story, Mermaid source, and view evidence remain available.";
       }
+    }
+
+    function focusEvent(view, id) {
+      const target = byId(`event-${view.id}-${id}`);
+      if (!target) return;
+      target.scrollIntoView({ block: "center" });
+      target.focus({ preventScroll: true });
     }
 
     function download(content, type, extension) {
@@ -382,7 +628,7 @@
       const level = document.createElement("span");
       level.textContent = view.level;
       button.append(level, document.createTextNode(view.title));
-      button.addEventListener("click", () => selectView(view));
+      button.addEventListener("click", () => { location.hash = view.id; });
       byId("views").append(button);
     });
     // Reload clears the browser's failed-module cache and retains the view hash.
@@ -395,6 +641,8 @@
     byId("download-svg").addEventListener("click", () => {
       if (!rendered) return;
       const svg = rendered.svg.cloneNode(true);
+      svg.querySelectorAll(".entity-hit").forEach((hit) => hit.remove());
+      svg.setAttribute("role", "img");
       svg.style.removeProperty("width"); svg.style.removeProperty("height");
       download(new XMLSerializer().serializeToString(svg), "image/svg+xml", "svg");
     });
@@ -403,7 +651,10 @@
       download(JSON.stringify({ type: "excalidraw", version: 2, source: "highvis", elements: rendered.elements, appState: rendered.appState, files: rendered.files }, null, 2), "application/json", "excalidraw");
     });
     new ResizeObserver(() => { if (zoomMode !== "manual") resetViewport(zoomMode); }).observe(byId("canvas"));
-    selectView(active);
+    byId("entity-select").addEventListener("change", () => { location.hash = `${active.id}/entity/${byId("entity-select").value}`; });
+    window.addEventListener("hashchange", () => { const selection = route(); selectView(selection.view, selection); });
+    const selection = route();
+    selectView(selection.view, selection);
   </script>
 </body>
 </html>
