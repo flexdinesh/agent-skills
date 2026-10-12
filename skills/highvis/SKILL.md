@@ -32,7 +32,7 @@ These are Highvis defaults, not additional C4 rules. User requests override them
 | Opening view | System context | Participating containers and feature boundaries |
 | Detail | Context + containers; components only for significant or requested areas | Container orientation, main HTML event story, then components where useful |
 | Request/response | Trace representative scenarios when useful or requested | Required for every boundary crossed in the main feature story |
-| HTML density | Compact, full-width report | Compact, full-width report with two-column event rows on desktop |
+| HTML density | Compact Atlas workspace: navigation, map, inspector | Same workspace, with a full event story and two-column event rows on wide screens |
 | Supporting views | Add a scenario only when it explains an important cross-boundary behaviour | Add a failure scenario only when traced handling reveals an important architectural decision |
 | Code level | Only when explicitly requested or essential to the question | Same; avoid symbol inventories |
 
@@ -48,17 +48,24 @@ These are Highvis defaults, not additional C4 rules. User requests override them
   or notes. Label edges with specific actions and verified protocols.
 - Keep the summary to two sentences: what this scope does and what the report
   covers. Notes explain decisions, unknowns, and omissions; evidence proves wiring.
-- Use white diagram surfaces, muted role colours, sans-serif diagram text, and
-  subtle Excalidraw strokes. Start at a readable scale; allow scrolling instead
-  of shrinking a large graph until labels disappear. “Fit view” is the overview;
-  “100%” restores full-size text. Preserve manual zoom when the window resizes.
+- Use white backgrounds and colourful, consistent entity roles: pink people,
+  indigo systems, blue interfaces, violet services/components, teal storage or
+  messaging, and orange external systems. Type labels remain authoritative;
+  colour does not replace C4 types or imply a runtime boundary.
+- Open diagrams in “Fit view” to show every participant. The inspector and entity
+  picker provide readable labels at overview scale; “100%” restores full-size
+  diagram text. Preserve manual zoom when the window resizes.
 
-## Compact HTML by default
+## Atlas HTML by default
 
-Pack useful information into the viewport. Use the bundled compact template;
-preserve its density when updating reports or adding sections.
+Use the bundled Atlas template: view navigation on the left, the diagram and
+connections in the centre, and selected entity details on the right. Selecting
+an entity shows its incoming/outgoing relationships, qualifications, source
+evidence, links to deeper views, and matching story contracts. On narrow screens,
+stack these regions and keep the entity picker available. Chronology-only views
+use the main reading area without a diagram inspector.
 
-- Use the full available width, 10–20px outer gutters, and a small report header.
+- Use the full available width, 12–20px content gutters, and a small report header.
   Keep title, scope, revision, summary, and view navigation close together.
   Avoid hero layouts, oversized headings, decorative cards, and empty spacer bands.
 - Default to 13px body text with approximately 1.4 line height, 24px report titles,
@@ -167,6 +174,13 @@ Use its bundled generator and template; do not recreate the renderer from memory
    Evidence items contain `path` and `detail`;
    optional `lines` is a source line number/range. Notes record assumptions and
    limits, not invented findings. Supply a real revision when available.
+   Add optional `entities` metadata to architecture views as described in
+   [C4 conventions](references/c4.md#entity-inspection). Reuse Mermaid node IDs;
+   record each role, entity evidence/notes, and an optional deeper-view ID. Names,
+   types, responsibilities, and connections come from the rendered Mermaid graph,
+   not a duplicated or independently invented inventory. Existing reports without
+   metadata remain supported; supply metadata for intentional role colours and
+   entity-specific evidence.
 2. Default destination: `docs/architecture/highvis/<scope-slug>.html` with a
    neighbouring JSON input. Follow an explicit user path or repository convention.
 3. Run, substituting absolute paths:
@@ -189,8 +203,8 @@ The pipeline is `parseMermaidToExcalidraw` → `convertToExcalidrawElements` →
 `exportToSvg`. Keep this pipeline; Mermaid's SVG or hand-drawn mode alone does
 not fulfil the Excalidraw requirement. Preserve view switching, zoom/fit, source
 inspection, evidence, `.mmd`/SVG/`.excalidraw` downloads, responsive layout, and
-visible loading/error states. Keep white diagram surfaces, clear typography,
-muted role colours, and readable HTML stories. Avoid dashboard filler.
+visible loading/error states. Keep white backgrounds, clear typography,
+consistent role colours, and readable HTML stories. Avoid dashboard filler.
 
 If fully offline output is requested, bundle verified dependencies or embed
 Excalidraw-rendered SVGs at generation time while retaining Mermaid sources and

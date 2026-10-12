@@ -11,6 +11,7 @@ from pathlib import Path
 LEVELS = {"Context", "Containers", "Components", "Code", "Dynamic"}
 EVENT_KINDS = {"request", "response", "publish", "consume", "callback", "redirect", "local"}
 EVENT_MODES = {"sync", "async", "local"}
+ENTITY_ROLES = {"person", "system", "interface", "service", "data", "external"}
 
 
 def require_text(value, location):
@@ -125,6 +126,23 @@ def validate_report(report):
         if view["level"] not in LEVELS:
             raise ValueError(f"{location}.level must be one of {sorted(LEVELS)}")
         validate_annotations(view, location)
+        if "entities" in view:
+            if not isinstance(view["entities"], list):
+                raise ValueError(f"{location}.entities must be an array")
+            entity_ids = set()
+            for entity_index, entity in enumerate(view["entities"]):
+                here = f"{location}.entities[{entity_index}]"
+                if not isinstance(entity, dict):
+                    raise ValueError(f"{here} must be an object")
+                identifier = entity.get("id")
+                if not isinstance(identifier, str) or not re.fullmatch(r"[a-zA-Z_][a-zA-Z0-9_-]*", identifier) or identifier in entity_ids:
+                    raise ValueError(f"{here}.id must be a unique Mermaid node id")
+                entity_ids.add(identifier)
+                if not isinstance(entity.get("role"), str) or entity["role"] not in ENTITY_ROLES:
+                    raise ValueError(f"{here}.role must be one of {sorted(ENTITY_ROLES)}")
+                validate_annotations(entity, here)
+                if "view" in entity:
+                    require_text(entity["view"], f"{here}.view")
         if "events" in view:
             validate_events(view["events"], f"{location}.events")
         if "mermaid" not in view:
@@ -141,6 +159,10 @@ def validate_report(report):
             raise ValueError(f"{location}.mermaid must be a flowchart")
         if re.search(r"%%\{|^\s*---|\bclick\s|https?://|<\s*/?\s*(?!br\s*/?>)[a-z]", view["mermaid"], re.I | re.M):
             raise ValueError(f"{location}.mermaid contains directives, links, or unsupported HTML")
+    for view in views:
+        for entity in view.get("entities", []):
+            if "view" in entity and entity["view"] not in identifiers:
+                raise ValueError(f"entity {entity['id']}.view must reference an existing view")
     return report
 
 
