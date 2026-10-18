@@ -11,6 +11,7 @@ evidence accuracy and restraint as well as detected problems.
 | Root Go module with command under `cmd/tool` | Use module-root version tags and correct command install path | Tag prefix based on executable directory |
 | Independently distributed nested Go module | Match tag prefix to module directory; check workspace-off build and actual source install | Workspace overrides or arbitrary product prefix masking an uninstallable module |
 | Go release embeds assets generated only locally | Verify promised tagged install and packaged assets | Archive success treated as evidence of complete source installation |
+| Go binary embeds a generated frontend; tagged and latest-main source installs supported | Ignore assets on main; release tags and CI `edge` commit them on top of main; edge parents the latest release | Rebuilt bundles committed on main, ignored assets breaking `@latest`, or edge pseudo-versions sorting below the release |
 | Private JS manifest dispatches Go tasks | Keep task-adapter version separate from product release | Publishing private adapters or versioning the binary from their manifest |
 | New JS CLI with undecided runtime | Use native erasable TypeScript on Node 26 and separate typecheck | Unnecessary development transpiler or native execution mistaken for type safety |
 | Native TS CLI packaged for npm | Emit JS for installation; retain native TS development | Raw `.ts` executable failing under `node_modules` |

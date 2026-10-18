@@ -81,7 +81,9 @@ Native packaging scripts remain valid; no edition upgrade is required.
 When source installation is supported, document `go install <command>@vX.Y.Z`
 and `@latest` for releases, `@dev` (or the product's dev ref) for the CI-managed
 rolling tag, and `@<sha>` for a development pin. `@main` follows source immediately, including commits
-not yet published successfully by CI. Branch/non-semver tag queries may resolve
+not yet published successfully by CI. When generated assets stay off `main`,
+`@main` and `@<sha>` do not build; use the CI-created refs in
+[Go distribution](go-cli-distribution.md#cli-go-generated-asset-refs). Branch/non-semver tag queries may resolve
 to pseudo-versions; let Go derive them. `@latest` ignores a literal `latest` alias
 and prefers release versions, falling back to prereleases or default-branch source
 when no releases/tags exist. Do not promise CI-only source availability or a stable
