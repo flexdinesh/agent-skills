@@ -175,7 +175,9 @@ such as Git for a live Git source, in documentation.
 
 **Exception:** runtime plugins or external processes can be product requirements.
 Committing built assets suits direct source installs; release-time generation
-also works when the supported install path provides them. Neither is mandatory.
+also works when the supported install path provides them, such as Go
+[asset refs](go-cli-distribution.md#cli-go-generated-asset-refs) on release tags
+and `edge`. Neither is mandatory.
 
 **Verify:** exercise the built artifact with its declared runtime prerequisites,
 without relying on a dev server or build-tool installation. Check embedded assets,

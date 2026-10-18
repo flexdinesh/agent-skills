@@ -86,7 +86,7 @@ its relevant owners and consumers.
 | Tooling | Established or selected pnpm workspace dependencies and task dispatch | [pnpm](references/pnpm.md) |
 | Tooling | Established or selected mise tool pins and task dispatch | [mise](references/mise.md) |
 | Docs | Development instructions or install/release/recovery guides | [Documentation](references/documentation.md) |
-| Distribution | Go archives, module tags, supported source installs | [Go distribution](references/go-cli-distribution.md) |
+| Distribution | Go archives, module tags, supported source installs, generated-asset refs | [Go distribution](references/go-cli-distribution.md) |
 | Distribution | Node CLI packaging, npm manifests, isolated installation | [Node distribution](references/node-cli-distribution.md) |
 | Releases | Manual stable CI, version plans, artifact checks, publication recovery | [CI releases](references/ci-releases.md) |
 | Releases | Go automatic dev builds, stable/dev channels, publication ordering | [Go CI channels](references/go-ci-releases.md) |
