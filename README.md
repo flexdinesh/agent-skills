@@ -8,6 +8,7 @@ Skills are manual-invocation only, with one exception: `gh-create-pr` also auto-
 
 ## Available skills
 
+- `engineering-patterns`: concrete engineering guidance with a minimal catalog and references loaded on demand
 - `autopilot` — plan, implement, validate, push, create a PR, and return to main
 - `execute-plan` — implement a planned set of changes, making writes and edits
 - `gh-create-pr` — push branch and create a GitHub PR with `gh` CLI (explicit or auto-invoked for PR work)
