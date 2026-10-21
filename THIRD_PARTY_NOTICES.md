@@ -1,6 +1,6 @@
 # Third-party notices
 
-The `architect`, `correct`, `how`, `interrogate`, `recall`, `unslop`, `verify`, and `why` skills are adapted from pstack in [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack), used under the MIT License below.
+The `architect`, `correct`, `how`, `interrogate`, `recall`, `teach`, `unslop`, `verify`, and `why` skills are adapted from pstack in [cursor/plugins](https://github.com/cursor/plugins/tree/main/pstack), used under the MIT License below.
 
 ```
 MIT License

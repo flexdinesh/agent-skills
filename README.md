@@ -27,6 +27,7 @@ Ported from [pstack](https://github.com/cursor/plugins/tree/main/pstack) and rew
 - `how`: explain subsystem architecture and runtime flow
 - `interrogate`: adversarial multi-reviewer code review with a lead verdict
 - `recall`: rebuild recent working context from chat history, live state, and the shared record
+- `teach`: explain what a thing is, how it works, and why it's built that way, conversationally and at the reader's pace
 - `unslop`: cut AI tells from writing
 - `verify`: prove finished work against the real artifact, not a proxy
 - `why`: cited, confidence-tiered investigation of why code has its shape
