@@ -20,6 +20,17 @@ Skills are manual-invocation only, with one exception: `gh-create-pr` also auto-
 - `review-changes` — review local diffs for bugs and risks
 - `ts-guidance` — example-driven TypeScript guidance for type safety, input parsing, and explicit domain contracts
 
+Ported from [pstack](https://github.com/cursor/plugins/tree/main/pstack) and rewritten as standalone, agent-agnostic skills (see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)):
+
+- `architect`: sketch types and module structure from parallel design candidates, then implement against the chosen sketch
+- `correct`: make repeated agent mistakes impossible via architecture, types, lints, and tests
+- `how`: explain subsystem architecture and runtime flow
+- `interrogate`: adversarial multi-reviewer code review with a lead verdict
+- `recall`: rebuild recent working context from chat history, live state, and the shared record
+- `unslop`: cut AI tells from writing
+- `verify`: prove finished work against the real artifact, not a proxy
+- `why`: cited, confidence-tiered investigation of why code has its shape
+
 ## Install from remote
 
 ```bash
