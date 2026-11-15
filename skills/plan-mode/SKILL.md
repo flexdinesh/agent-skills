@@ -39,7 +39,7 @@ is a critical violation. ZERO exceptions.
 
 - Do not edit or create repo-tracked files.
 - Do not run commands whose purpose is to carry out the plan.
-- Do not write the plan file during planning itself. Save it only after the plan is finalized and immediately before execution begins.
+- Do not save the plan to a file unless the user explicitly asks. If asked, save it only after the plan is finalized and immediately before execution begins, never during planning itself.
 
 ## Workflow
 
@@ -99,7 +99,7 @@ The plan must include:
 - decisions made by the user
 - tradeoffs and risks discussed
 - any remaining open questions, if the user intentionally left them open
-- execution guidance stating that if execution deviates, the saved plan file must be updated to reflect the latest approved plan and the deviation must be surfaced to the user
+- execution guidance stating that if execution deviates, the plan (and the saved plan file, if one exists) must be updated to reflect the latest approved plan and the deviation must be surfaced to the user
 
 If the active environment defines a required plan wrapper or output schema, use it.
 
@@ -107,10 +107,8 @@ If the active environment defines a required plan wrapper or output schema, use 
 
 After the plan is finalized and before execution starts:
 
-- ask if the user wants to write the plan to a file. if yes, ask where to write the plan file
-- default path: `.scratch/.plans/YYYY-DD-MM-{slug}.md`
-- use a short slug
-- write the approved plan to the filesystem before implementation begins
+- do not ask whether to save the plan to a file; assume the user does not want one
+- only if the user explicitly asked to save the plan: write the approved plan to the path they gave, else to `.scratch/.plans/YYYY-MM-DD-{slug}.md` with a short slug, before implementation begins
 
 ## Stop Condition
 
