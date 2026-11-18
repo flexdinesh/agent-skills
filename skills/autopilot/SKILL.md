@@ -5,33 +5,43 @@ description: "Plan, implement, validate, push, and create a PR for the accompany
 
 # Autopilot
 
-Manual invocation only. Treat the accompanying prompt as the task. Invocation authorizes implementation, task-scoped commits, pushing, PR creation, and returning to `main`; no separate approval needed.
+Manual invocation only: use this skill only when the user explicitly invokes `autopilot` or `$autopilot`; do not auto-invoke from task context.
+
+Treat the accompanying prompt as the task. Invocation authorizes worktree creation, implementation, task-scoped commits, pushing, PR creation, and returning to `main`; no separate approval needed. Stop only when the user's direction is needed.
+
+Flow: Prepare, Plan, Execute, Validate, Push and PR, Return to main.
 
 ## Prepare
 
-Read repository instructions. Inspect Git status, branch, upstream, and remotes; preserve unrelated work. Resolve detached HEAD or missing context first. Check that `wt` is available on `PATH` before starting the task. If missing, ask the user to install the Worktrunk CLI (`wt`) and make it available on `PATH`; resume once available. Identify `main`'s upstream remote (use `origin` if no upstream is configured) and run `git fetch <remote>`. Always work from the fetched `<remote>/main`, never local `main`, which may be stale.
+Read repository instructions. Inspect Git status, branch, upstream, and remotes; preserve unrelated work. Resolve detached HEAD or missing context first. Check that `wt` is available on `PATH` before starting the task. If missing, ask the user to install the Worktrunk CLI (`wt`) and make it available on `PATH`; resume once available. Identify `main`'s upstream remote (use `origin` if no upstream is configured) and run `git fetch <remote>`; require success. Always work from the fetched `<remote>/main`, never local `main`, which may be stale.
 
-- If on `main`, run `wt switch --create <task> --base <remote>/main` to create a descriptive branch in a new worktree from the fetched remote `main`, and switch to its directory before starting the task.
-- Otherwise continue in the current branch and worktree, but first rebase it onto the fetched `<remote>/main` (or its fetched parent branch, if stacked on another branch) when it lacks those commits. Never merge. Ask before handling uncommitted changes or an in-progress rebase; never discard or stash them automatically. On conflicts, abort the rebase, report files, and ask before resolving. If this rewrites published commits, disclose it at push time per Push and PR.
+- Default: run `wt switch --create <task> --base <remote>/main` to create a descriptive branch in a new worktree from the fetched remote `main`, and switch to its directory before planning. Do this regardless of the current branch.
+- Exception: only if the prompt explicitly says to continue existing work on the current branch, stay in it, but first rebase it onto the fetched `<remote>/main` (or its fetched parent branch, if stacked on another branch) when it lacks those commits. Never merge. Ask before handling uncommitted changes or an in-progress rebase; never discard or stash them automatically. On conflicts, abort the rebase, report files, and ask before resolving. If this rewrites published commits, disclose it at push time per Push and PR.
 
 Use Worktrunk (`wt`), never Git commands, to create or switch worktrees. Confirm the resulting directory and branch; run subsequent commands from that worktree directory explicitly. If fetching, rebasing, or `wt` fails, report the blocker; do not continue from a stale base or fall back to Git worktree commands.
 
-## Plan — condensed plan-mode
+## Plan
 
-- Keep this phase read-only: inspect code, callers, configs, schemas, tests, and tooling; no implementation or plan-file writes yet.
-- Resolve discoverable facts locally. Ask about unresolved intent, preferences, scope, behavior, interfaces, or acceptance criteria; explain meaningful alternatives and tradeoffs. Do not invent user decisions.
-- Present a decision-complete plan: title, summary, surgical changes and affected files, verification, user decisions, relevant risks and tradeoffs, and independent work. End with unresolved questions or `None`.
-- Once meaningful ambiguity is resolved, proceed automatically. Do not ask to save the plan to a file; save one only if the user explicitly asked, after finalizing and immediately before implementation.
+Read `references/planning.md` and follow it exactly. Planning stays read-only; worktree setup from Prepare is the only change made before planning ends.
 
-## Implement — condensed execute-plan
+- Do not prompt the user to save the plan to a file. Save one only if the user explicitly asked, per the reference's Plan File rules.
+- If open decisions, preferences, or ambiguity remain, ask the user and wait. Do not invent user decisions.
+- Planning ends when the plan is decision complete: present the final plan, then proceed to Execute automatically. Do not ask for approval to start.
 
-- Follow the finalized plan and repository conventions; keep edits minimal and task-scoped. Coordinate independent tasks through background agents when supported.
-- Respect tool permissions; never bypass unavailable or denied capabilities. Report blockers and ask for direction.
-- If execution requires a changed approach, stop dependent work, explain alternatives, and resolve the decision with the user. Update the plan and any saved copy with approved changes, reasons, tradeoffs, and risks.
-- Run relevant local tests and required lint, type, and build checks. Add meaningful behavior tests where warranted. Fix task-related failures; report unresolved failures before publishing. Review the final diff.
-- Summarize changed files, decisions, tradeoffs, commands run, and actual validation results.
+## Execute
 
-## Push and PR — condensed gh-create-pr
+Read `references/execution.md` and follow it exactly, using the finalized plan. Keep edits minimal, task-scoped, and consistent with repository conventions. When the reference says to stop and ask, stop and wait for direction; resume Autopilot once resolved.
+
+## Validate
+
+Before the after-execution summary:
+
+- Run relevant local tests and required lint, type, and build checks. Add meaningful behavior tests where warranted.
+- Fix task-related failures; report unresolved failures before publishing.
+- Review the final diff.
+- Include actual validation results in the summary.
+
+## Push and PR
 
 - Verify Git, `gh`, authentication, repository, push destination, head, base, and parent branch. Check for an existing open PR, including fork ownership; reuse the task PR instead of duplicating it.
 - Stage only task changes; commit concisely. Run `git fetch <remote>` again for the latest `<remote>/main` and other relevant refs, then inspect the full committed diff against the PR base. Stop if there are no changes to propose.
