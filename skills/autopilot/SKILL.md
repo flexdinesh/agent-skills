@@ -9,7 +9,7 @@ Manual invocation only: use this skill only when the user explicitly invokes `au
 
 Treat the accompanying prompt as the task. Invocation authorizes worktree creation, implementation, task-scoped commits, pushing, PR creation, and returning to `main`; no separate approval needed. Stop only when the user's direction is needed.
 
-Flow: Prepare, Plan, Execute, Validate, Push and PR, Return to main.
+Flow: Prepare, Plan, Execute, Push and PR, Return to main.
 
 ## Prepare
 
@@ -30,16 +30,7 @@ Read `references/planning.md` and follow it exactly. Planning stays read-only; w
 
 ## Execute
 
-Read `references/execution.md` and follow it exactly, using the finalized plan. Keep edits minimal, task-scoped, and consistent with repository conventions. When the reference says to stop and ask, stop and wait for direction; resume Autopilot once resolved.
-
-## Validate
-
-Before the after-execution summary:
-
-- Run relevant local tests and required lint, type, and build checks. Add meaningful behavior tests where warranted.
-- Fix task-related failures; report unresolved failures before publishing.
-- Review the final diff.
-- Include actual validation results in the summary.
+Read `references/execution.md` and follow it exactly, using the finalized plan. Keep edits minimal, task-scoped, and consistent with repository conventions. Do not publish with unresolved validation failures; report them and ask for direction. When the reference says to stop and ask, stop and wait for direction; resume Autopilot once resolved.
 
 ## Push and PR
 

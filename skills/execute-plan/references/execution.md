@@ -37,6 +37,14 @@ These execution instructions are important. Follow them to the dot. In case you 
 - let the user know about the deviation in plan with reasons and capture the updated decisions, tradeoffs, and risks in the plan
 - if something doesn't work, do not keep pushing or try various things to force it. stop execution, present the user with alternative approaches, and get explicit approval before changing direction
 
+## Validation
+
+Before the after-execution summary:
+
+- run relevant local tests and required lint, type, and build checks. add meaningful behavior tests where warranted.
+- fix failures caused by the change; report unresolved failures to the user.
+- review the final diff.
+
 ## After execution:
 
 These after execution instructions are important. Follow them to the dot. In case you can't follow them, let the user know why.
@@ -45,6 +53,7 @@ These after execution instructions are important. Follow them to the dot. In cas
 - summarise the decisions and tradeoffs in the execution
 - list down the files that were changed
 - list down all the commands that run during execution
+- report actual validation results; do not claim checks that did not run
 
 ## Stop Condition
 
